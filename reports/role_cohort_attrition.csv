@@ -1,0 +1,6 @@
+step,records
+Raw public results file,49123
+"Remove near-empty, duplicate and straight-lined responses",43242
+"Keep a specific developer role (drop missing DevType, Student, Retired, Other)",38036
+Keep skill-defined technical roles (drop management/seniority/non-technical),31406
+Keep respondents who answered the main technology question,23072

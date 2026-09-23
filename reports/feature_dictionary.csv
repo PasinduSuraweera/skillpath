@@ -1,0 +1,480 @@
+feature,group,source,type,transformation
+tech__Language_have__Ada,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'Ada' selected
+tech__Language_have__Assembly,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'Assembly' selected
+tech__Language_have__Bash/Shell_(all_shells),Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'Bash/Shell_(all_shells)' selected
+tech__Language_have__C,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'C' selected
+tech__Language_have__C#,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'C#' selected
+tech__Language_have__C++,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'C++' selected
+tech__Language_have__COBOL,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'COBOL' selected
+tech__Language_have__Dart,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'Dart' selected
+tech__Language_have__Delphi,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'Delphi' selected
+tech__Language_have__Elixir,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'Elixir' selected
+tech__Language_have__Erlang,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'Erlang' selected
+tech__Language_have__F#,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'F#' selected
+tech__Language_have__Fortran,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'Fortran' selected
+tech__Language_have__GDScript,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'GDScript' selected
+tech__Language_have__Gleam,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'Gleam' selected
+tech__Language_have__Go,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'Go' selected
+tech__Language_have__Groovy,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'Groovy' selected
+tech__Language_have__HTML/CSS,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'HTML/CSS' selected
+tech__Language_have__Java,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'Java' selected
+tech__Language_have__JavaScript,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'JavaScript' selected
+tech__Language_have__Kotlin,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'Kotlin' selected
+tech__Language_have__Lisp,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'Lisp' selected
+tech__Language_have__Lua,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'Lua' selected
+tech__Language_have__MATLAB,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'MATLAB' selected
+tech__Language_have__MicroPython,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'MicroPython' selected
+tech__Language_have__OCaml,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'OCaml' selected
+tech__Language_have__PHP,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'PHP' selected
+tech__Language_have__Perl,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'Perl' selected
+tech__Language_have__PowerShell,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'PowerShell' selected
+tech__Language_have__Prolog,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'Prolog' selected
+tech__Language_have__Python,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'Python' selected
+tech__Language_have__R,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'R' selected
+tech__Language_have__Ruby,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'Ruby' selected
+tech__Language_have__Rust,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'Rust' selected
+tech__Language_have__SQL,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'SQL' selected
+tech__Language_have__Scala,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'Scala' selected
+tech__Language_have__Swift,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'Swift' selected
+tech__Language_have__TypeScript,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'TypeScript' selected
+tech__Language_have__VBA,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'VBA' selected
+tech__Language_have__Visual_Basic_(.Net),Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'Visual_Basic_(.Net)' selected
+tech__Language_have__Zig,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if 'Zig' selected
+tech__Language_have__OTHER,Language (have),LanguageHaveWorkedWith,binary/numeric,1 if any technology below the 0.5% training support (or unseen) was selected
+tech__Language_have_count,Language (have),LanguageHaveWorkedWith,binary/numeric,log1p(number of technologies selected)
+tech__Language_want__Ada,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'Ada' selected
+tech__Language_want__Assembly,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'Assembly' selected
+tech__Language_want__Bash/Shell_(all_shells),Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'Bash/Shell_(all_shells)' selected
+tech__Language_want__C,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'C' selected
+tech__Language_want__C#,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'C#' selected
+tech__Language_want__C++,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'C++' selected
+tech__Language_want__COBOL,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'COBOL' selected
+tech__Language_want__Dart,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'Dart' selected
+tech__Language_want__Delphi,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'Delphi' selected
+tech__Language_want__Elixir,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'Elixir' selected
+tech__Language_want__Erlang,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'Erlang' selected
+tech__Language_want__F#,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'F#' selected
+tech__Language_want__Fortran,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'Fortran' selected
+tech__Language_want__GDScript,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'GDScript' selected
+tech__Language_want__Gleam,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'Gleam' selected
+tech__Language_want__Go,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'Go' selected
+tech__Language_want__Groovy,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'Groovy' selected
+tech__Language_want__HTML/CSS,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'HTML/CSS' selected
+tech__Language_want__Java,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'Java' selected
+tech__Language_want__JavaScript,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'JavaScript' selected
+tech__Language_want__Kotlin,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'Kotlin' selected
+tech__Language_want__Lisp,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'Lisp' selected
+tech__Language_want__Lua,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'Lua' selected
+tech__Language_want__MATLAB,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'MATLAB' selected
+tech__Language_want__MicroPython,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'MicroPython' selected
+tech__Language_want__Mojo,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'Mojo' selected
+tech__Language_want__OCaml,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'OCaml' selected
+tech__Language_want__PHP,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'PHP' selected
+tech__Language_want__Perl,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'Perl' selected
+tech__Language_want__PowerShell,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'PowerShell' selected
+tech__Language_want__Prolog,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'Prolog' selected
+tech__Language_want__Python,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'Python' selected
+tech__Language_want__R,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'R' selected
+tech__Language_want__Ruby,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'Ruby' selected
+tech__Language_want__Rust,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'Rust' selected
+tech__Language_want__SQL,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'SQL' selected
+tech__Language_want__Scala,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'Scala' selected
+tech__Language_want__Swift,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'Swift' selected
+tech__Language_want__TypeScript,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'TypeScript' selected
+tech__Language_want__VBA,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'VBA' selected
+tech__Language_want__Visual_Basic_(.Net),Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'Visual_Basic_(.Net)' selected
+tech__Language_want__Zig,Language (want),LanguageWantToWorkWith,binary/numeric,1 if 'Zig' selected
+tech__Language_want_count,Language (want),LanguageWantToWorkWith,binary/numeric,log1p(number of technologies selected)
+tech__Language_want_unknown,Language (want),LanguageWantToWorkWith + LanguageChoice,binary/numeric,"1 if list empty and gate answer was not 'No' (unknown, not a true zero)"
+tech__Database_have__Amazon_Redshift,Database (have),DatabaseHaveWorkedWith,binary/numeric,1 if 'Amazon_Redshift' selected
+tech__Database_have__BigQuery,Database (have),DatabaseHaveWorkedWith,binary/numeric,1 if 'BigQuery' selected
+tech__Database_have__Cassandra,Database (have),DatabaseHaveWorkedWith,binary/numeric,1 if 'Cassandra' selected
+tech__Database_have__Clickhouse,Database (have),DatabaseHaveWorkedWith,binary/numeric,1 if 'Clickhouse' selected
+tech__Database_have__Cloud_Firestore,Database (have),DatabaseHaveWorkedWith,binary/numeric,1 if 'Cloud_Firestore' selected
+tech__Database_have__Cockroachdb,Database (have),DatabaseHaveWorkedWith,binary/numeric,1 if 'Cockroachdb' selected
+tech__Database_have__Cosmos_DB,Database (have),DatabaseHaveWorkedWith,binary/numeric,1 if 'Cosmos_DB' selected
+tech__Database_have__Databricks_SQL,Database (have),DatabaseHaveWorkedWith,binary/numeric,1 if 'Databricks_SQL' selected
+tech__Database_have__DuckDB,Database (have),DatabaseHaveWorkedWith,binary/numeric,1 if 'DuckDB' selected
+tech__Database_have__Dynamodb,Database (have),DatabaseHaveWorkedWith,binary/numeric,1 if 'Dynamodb' selected
+tech__Database_have__Elasticsearch,Database (have),DatabaseHaveWorkedWith,binary/numeric,1 if 'Elasticsearch' selected
+tech__Database_have__Firebase_Realtime_Database,Database (have),DatabaseHaveWorkedWith,binary/numeric,1 if 'Firebase_Realtime_Database' selected
+tech__Database_have__H2,Database (have),DatabaseHaveWorkedWith,binary/numeric,1 if 'H2' selected
+tech__Database_have__IBM_DB2,Database (have),DatabaseHaveWorkedWith,binary/numeric,1 if 'IBM_DB2' selected
+tech__Database_have__InfluxDB,Database (have),DatabaseHaveWorkedWith,binary/numeric,1 if 'InfluxDB' selected
+tech__Database_have__MariaDB,Database (have),DatabaseHaveWorkedWith,binary/numeric,1 if 'MariaDB' selected
+tech__Database_have__Microsoft_Access,Database (have),DatabaseHaveWorkedWith,binary/numeric,1 if 'Microsoft_Access' selected
+tech__Database_have__Microsoft_SQL_Server,Database (have),DatabaseHaveWorkedWith,binary/numeric,1 if 'Microsoft_SQL_Server' selected
+tech__Database_have__MongoDB,Database (have),DatabaseHaveWorkedWith,binary/numeric,1 if 'MongoDB' selected
+tech__Database_have__MySQL,Database (have),DatabaseHaveWorkedWith,binary/numeric,1 if 'MySQL' selected
+tech__Database_have__Neo4J,Database (have),DatabaseHaveWorkedWith,binary/numeric,1 if 'Neo4J' selected
+tech__Database_have__Oracle,Database (have),DatabaseHaveWorkedWith,binary/numeric,1 if 'Oracle' selected
+tech__Database_have__Pocketbase,Database (have),DatabaseHaveWorkedWith,binary/numeric,1 if 'Pocketbase' selected
+tech__Database_have__PostgreSQL,Database (have),DatabaseHaveWorkedWith,binary/numeric,1 if 'PostgreSQL' selected
+tech__Database_have__Redis,Database (have),DatabaseHaveWorkedWith,binary/numeric,1 if 'Redis' selected
+tech__Database_have__SQLite,Database (have),DatabaseHaveWorkedWith,binary/numeric,1 if 'SQLite' selected
+tech__Database_have__Snowflake,Database (have),DatabaseHaveWorkedWith,binary/numeric,1 if 'Snowflake' selected
+tech__Database_have__Supabase,Database (have),DatabaseHaveWorkedWith,binary/numeric,1 if 'Supabase' selected
+tech__Database_have__Valkey,Database (have),DatabaseHaveWorkedWith,binary/numeric,1 if 'Valkey' selected
+tech__Database_have__OTHER,Database (have),DatabaseHaveWorkedWith,binary/numeric,1 if any technology below the 0.5% training support (or unseen) was selected
+tech__Database_have_count,Database (have),DatabaseHaveWorkedWith,binary/numeric,log1p(number of technologies selected)
+tech__Database_have_unknown,Database (have),DatabaseHaveWorkedWith + DatabaseChoice,binary/numeric,"1 if list empty and gate answer was not 'No' (unknown, not a true zero)"
+tech__Database_want__Amazon_Redshift,Database (want),DatabaseWantToWorkWith,binary/numeric,1 if 'Amazon_Redshift' selected
+tech__Database_want__BigQuery,Database (want),DatabaseWantToWorkWith,binary/numeric,1 if 'BigQuery' selected
+tech__Database_want__Cassandra,Database (want),DatabaseWantToWorkWith,binary/numeric,1 if 'Cassandra' selected
+tech__Database_want__Clickhouse,Database (want),DatabaseWantToWorkWith,binary/numeric,1 if 'Clickhouse' selected
+tech__Database_want__Cloud_Firestore,Database (want),DatabaseWantToWorkWith,binary/numeric,1 if 'Cloud_Firestore' selected
+tech__Database_want__Cockroachdb,Database (want),DatabaseWantToWorkWith,binary/numeric,1 if 'Cockroachdb' selected
+tech__Database_want__Cosmos_DB,Database (want),DatabaseWantToWorkWith,binary/numeric,1 if 'Cosmos_DB' selected
+tech__Database_want__Databricks_SQL,Database (want),DatabaseWantToWorkWith,binary/numeric,1 if 'Databricks_SQL' selected
+tech__Database_want__Datomic,Database (want),DatabaseWantToWorkWith,binary/numeric,1 if 'Datomic' selected
+tech__Database_want__DuckDB,Database (want),DatabaseWantToWorkWith,binary/numeric,1 if 'DuckDB' selected
+tech__Database_want__Dynamodb,Database (want),DatabaseWantToWorkWith,binary/numeric,1 if 'Dynamodb' selected
+tech__Database_want__Elasticsearch,Database (want),DatabaseWantToWorkWith,binary/numeric,1 if 'Elasticsearch' selected
+tech__Database_want__Firebase_Realtime_Database,Database (want),DatabaseWantToWorkWith,binary/numeric,1 if 'Firebase_Realtime_Database' selected
+tech__Database_want__H2,Database (want),DatabaseWantToWorkWith,binary/numeric,1 if 'H2' selected
+tech__Database_want__IBM_DB2,Database (want),DatabaseWantToWorkWith,binary/numeric,1 if 'IBM_DB2' selected
+tech__Database_want__InfluxDB,Database (want),DatabaseWantToWorkWith,binary/numeric,1 if 'InfluxDB' selected
+tech__Database_want__MariaDB,Database (want),DatabaseWantToWorkWith,binary/numeric,1 if 'MariaDB' selected
+tech__Database_want__Microsoft_Access,Database (want),DatabaseWantToWorkWith,binary/numeric,1 if 'Microsoft_Access' selected
+tech__Database_want__Microsoft_SQL_Server,Database (want),DatabaseWantToWorkWith,binary/numeric,1 if 'Microsoft_SQL_Server' selected
+tech__Database_want__MongoDB,Database (want),DatabaseWantToWorkWith,binary/numeric,1 if 'MongoDB' selected
+tech__Database_want__MySQL,Database (want),DatabaseWantToWorkWith,binary/numeric,1 if 'MySQL' selected
+tech__Database_want__Neo4J,Database (want),DatabaseWantToWorkWith,binary/numeric,1 if 'Neo4J' selected
+tech__Database_want__Oracle,Database (want),DatabaseWantToWorkWith,binary/numeric,1 if 'Oracle' selected
+tech__Database_want__Pocketbase,Database (want),DatabaseWantToWorkWith,binary/numeric,1 if 'Pocketbase' selected
+tech__Database_want__PostgreSQL,Database (want),DatabaseWantToWorkWith,binary/numeric,1 if 'PostgreSQL' selected
+tech__Database_want__Redis,Database (want),DatabaseWantToWorkWith,binary/numeric,1 if 'Redis' selected
+tech__Database_want__SQLite,Database (want),DatabaseWantToWorkWith,binary/numeric,1 if 'SQLite' selected
+tech__Database_want__Snowflake,Database (want),DatabaseWantToWorkWith,binary/numeric,1 if 'Snowflake' selected
+tech__Database_want__Supabase,Database (want),DatabaseWantToWorkWith,binary/numeric,1 if 'Supabase' selected
+tech__Database_want__Valkey,Database (want),DatabaseWantToWorkWith,binary/numeric,1 if 'Valkey' selected
+tech__Database_want_count,Database (want),DatabaseWantToWorkWith,binary/numeric,log1p(number of technologies selected)
+tech__Database_want_unknown,Database (want),DatabaseWantToWorkWith + DatabaseChoice,binary/numeric,"1 if list empty and gate answer was not 'No' (unknown, not a true zero)"
+tech__Platform_have__APT,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'APT' selected
+tech__Platform_have__Amazon_Web_Services_(AWS),Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'Amazon_Web_Services_(AWS)' selected
+tech__Platform_have__Ansible,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'Ansible' selected
+tech__Platform_have__Bun,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'Bun' selected
+tech__Platform_have__Cargo,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'Cargo' selected
+tech__Platform_have__Chocolatey,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'Chocolatey' selected
+tech__Platform_have__Cloudflare,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'Cloudflare' selected
+tech__Platform_have__Composer,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'Composer' selected
+tech__Platform_have__Datadog,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'Datadog' selected
+tech__Platform_have__Digital_Ocean,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'Digital_Ocean' selected
+tech__Platform_have__Docker,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'Docker' selected
+tech__Platform_have__Firebase,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'Firebase' selected
+tech__Platform_have__Google_Cloud,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'Google_Cloud' selected
+tech__Platform_have__Gradle,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'Gradle' selected
+tech__Platform_have__Heroku,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'Heroku' selected
+tech__Platform_have__Homebrew,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'Homebrew' selected
+tech__Platform_have__IBM_Cloud,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'IBM_Cloud' selected
+tech__Platform_have__Kubernetes,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'Kubernetes' selected
+tech__Platform_have__MSBuild,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'MSBuild' selected
+tech__Platform_have__Make,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'Make' selected
+tech__Platform_have__Maven_(build_tool),Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'Maven_(build_tool)' selected
+tech__Platform_have__Microsoft_Azure,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'Microsoft_Azure' selected
+tech__Platform_have__Netlify,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'Netlify' selected
+tech__Platform_have__New_Relic,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'New_Relic' selected
+tech__Platform_have__Ninja,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'Ninja' selected
+tech__Platform_have__NuGet,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'NuGet' selected
+tech__Platform_have__Pacman,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'Pacman' selected
+tech__Platform_have__Pip,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'Pip' selected
+tech__Platform_have__Podman,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'Podman' selected
+tech__Platform_have__Poetry,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'Poetry' selected
+tech__Platform_have__Prometheus,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'Prometheus' selected
+tech__Platform_have__Railway,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'Railway' selected
+tech__Platform_have__Splunk,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'Splunk' selected
+tech__Platform_have__Supabase,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'Supabase' selected
+tech__Platform_have__Terraform,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'Terraform' selected
+tech__Platform_have__Vercel,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'Vercel' selected
+tech__Platform_have__Vite,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'Vite' selected
+tech__Platform_have__Webpack,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'Webpack' selected
+tech__Platform_have__Yarn,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'Yarn' selected
+tech__Platform_have__npm,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'npm' selected
+tech__Platform_have__pnpm,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if 'pnpm' selected
+tech__Platform_have__OTHER,Platform (have),PlatformHaveWorkedWith,binary/numeric,1 if any technology below the 0.5% training support (or unseen) was selected
+tech__Platform_have_count,Platform (have),PlatformHaveWorkedWith,binary/numeric,log1p(number of technologies selected)
+tech__Platform_have_unknown,Platform (have),PlatformHaveWorkedWith + PlatformChoice,binary/numeric,"1 if list empty and gate answer was not 'No' (unknown, not a true zero)"
+tech__Platform_want__APT,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'APT' selected
+tech__Platform_want__Amazon_Web_Services_(AWS),Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'Amazon_Web_Services_(AWS)' selected
+tech__Platform_want__Ansible,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'Ansible' selected
+tech__Platform_want__Bun,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'Bun' selected
+tech__Platform_want__Cargo,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'Cargo' selected
+tech__Platform_want__Chocolatey,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'Chocolatey' selected
+tech__Platform_want__Cloudflare,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'Cloudflare' selected
+tech__Platform_want__Composer,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'Composer' selected
+tech__Platform_want__Datadog,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'Datadog' selected
+tech__Platform_want__Digital_Ocean,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'Digital_Ocean' selected
+tech__Platform_want__Docker,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'Docker' selected
+tech__Platform_want__Firebase,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'Firebase' selected
+tech__Platform_want__Google_Cloud,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'Google_Cloud' selected
+tech__Platform_want__Gradle,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'Gradle' selected
+tech__Platform_want__Heroku,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'Heroku' selected
+tech__Platform_want__Homebrew,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'Homebrew' selected
+tech__Platform_want__IBM_Cloud,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'IBM_Cloud' selected
+tech__Platform_want__Kubernetes,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'Kubernetes' selected
+tech__Platform_want__MSBuild,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'MSBuild' selected
+tech__Platform_want__Make,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'Make' selected
+tech__Platform_want__Maven_(build_tool),Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'Maven_(build_tool)' selected
+tech__Platform_want__Microsoft_Azure,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'Microsoft_Azure' selected
+tech__Platform_want__Netlify,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'Netlify' selected
+tech__Platform_want__New_Relic,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'New_Relic' selected
+tech__Platform_want__Ninja,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'Ninja' selected
+tech__Platform_want__NuGet,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'NuGet' selected
+tech__Platform_want__Pacman,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'Pacman' selected
+tech__Platform_want__Pip,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'Pip' selected
+tech__Platform_want__Podman,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'Podman' selected
+tech__Platform_want__Poetry,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'Poetry' selected
+tech__Platform_want__Prometheus,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'Prometheus' selected
+tech__Platform_want__Railway,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'Railway' selected
+tech__Platform_want__Splunk,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'Splunk' selected
+tech__Platform_want__Supabase,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'Supabase' selected
+tech__Platform_want__Terraform,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'Terraform' selected
+tech__Platform_want__Vercel,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'Vercel' selected
+tech__Platform_want__Vite,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'Vite' selected
+tech__Platform_want__Webpack,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'Webpack' selected
+tech__Platform_want__Yarn,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'Yarn' selected
+tech__Platform_want__npm,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'npm' selected
+tech__Platform_want__pnpm,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if 'pnpm' selected
+tech__Platform_want__OTHER,Platform (want),PlatformWantToWorkWith,binary/numeric,1 if any technology below the 0.5% training support (or unseen) was selected
+tech__Platform_want_count,Platform (want),PlatformWantToWorkWith,binary/numeric,log1p(number of technologies selected)
+tech__Platform_want_unknown,Platform (want),PlatformWantToWorkWith + PlatformChoice,binary/numeric,"1 if list empty and gate answer was not 'No' (unknown, not a true zero)"
+tech__Webframe_have__ASP.NET,Webframe (have),WebframeHaveWorkedWith,binary/numeric,1 if 'ASP.NET' selected
+tech__Webframe_have__ASP.NET_Core,Webframe (have),WebframeHaveWorkedWith,binary/numeric,1 if 'ASP.NET_Core' selected
+tech__Webframe_have__Angular,Webframe (have),WebframeHaveWorkedWith,binary/numeric,1 if 'Angular' selected
+tech__Webframe_have__AngularJS,Webframe (have),WebframeHaveWorkedWith,binary/numeric,1 if 'AngularJS' selected
+tech__Webframe_have__Astro,Webframe (have),WebframeHaveWorkedWith,binary/numeric,1 if 'Astro' selected
+tech__Webframe_have__Axum,Webframe (have),WebframeHaveWorkedWith,binary/numeric,1 if 'Axum' selected
+tech__Webframe_have__Blazor,Webframe (have),WebframeHaveWorkedWith,binary/numeric,1 if 'Blazor' selected
+tech__Webframe_have__Deno,Webframe (have),WebframeHaveWorkedWith,binary/numeric,1 if 'Deno' selected
+tech__Webframe_have__Django,Webframe (have),WebframeHaveWorkedWith,binary/numeric,1 if 'Django' selected
+tech__Webframe_have__Drupal,Webframe (have),WebframeHaveWorkedWith,binary/numeric,1 if 'Drupal' selected
+tech__Webframe_have__Express,Webframe (have),WebframeHaveWorkedWith,binary/numeric,1 if 'Express' selected
+tech__Webframe_have__FastAPI,Webframe (have),WebframeHaveWorkedWith,binary/numeric,1 if 'FastAPI' selected
+tech__Webframe_have__Fastify,Webframe (have),WebframeHaveWorkedWith,binary/numeric,1 if 'Fastify' selected
+tech__Webframe_have__Flask,Webframe (have),WebframeHaveWorkedWith,binary/numeric,1 if 'Flask' selected
+tech__Webframe_have__Laravel,Webframe (have),WebframeHaveWorkedWith,binary/numeric,1 if 'Laravel' selected
+tech__Webframe_have__NestJS,Webframe (have),WebframeHaveWorkedWith,binary/numeric,1 if 'NestJS' selected
+tech__Webframe_have__Next.js,Webframe (have),WebframeHaveWorkedWith,binary/numeric,1 if 'Next.js' selected
+tech__Webframe_have__Node.js,Webframe (have),WebframeHaveWorkedWith,binary/numeric,1 if 'Node.js' selected
+tech__Webframe_have__Nuxt.js,Webframe (have),WebframeHaveWorkedWith,binary/numeric,1 if 'Nuxt.js' selected
+tech__Webframe_have__Phoenix,Webframe (have),WebframeHaveWorkedWith,binary/numeric,1 if 'Phoenix' selected
+tech__Webframe_have__React,Webframe (have),WebframeHaveWorkedWith,binary/numeric,1 if 'React' selected
+tech__Webframe_have__Ruby_on_Rails,Webframe (have),WebframeHaveWorkedWith,binary/numeric,1 if 'Ruby_on_Rails' selected
+tech__Webframe_have__Spring_Boot,Webframe (have),WebframeHaveWorkedWith,binary/numeric,1 if 'Spring_Boot' selected
+tech__Webframe_have__Svelte,Webframe (have),WebframeHaveWorkedWith,binary/numeric,1 if 'Svelte' selected
+tech__Webframe_have__Symfony,Webframe (have),WebframeHaveWorkedWith,binary/numeric,1 if 'Symfony' selected
+tech__Webframe_have__Vue.js,Webframe (have),WebframeHaveWorkedWith,binary/numeric,1 if 'Vue.js' selected
+tech__Webframe_have__WordPress,Webframe (have),WebframeHaveWorkedWith,binary/numeric,1 if 'WordPress' selected
+tech__Webframe_have__jQuery,Webframe (have),WebframeHaveWorkedWith,binary/numeric,1 if 'jQuery' selected
+tech__Webframe_have_count,Webframe (have),WebframeHaveWorkedWith,binary/numeric,log1p(number of technologies selected)
+tech__Webframe_have_unknown,Webframe (have),WebframeHaveWorkedWith + WebframeChoice,binary/numeric,"1 if list empty and gate answer was not 'No' (unknown, not a true zero)"
+tech__Webframe_want__ASP.NET,Webframe (want),WebframeWantToWorkWith,binary/numeric,1 if 'ASP.NET' selected
+tech__Webframe_want__ASP.NET_Core,Webframe (want),WebframeWantToWorkWith,binary/numeric,1 if 'ASP.NET_Core' selected
+tech__Webframe_want__Angular,Webframe (want),WebframeWantToWorkWith,binary/numeric,1 if 'Angular' selected
+tech__Webframe_want__AngularJS,Webframe (want),WebframeWantToWorkWith,binary/numeric,1 if 'AngularJS' selected
+tech__Webframe_want__Astro,Webframe (want),WebframeWantToWorkWith,binary/numeric,1 if 'Astro' selected
+tech__Webframe_want__Axum,Webframe (want),WebframeWantToWorkWith,binary/numeric,1 if 'Axum' selected
+tech__Webframe_want__Blazor,Webframe (want),WebframeWantToWorkWith,binary/numeric,1 if 'Blazor' selected
+tech__Webframe_want__Deno,Webframe (want),WebframeWantToWorkWith,binary/numeric,1 if 'Deno' selected
+tech__Webframe_want__Django,Webframe (want),WebframeWantToWorkWith,binary/numeric,1 if 'Django' selected
+tech__Webframe_want__Drupal,Webframe (want),WebframeWantToWorkWith,binary/numeric,1 if 'Drupal' selected
+tech__Webframe_want__Express,Webframe (want),WebframeWantToWorkWith,binary/numeric,1 if 'Express' selected
+tech__Webframe_want__FastAPI,Webframe (want),WebframeWantToWorkWith,binary/numeric,1 if 'FastAPI' selected
+tech__Webframe_want__Fastify,Webframe (want),WebframeWantToWorkWith,binary/numeric,1 if 'Fastify' selected
+tech__Webframe_want__Flask,Webframe (want),WebframeWantToWorkWith,binary/numeric,1 if 'Flask' selected
+tech__Webframe_want__Laravel,Webframe (want),WebframeWantToWorkWith,binary/numeric,1 if 'Laravel' selected
+tech__Webframe_want__NestJS,Webframe (want),WebframeWantToWorkWith,binary/numeric,1 if 'NestJS' selected
+tech__Webframe_want__Next.js,Webframe (want),WebframeWantToWorkWith,binary/numeric,1 if 'Next.js' selected
+tech__Webframe_want__Node.js,Webframe (want),WebframeWantToWorkWith,binary/numeric,1 if 'Node.js' selected
+tech__Webframe_want__Nuxt.js,Webframe (want),WebframeWantToWorkWith,binary/numeric,1 if 'Nuxt.js' selected
+tech__Webframe_want__Phoenix,Webframe (want),WebframeWantToWorkWith,binary/numeric,1 if 'Phoenix' selected
+tech__Webframe_want__React,Webframe (want),WebframeWantToWorkWith,binary/numeric,1 if 'React' selected
+tech__Webframe_want__Ruby_on_Rails,Webframe (want),WebframeWantToWorkWith,binary/numeric,1 if 'Ruby_on_Rails' selected
+tech__Webframe_want__Spring_Boot,Webframe (want),WebframeWantToWorkWith,binary/numeric,1 if 'Spring_Boot' selected
+tech__Webframe_want__Svelte,Webframe (want),WebframeWantToWorkWith,binary/numeric,1 if 'Svelte' selected
+tech__Webframe_want__Symfony,Webframe (want),WebframeWantToWorkWith,binary/numeric,1 if 'Symfony' selected
+tech__Webframe_want__Vue.js,Webframe (want),WebframeWantToWorkWith,binary/numeric,1 if 'Vue.js' selected
+tech__Webframe_want__WordPress,Webframe (want),WebframeWantToWorkWith,binary/numeric,1 if 'WordPress' selected
+tech__Webframe_want__jQuery,Webframe (want),WebframeWantToWorkWith,binary/numeric,1 if 'jQuery' selected
+tech__Webframe_want_count,Webframe (want),WebframeWantToWorkWith,binary/numeric,log1p(number of technologies selected)
+tech__Webframe_want_unknown,Webframe (want),WebframeWantToWorkWith + WebframeChoice,binary/numeric,"1 if list empty and gate answer was not 'No' (unknown, not a true zero)"
+tech__DevEnvs_have__Aider,DevEnvs (have),DevEnvsHaveWorkedWith,binary/numeric,1 if 'Aider' selected
+tech__DevEnvs_have__Android_Studio,DevEnvs (have),DevEnvsHaveWorkedWith,binary/numeric,1 if 'Android_Studio' selected
+tech__DevEnvs_have__Bolt,DevEnvs (have),DevEnvsHaveWorkedWith,binary/numeric,1 if 'Bolt' selected
+tech__DevEnvs_have__Claude_Code,DevEnvs (have),DevEnvsHaveWorkedWith,binary/numeric,1 if 'Claude_Code' selected
+tech__DevEnvs_have__Cline_and/or_Roo,DevEnvs (have),DevEnvsHaveWorkedWith,binary/numeric,1 if 'Cline_and/or_Roo' selected
+tech__DevEnvs_have__Cursor,DevEnvs (have),DevEnvsHaveWorkedWith,binary/numeric,1 if 'Cursor' selected
+tech__DevEnvs_have__Eclipse,DevEnvs (have),DevEnvsHaveWorkedWith,binary/numeric,1 if 'Eclipse' selected
+tech__DevEnvs_have__IntelliJ_IDEA,DevEnvs (have),DevEnvsHaveWorkedWith,binary/numeric,1 if 'IntelliJ_IDEA' selected
+tech__DevEnvs_have__Jupyter_Notebook/JupyterLab,DevEnvs (have),DevEnvsHaveWorkedWith,binary/numeric,1 if 'Jupyter_Notebook/JupyterLab' selected
+tech__DevEnvs_have__Lovable.dev,DevEnvs (have),DevEnvsHaveWorkedWith,binary/numeric,1 if 'Lovable.dev' selected
+tech__DevEnvs_have__Nano,DevEnvs (have),DevEnvsHaveWorkedWith,binary/numeric,1 if 'Nano' selected
+tech__DevEnvs_have__Neovim,DevEnvs (have),DevEnvsHaveWorkedWith,binary/numeric,1 if 'Neovim' selected
+tech__DevEnvs_have__Notepad++,DevEnvs (have),DevEnvsHaveWorkedWith,binary/numeric,1 if 'Notepad++' selected
+tech__DevEnvs_have__PhpStorm,DevEnvs (have),DevEnvsHaveWorkedWith,binary/numeric,1 if 'PhpStorm' selected
+tech__DevEnvs_have__PyCharm,DevEnvs (have),DevEnvsHaveWorkedWith,binary/numeric,1 if 'PyCharm' selected
+tech__DevEnvs_have__Rider,DevEnvs (have),DevEnvsHaveWorkedWith,binary/numeric,1 if 'Rider' selected
+tech__DevEnvs_have__RustRover,DevEnvs (have),DevEnvsHaveWorkedWith,binary/numeric,1 if 'RustRover' selected
+tech__DevEnvs_have__Sublime_Text,DevEnvs (have),DevEnvsHaveWorkedWith,binary/numeric,1 if 'Sublime_Text' selected
+tech__DevEnvs_have__Trae,DevEnvs (have),DevEnvsHaveWorkedWith,binary/numeric,1 if 'Trae' selected
+tech__DevEnvs_have__VSCodium,DevEnvs (have),DevEnvsHaveWorkedWith,binary/numeric,1 if 'VSCodium' selected
+tech__DevEnvs_have__Vim,DevEnvs (have),DevEnvsHaveWorkedWith,binary/numeric,1 if 'Vim' selected
+tech__DevEnvs_have__Visual_Studio,DevEnvs (have),DevEnvsHaveWorkedWith,binary/numeric,1 if 'Visual_Studio' selected
+tech__DevEnvs_have__Visual_Studio_Code,DevEnvs (have),DevEnvsHaveWorkedWith,binary/numeric,1 if 'Visual_Studio_Code' selected
+tech__DevEnvs_have__WebStorm,DevEnvs (have),DevEnvsHaveWorkedWith,binary/numeric,1 if 'WebStorm' selected
+tech__DevEnvs_have__Windsurf,DevEnvs (have),DevEnvsHaveWorkedWith,binary/numeric,1 if 'Windsurf' selected
+tech__DevEnvs_have__Xcode,DevEnvs (have),DevEnvsHaveWorkedWith,binary/numeric,1 if 'Xcode' selected
+tech__DevEnvs_have__Zed,DevEnvs (have),DevEnvsHaveWorkedWith,binary/numeric,1 if 'Zed' selected
+tech__DevEnvs_have_count,DevEnvs (have),DevEnvsHaveWorkedWith,binary/numeric,log1p(number of technologies selected)
+tech__DevEnvs_have_unknown,DevEnvs (have),DevEnvsHaveWorkedWith + DevEnvsChoice,binary/numeric,"1 if list empty and gate answer was not 'No' (unknown, not a true zero)"
+tech__DevEnvs_want__Aider,DevEnvs (want),DevEnvsWantToWorkWith,binary/numeric,1 if 'Aider' selected
+tech__DevEnvs_want__Android_Studio,DevEnvs (want),DevEnvsWantToWorkWith,binary/numeric,1 if 'Android_Studio' selected
+tech__DevEnvs_want__Bolt,DevEnvs (want),DevEnvsWantToWorkWith,binary/numeric,1 if 'Bolt' selected
+tech__DevEnvs_want__Claude_Code,DevEnvs (want),DevEnvsWantToWorkWith,binary/numeric,1 if 'Claude_Code' selected
+tech__DevEnvs_want__Cline_and/or_Roo,DevEnvs (want),DevEnvsWantToWorkWith,binary/numeric,1 if 'Cline_and/or_Roo' selected
+tech__DevEnvs_want__Cursor,DevEnvs (want),DevEnvsWantToWorkWith,binary/numeric,1 if 'Cursor' selected
+tech__DevEnvs_want__Eclipse,DevEnvs (want),DevEnvsWantToWorkWith,binary/numeric,1 if 'Eclipse' selected
+tech__DevEnvs_want__IntelliJ_IDEA,DevEnvs (want),DevEnvsWantToWorkWith,binary/numeric,1 if 'IntelliJ_IDEA' selected
+tech__DevEnvs_want__Jupyter_Notebook/JupyterLab,DevEnvs (want),DevEnvsWantToWorkWith,binary/numeric,1 if 'Jupyter_Notebook/JupyterLab' selected
+tech__DevEnvs_want__Lovable.dev,DevEnvs (want),DevEnvsWantToWorkWith,binary/numeric,1 if 'Lovable.dev' selected
+tech__DevEnvs_want__Nano,DevEnvs (want),DevEnvsWantToWorkWith,binary/numeric,1 if 'Nano' selected
+tech__DevEnvs_want__Neovim,DevEnvs (want),DevEnvsWantToWorkWith,binary/numeric,1 if 'Neovim' selected
+tech__DevEnvs_want__Notepad++,DevEnvs (want),DevEnvsWantToWorkWith,binary/numeric,1 if 'Notepad++' selected
+tech__DevEnvs_want__PhpStorm,DevEnvs (want),DevEnvsWantToWorkWith,binary/numeric,1 if 'PhpStorm' selected
+tech__DevEnvs_want__PyCharm,DevEnvs (want),DevEnvsWantToWorkWith,binary/numeric,1 if 'PyCharm' selected
+tech__DevEnvs_want__Rider,DevEnvs (want),DevEnvsWantToWorkWith,binary/numeric,1 if 'Rider' selected
+tech__DevEnvs_want__RustRover,DevEnvs (want),DevEnvsWantToWorkWith,binary/numeric,1 if 'RustRover' selected
+tech__DevEnvs_want__Sublime_Text,DevEnvs (want),DevEnvsWantToWorkWith,binary/numeric,1 if 'Sublime_Text' selected
+tech__DevEnvs_want__Trae,DevEnvs (want),DevEnvsWantToWorkWith,binary/numeric,1 if 'Trae' selected
+tech__DevEnvs_want__VSCodium,DevEnvs (want),DevEnvsWantToWorkWith,binary/numeric,1 if 'VSCodium' selected
+tech__DevEnvs_want__Vim,DevEnvs (want),DevEnvsWantToWorkWith,binary/numeric,1 if 'Vim' selected
+tech__DevEnvs_want__Visual_Studio,DevEnvs (want),DevEnvsWantToWorkWith,binary/numeric,1 if 'Visual_Studio' selected
+tech__DevEnvs_want__Visual_Studio_Code,DevEnvs (want),DevEnvsWantToWorkWith,binary/numeric,1 if 'Visual_Studio_Code' selected
+tech__DevEnvs_want__WebStorm,DevEnvs (want),DevEnvsWantToWorkWith,binary/numeric,1 if 'WebStorm' selected
+tech__DevEnvs_want__Windsurf,DevEnvs (want),DevEnvsWantToWorkWith,binary/numeric,1 if 'Windsurf' selected
+tech__DevEnvs_want__Xcode,DevEnvs (want),DevEnvsWantToWorkWith,binary/numeric,1 if 'Xcode' selected
+tech__DevEnvs_want__Zed,DevEnvs (want),DevEnvsWantToWorkWith,binary/numeric,1 if 'Zed' selected
+tech__DevEnvs_want_count,DevEnvs (want),DevEnvsWantToWorkWith,binary/numeric,log1p(number of technologies selected)
+tech__DevEnvs_want_unknown,DevEnvs (want),DevEnvsWantToWorkWith + DevEnvsChoice,binary/numeric,"1 if list empty and gate answer was not 'No' (unknown, not a true zero)"
+tech__AIModels_have__Alibaba_Cloud_Qwen_models,AIModels (have),AIModelsHaveWorkedWith,binary/numeric,1 if 'Alibaba_Cloud_Qwen_models' selected
+tech__AIModels_have__Amazon_Titan_models,AIModels (have),AIModelsHaveWorkedWith,binary/numeric,1 if 'Amazon_Titan_models' selected
+tech__AIModels_have__Anthropic:_Claude_Sonnet,AIModels (have),AIModelsHaveWorkedWith,binary/numeric,1 if 'Anthropic:_Claude_Sonnet' selected
+tech__AIModels_have__DeepSeek_(R-_Reasoning_models),AIModels (have),AIModelsHaveWorkedWith,binary/numeric,1 if 'DeepSeek_(R-_Reasoning_models)' selected
+tech__AIModels_have__DeepSeek_(V-_General_purpose_models),AIModels (have),AIModelsHaveWorkedWith,binary/numeric,1 if 'DeepSeek_(V-_General_purpose_models)' selected
+tech__AIModels_have__Gemini_(Flash_general_purpose_models),AIModels (have),AIModelsHaveWorkedWith,binary/numeric,1 if 'Gemini_(Flash_general_purpose_models)' selected
+tech__AIModels_have__Gemini_(Pro_Reasoning_models),AIModels (have),AIModelsHaveWorkedWith,binary/numeric,1 if 'Gemini_(Pro_Reasoning_models)' selected
+tech__AIModels_have__Meta_Llama_(all_models),AIModels (have),AIModelsHaveWorkedWith,binary/numeric,1 if 'Meta_Llama_(all_models)' selected
+tech__AIModels_have__Microsoft_Phi-4_models,AIModels (have),AIModelsHaveWorkedWith,binary/numeric,1 if 'Microsoft_Phi-4_models' selected
+tech__AIModels_have__Mistral_AI_models,AIModels (have),AIModelsHaveWorkedWith,binary/numeric,1 if 'Mistral_AI_models' selected
+tech__AIModels_have__Perplexity_Sonar_models,AIModels (have),AIModelsHaveWorkedWith,binary/numeric,1 if 'Perplexity_Sonar_models' selected
+tech__AIModels_have__X_Grok_models,AIModels (have),AIModelsHaveWorkedWith,binary/numeric,1 if 'X_Grok_models' selected
+tech__AIModels_have__openAI_GPT_(chatbot_models),AIModels (have),AIModelsHaveWorkedWith,binary/numeric,1 if 'openAI_GPT_(chatbot_models)' selected
+tech__AIModels_have__openAI_Image_generating_models,AIModels (have),AIModelsHaveWorkedWith,binary/numeric,1 if 'openAI_Image_generating_models' selected
+tech__AIModels_have__openAI_Reasoning_models,AIModels (have),AIModelsHaveWorkedWith,binary/numeric,1 if 'openAI_Reasoning_models' selected
+tech__AIModels_have__OTHER,AIModels (have),AIModelsHaveWorkedWith,binary/numeric,1 if any technology below the 0.5% training support (or unseen) was selected
+tech__AIModels_have_count,AIModels (have),AIModelsHaveWorkedWith,binary/numeric,log1p(number of technologies selected)
+tech__AIModels_have_unknown,AIModels (have),AIModelsHaveWorkedWith + AIModelsChoice,binary/numeric,"1 if list empty and gate answer was not 'No' (unknown, not a true zero)"
+tech__AIModels_want__Alibaba_Cloud_Qwen_models,AIModels (want),AIModelsWantToWorkWith,binary/numeric,1 if 'Alibaba_Cloud_Qwen_models' selected
+tech__AIModels_want__Amazon_Titan_models,AIModels (want),AIModelsWantToWorkWith,binary/numeric,1 if 'Amazon_Titan_models' selected
+tech__AIModels_want__Anthropic:_Claude_Sonnet,AIModels (want),AIModelsWantToWorkWith,binary/numeric,1 if 'Anthropic:_Claude_Sonnet' selected
+tech__AIModels_want__DeepSeek_(R-_Reasoning_models),AIModels (want),AIModelsWantToWorkWith,binary/numeric,1 if 'DeepSeek_(R-_Reasoning_models)' selected
+tech__AIModels_want__DeepSeek_(V-_General_purpose_models),AIModels (want),AIModelsWantToWorkWith,binary/numeric,1 if 'DeepSeek_(V-_General_purpose_models)' selected
+tech__AIModels_want__Gemini_(Flash_general_purpose_models),AIModels (want),AIModelsWantToWorkWith,binary/numeric,1 if 'Gemini_(Flash_general_purpose_models)' selected
+tech__AIModels_want__Gemini_(Pro_Reasoning_models),AIModels (want),AIModelsWantToWorkWith,binary/numeric,1 if 'Gemini_(Pro_Reasoning_models)' selected
+tech__AIModels_want__Meta_Llama_(all_models),AIModels (want),AIModelsWantToWorkWith,binary/numeric,1 if 'Meta_Llama_(all_models)' selected
+tech__AIModels_want__Microsoft_Phi-4_models,AIModels (want),AIModelsWantToWorkWith,binary/numeric,1 if 'Microsoft_Phi-4_models' selected
+tech__AIModels_want__Mistral_AI_models,AIModels (want),AIModelsWantToWorkWith,binary/numeric,1 if 'Mistral_AI_models' selected
+tech__AIModels_want__Perplexity_Sonar_models,AIModels (want),AIModelsWantToWorkWith,binary/numeric,1 if 'Perplexity_Sonar_models' selected
+tech__AIModels_want__X_Grok_models,AIModels (want),AIModelsWantToWorkWith,binary/numeric,1 if 'X_Grok_models' selected
+tech__AIModels_want__openAI_GPT_(chatbot_models),AIModels (want),AIModelsWantToWorkWith,binary/numeric,1 if 'openAI_GPT_(chatbot_models)' selected
+tech__AIModels_want__openAI_Image_generating_models,AIModels (want),AIModelsWantToWorkWith,binary/numeric,1 if 'openAI_Image_generating_models' selected
+tech__AIModels_want__openAI_Reasoning_models,AIModels (want),AIModelsWantToWorkWith,binary/numeric,1 if 'openAI_Reasoning_models' selected
+tech__AIModels_want__OTHER,AIModels (want),AIModelsWantToWorkWith,binary/numeric,1 if any technology below the 0.5% training support (or unseen) was selected
+tech__AIModels_want_count,AIModels (want),AIModelsWantToWorkWith,binary/numeric,log1p(number of technologies selected)
+tech__AIModels_want_unknown,AIModels (want),AIModelsWantToWorkWith + AIModelsChoice,binary/numeric,"1 if list empty and gate answer was not 'No' (unknown, not a true zero)"
+tech__SOTags_have__.NET_8_or_higher,SOTags (have),SOTagsHaveWorkedWith,binary/numeric,1 if '.NET_8_or_higher' selected
+tech__SOTags_have__Amazon_Bedrock,SOTags (have),SOTagsHaveWorkedWith,binary/numeric,1 if 'Amazon_Bedrock' selected
+tech__SOTags_have__Delphi_12+_Athens,SOTags (have),SOTagsHaveWorkedWith,binary/numeric,1 if 'Delphi_12+_Athens' selected
+tech__SOTags_have__Google_Gemini,SOTags (have),SOTagsHaveWorkedWith,binary/numeric,1 if 'Google_Gemini' selected
+tech__SOTags_have__LangGraph,SOTags (have),SOTagsHaveWorkedWith,binary/numeric,1 if 'LangGraph' selected
+tech__SOTags_have__Large_Language_Model,SOTags (have),SOTagsHaveWorkedWith,binary/numeric,1 if 'Large_Language_Model' selected
+tech__SOTags_have__Microsoft_Fabric,SOTags (have),SOTagsHaveWorkedWith,binary/numeric,1 if 'Microsoft_Fabric' selected
+tech__SOTags_have__Odoo,SOTags (have),SOTagsHaveWorkedWith,binary/numeric,1 if 'Odoo' selected
+tech__SOTags_have__Ollama,SOTags (have),SOTagsHaveWorkedWith,binary/numeric,1 if 'Ollama' selected
+tech__SOTags_have__Polars,SOTags (have),SOTagsHaveWorkedWith,binary/numeric,1 if 'Polars' selected
+tech__SOTags_have__Pydantic,SOTags (have),SOTagsHaveWorkedWith,binary/numeric,1 if 'Pydantic' selected
+tech__SOTags_have__RAG,SOTags (have),SOTagsHaveWorkedWith,binary/numeric,1 if 'RAG' selected
+tech__SOTags_have__Shadcn/ui,SOTags (have),SOTagsHaveWorkedWith,binary/numeric,1 if 'Shadcn/ui' selected
+tech__SOTags_have__SwiftData,SOTags (have),SOTagsHaveWorkedWith,binary/numeric,1 if 'SwiftData' selected
+tech__SOTags_have__Tailwind_CSS_4,SOTags (have),SOTagsHaveWorkedWith,binary/numeric,1 if 'Tailwind_CSS_4' selected
+tech__SOTags_have__Ultralytics,SOTags (have),SOTagsHaveWorkedWith,binary/numeric,1 if 'Ultralytics' selected
+tech__SOTags_have__c++23,SOTags (have),SOTagsHaveWorkedWith,binary/numeric,1 if 'c++23' selected
+tech__SOTags_have__hostinger,SOTags (have),SOTagsHaveWorkedWith,binary/numeric,1 if 'hostinger' selected
+tech__SOTags_have__uv,SOTags (have),SOTagsHaveWorkedWith,binary/numeric,1 if 'uv' selected
+tech__SOTags_have__OTHER,SOTags (have),SOTagsHaveWorkedWith,binary/numeric,1 if any technology below the 0.5% training support (or unseen) was selected
+tech__SOTags_have_count,SOTags (have),SOTagsHaveWorkedWith,binary/numeric,log1p(number of technologies selected)
+tech__SOTags_have_unknown,SOTags (have),SOTagsHaveWorkedWith + (no gate question),binary/numeric,"1 if list empty and gate answer was not 'No' (unknown, not a true zero)"
+tech__SOTags_want__.NET_8_or_higher,SOTags (want),SOTagsWantToWorkWith,binary/numeric,1 if '.NET_8_or_higher' selected
+tech__SOTags_want__Amazon_Bedrock,SOTags (want),SOTagsWantToWorkWith,binary/numeric,1 if 'Amazon_Bedrock' selected
+tech__SOTags_want__Delphi_12+_Athens,SOTags (want),SOTagsWantToWorkWith,binary/numeric,1 if 'Delphi_12+_Athens' selected
+tech__SOTags_want__Google_Gemini,SOTags (want),SOTagsWantToWorkWith,binary/numeric,1 if 'Google_Gemini' selected
+tech__SOTags_want__LangGraph,SOTags (want),SOTagsWantToWorkWith,binary/numeric,1 if 'LangGraph' selected
+tech__SOTags_want__Large_Language_Model,SOTags (want),SOTagsWantToWorkWith,binary/numeric,1 if 'Large_Language_Model' selected
+tech__SOTags_want__Microsoft_Fabric,SOTags (want),SOTagsWantToWorkWith,binary/numeric,1 if 'Microsoft_Fabric' selected
+tech__SOTags_want__Odoo,SOTags (want),SOTagsWantToWorkWith,binary/numeric,1 if 'Odoo' selected
+tech__SOTags_want__Ollama,SOTags (want),SOTagsWantToWorkWith,binary/numeric,1 if 'Ollama' selected
+tech__SOTags_want__Polars,SOTags (want),SOTagsWantToWorkWith,binary/numeric,1 if 'Polars' selected
+tech__SOTags_want__Pydantic,SOTags (want),SOTagsWantToWorkWith,binary/numeric,1 if 'Pydantic' selected
+tech__SOTags_want__RAG,SOTags (want),SOTagsWantToWorkWith,binary/numeric,1 if 'RAG' selected
+tech__SOTags_want__Shadcn/ui,SOTags (want),SOTagsWantToWorkWith,binary/numeric,1 if 'Shadcn/ui' selected
+tech__SOTags_want__SwiftData,SOTags (want),SOTagsWantToWorkWith,binary/numeric,1 if 'SwiftData' selected
+tech__SOTags_want__Tailwind_CSS_4,SOTags (want),SOTagsWantToWorkWith,binary/numeric,1 if 'Tailwind_CSS_4' selected
+tech__SOTags_want__Ultralytics,SOTags (want),SOTagsWantToWorkWith,binary/numeric,1 if 'Ultralytics' selected
+tech__SOTags_want__c++23,SOTags (want),SOTagsWantToWorkWith,binary/numeric,1 if 'c++23' selected
+tech__SOTags_want__hostinger,SOTags (want),SOTagsWantToWorkWith,binary/numeric,1 if 'hostinger' selected
+tech__SOTags_want__uv,SOTags (want),SOTagsWantToWorkWith,binary/numeric,1 if 'uv' selected
+tech__SOTags_want__visionOS,SOTags (want),SOTagsWantToWorkWith,binary/numeric,1 if 'visionOS' selected
+tech__SOTags_want_count,SOTags (want),SOTagsWantToWorkWith,binary/numeric,log1p(number of technologies selected)
+tech__SOTags_want_unknown,SOTags (want),SOTagsWantToWorkWith + (no gate question),binary/numeric,"1 if list empty and gate answer was not 'No' (unknown, not a true zero)"
+tech__Language_want_new_count,Language (want),LanguageHaveWorkedWith + LanguageWantToWorkWith,binary/numeric,log1p(number wanted but not yet used)
+tech__Database_want_new_count,Database (want),DatabaseHaveWorkedWith + DatabaseWantToWorkWith,binary/numeric,log1p(number wanted but not yet used)
+tech__Platform_want_new_count,Platform (want),PlatformHaveWorkedWith + PlatformWantToWorkWith,binary/numeric,log1p(number wanted but not yet used)
+tech__Webframe_want_new_count,Webframe (want),WebframeHaveWorkedWith + WebframeWantToWorkWith,binary/numeric,log1p(number wanted but not yet used)
+tech__DevEnvs_want_new_count,DevEnvs (want),DevEnvsHaveWorkedWith + DevEnvsWantToWorkWith,binary/numeric,log1p(number wanted but not yet used)
+tech__AIModels_want_new_count,AIModels (want),AIModelsHaveWorkedWith + AIModelsWantToWorkWith,binary/numeric,log1p(number wanted but not yet used)
+tech__SOTags_want_new_count,SOTags (want),SOTagsHaveWorkedWith + SOTagsWantToWorkWith,binary/numeric,log1p(number wanted but not yet used)
+exp__log_YearsCode,Experience,"YearsCode, WorkExp",numeric,"log1p(years), median-imputed, standardised"
+exp__log_WorkExp,Experience,"YearsCode, WorkExp",numeric,"log1p(years), median-imputed, standardised"
+exp__CareerChanger,Experience,"YearsCode, WorkExp",numeric,"WorkExp > YearsCode (career changer), median-imputed, standardised"
+exp__missingindicator_log_YearsCode,Experience,"YearsCode, WorkExp",numeric,missing-value indicator
+exp__missingindicator_log_WorkExp,Experience,"YearsCode, WorkExp",numeric,missing-value indicator
+exp__missingindicator_CareerChanger,Experience,"YearsCode, WorkExp",numeric,missing-value indicator
+ord__EdLevel_ord,Ordinal,EdLevel,numeric,"ordered answer scale -> integer, median-imputed, standardised"
+ord__AISelect_ord,Ordinal,AISelect,numeric,"ordered answer scale -> integer, median-imputed, standardised"
+ord__AIAgents_ord,Ordinal,AIAgents,numeric,"ordered answer scale -> integer, median-imputed, standardised"
+ord__AIAcc_ord,Ordinal,AIAcc,numeric,"ordered answer scale -> integer, median-imputed, standardised"
+ord__AISent_ord,Ordinal,AISent,numeric,"ordered answer scale -> integer, median-imputed, standardised"
+ord__missingindicator_EdLevel_ord,Ordinal,EdLevel,numeric,missing-value indicator (standardised)
+ord__missingindicator_AISelect_ord,Ordinal,AISelect,numeric,missing-value indicator (standardised)
+ord__missingindicator_AIAgents_ord,Ordinal,AIAgents,numeric,missing-value indicator (standardised)
+ord__missingindicator_AIAcc_ord,Ordinal,AIAcc,numeric,missing-value indicator (standardised)
+ord__missingindicator_AISent_ord,Ordinal,AISent,numeric,missing-value indicator (standardised)
+region__Region_East Asia,Region,Country,binary,one-hot of the UN M49 based region
+region__Region_Eastern Europe & Central Asia,Region,Country,binary,one-hot of the UN M49 based region
+region__Region_Latin America & Caribbean,Region,Country,binary,one-hot of the UN M49 based region
+region__Region_Middle East & North Africa,Region,Country,binary,one-hot of the UN M49 based region
+region__Region_Missing,Region,Country,binary,one-hot of the UN M49 based region
+region__Region_North America,Region,Country,binary,one-hot of the UN M49 based region
+region__Region_Northern Europe,Region,Country,binary,one-hot of the UN M49 based region
+region__Region_Oceania,Region,Country,binary,one-hot of the UN M49 based region
+region__Region_South Asia,Region,Country,binary,one-hot of the UN M49 based region
+region__Region_South-East Asia,Region,Country,binary,one-hot of the UN M49 based region
+region__Region_Southern Europe,Region,Country,binary,one-hot of the UN M49 based region
+region__Region_Sub-Saharan Africa,Region,Country,binary,one-hot of the UN M49 based region
+region__Region_Western Europe,Region,Country,binary,one-hot of the UN M49 based region
+nom__LearnCodeAI_Missing,Nominal,LearnCodeAI,binary,one-hot ('Missing' is its own category)
+"nom__LearnCodeAI_No, I didn't spend time learning in the past year",Nominal,LearnCodeAI,binary,one-hot ('Missing' is its own category)
+"nom__LearnCodeAI_No, I learned something that was not related to AI or AI enablement as required for my job or to benefit my career",Nominal,LearnCodeAI,binary,one-hot ('Missing' is its own category)
+"nom__LearnCodeAI_No, I learned something that was not related to AI or AI enablement for my personal curiosity and/or hobbies",Nominal,LearnCodeAI,binary,one-hot ('Missing' is its own category)
+"nom__LearnCodeAI_Yes, I learned how to use AI-enabled tools for my personal curiosity and/or hobbies",Nominal,LearnCodeAI,binary,one-hot ('Missing' is its own category)
+"nom__LearnCodeAI_Yes, I learned how to use AI-enabled tools required for my job or to benefit my career",Nominal,LearnCodeAI,binary,one-hot ('Missing' is its own category)

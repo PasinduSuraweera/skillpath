@@ -1,0 +1,15 @@
+# Versions used to build the committed artifacts. scikit-learn must match the
+# version that saved artifacts/*.joblib (re-run scripts/build_dataset.py if you change it).
+scikit-learn==1.8.0
+pandas>=2.2,<3.1
+numpy>=1.26
+pyarrow>=15
+joblib>=1.3
+scipy>=1.11
+matplotlib>=3.8
+# notebooks and tests
+jupyter
+jupytext>=1.16
+nbconvert>=7
+ipykernel
+pytest>=8

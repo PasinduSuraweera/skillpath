@@ -1,0 +1,1145 @@
+{
+  "countries": [
+    {
+      "Country": "Afghanistan",
+      "Region": "South Asia"
+    },
+    {
+      "Country": "Albania",
+      "Region": "Southern Europe"
+    },
+    {
+      "Country": "Algeria",
+      "Region": "Middle East & North Africa"
+    },
+    {
+      "Country": "Andorra",
+      "Region": "Southern Europe"
+    },
+    {
+      "Country": "Angola",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "Antigua and Barbuda",
+      "Region": "Latin America & Caribbean"
+    },
+    {
+      "Country": "Argentina",
+      "Region": "Latin America & Caribbean"
+    },
+    {
+      "Country": "Armenia",
+      "Region": "Middle East & North Africa"
+    },
+    {
+      "Country": "Australia",
+      "Region": "Oceania"
+    },
+    {
+      "Country": "Austria",
+      "Region": "Western Europe"
+    },
+    {
+      "Country": "Azerbaijan",
+      "Region": "Middle East & North Africa"
+    },
+    {
+      "Country": "Bahrain",
+      "Region": "Middle East & North Africa"
+    },
+    {
+      "Country": "Bangladesh",
+      "Region": "South Asia"
+    },
+    {
+      "Country": "Barbados",
+      "Region": "Latin America & Caribbean"
+    },
+    {
+      "Country": "Belarus",
+      "Region": "Eastern Europe & Central Asia"
+    },
+    {
+      "Country": "Belgium",
+      "Region": "Western Europe"
+    },
+    {
+      "Country": "Belize",
+      "Region": "Latin America & Caribbean"
+    },
+    {
+      "Country": "Benin",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "Bhutan",
+      "Region": "South Asia"
+    },
+    {
+      "Country": "Bolivia",
+      "Region": "Latin America & Caribbean"
+    },
+    {
+      "Country": "Bosnia and Herzegovina",
+      "Region": "Southern Europe"
+    },
+    {
+      "Country": "Botswana",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "Brazil",
+      "Region": "Latin America & Caribbean"
+    },
+    {
+      "Country": "Brunei Darussalam",
+      "Region": "South-East Asia"
+    },
+    {
+      "Country": "Bulgaria",
+      "Region": "Eastern Europe & Central Asia"
+    },
+    {
+      "Country": "Burundi",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "Cambodia",
+      "Region": "South-East Asia"
+    },
+    {
+      "Country": "Cameroon",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "Canada",
+      "Region": "North America"
+    },
+    {
+      "Country": "Cape Verde",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "Chile",
+      "Region": "Latin America & Caribbean"
+    },
+    {
+      "Country": "China",
+      "Region": "East Asia"
+    },
+    {
+      "Country": "Colombia",
+      "Region": "Latin America & Caribbean"
+    },
+    {
+      "Country": "Congo, Republic of the...",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "Costa Rica",
+      "Region": "Latin America & Caribbean"
+    },
+    {
+      "Country": "Croatia",
+      "Region": "Southern Europe"
+    },
+    {
+      "Country": "Cuba",
+      "Region": "Latin America & Caribbean"
+    },
+    {
+      "Country": "Cyprus",
+      "Region": "Middle East & North Africa"
+    },
+    {
+      "Country": "Czech Republic",
+      "Region": "Eastern Europe & Central Asia"
+    },
+    {
+      "Country": "Côte d'Ivoire",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "Democratic People's Republic of Korea",
+      "Region": "East Asia"
+    },
+    {
+      "Country": "Democratic Republic of the Congo",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "Denmark",
+      "Region": "Northern Europe"
+    },
+    {
+      "Country": "Djibouti",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "Dominican Republic",
+      "Region": "Latin America & Caribbean"
+    },
+    {
+      "Country": "Ecuador",
+      "Region": "Latin America & Caribbean"
+    },
+    {
+      "Country": "Egypt",
+      "Region": "Middle East & North Africa"
+    },
+    {
+      "Country": "El Salvador",
+      "Region": "Latin America & Caribbean"
+    },
+    {
+      "Country": "Estonia",
+      "Region": "Northern Europe"
+    },
+    {
+      "Country": "Ethiopia",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "Fiji",
+      "Region": "Oceania"
+    },
+    {
+      "Country": "Finland",
+      "Region": "Northern Europe"
+    },
+    {
+      "Country": "France",
+      "Region": "Western Europe"
+    },
+    {
+      "Country": "Gabon",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "Gambia",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "Georgia",
+      "Region": "Middle East & North Africa"
+    },
+    {
+      "Country": "Germany",
+      "Region": "Western Europe"
+    },
+    {
+      "Country": "Ghana",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "Greece",
+      "Region": "Southern Europe"
+    },
+    {
+      "Country": "Guatemala",
+      "Region": "Latin America & Caribbean"
+    },
+    {
+      "Country": "Guinea",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "Guinea-Bissau",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "Guyana",
+      "Region": "Latin America & Caribbean"
+    },
+    {
+      "Country": "Haiti",
+      "Region": "Latin America & Caribbean"
+    },
+    {
+      "Country": "Honduras",
+      "Region": "Latin America & Caribbean"
+    },
+    {
+      "Country": "Hong Kong (S.A.R.)",
+      "Region": "East Asia"
+    },
+    {
+      "Country": "Hungary",
+      "Region": "Eastern Europe & Central Asia"
+    },
+    {
+      "Country": "Iceland",
+      "Region": "Northern Europe"
+    },
+    {
+      "Country": "India",
+      "Region": "South Asia"
+    },
+    {
+      "Country": "Indonesia",
+      "Region": "South-East Asia"
+    },
+    {
+      "Country": "Iran, Islamic Republic of...",
+      "Region": "South Asia"
+    },
+    {
+      "Country": "Iraq",
+      "Region": "Middle East & North Africa"
+    },
+    {
+      "Country": "Ireland",
+      "Region": "Northern Europe"
+    },
+    {
+      "Country": "Isle of Man",
+      "Region": "Northern Europe"
+    },
+    {
+      "Country": "Israel",
+      "Region": "Middle East & North Africa"
+    },
+    {
+      "Country": "Italy",
+      "Region": "Southern Europe"
+    },
+    {
+      "Country": "Jamaica",
+      "Region": "Latin America & Caribbean"
+    },
+    {
+      "Country": "Japan",
+      "Region": "East Asia"
+    },
+    {
+      "Country": "Jordan",
+      "Region": "Middle East & North Africa"
+    },
+    {
+      "Country": "Kazakhstan",
+      "Region": "Eastern Europe & Central Asia"
+    },
+    {
+      "Country": "Kenya",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "Kosovo",
+      "Region": "Southern Europe"
+    },
+    {
+      "Country": "Kuwait",
+      "Region": "Middle East & North Africa"
+    },
+    {
+      "Country": "Kyrgyzstan",
+      "Region": "Eastern Europe & Central Asia"
+    },
+    {
+      "Country": "Lao People's Democratic Republic",
+      "Region": "South-East Asia"
+    },
+    {
+      "Country": "Latvia",
+      "Region": "Northern Europe"
+    },
+    {
+      "Country": "Lebanon",
+      "Region": "Middle East & North Africa"
+    },
+    {
+      "Country": "Lesotho",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "Libyan Arab Jamahiriya",
+      "Region": "Middle East & North Africa"
+    },
+    {
+      "Country": "Lithuania",
+      "Region": "Northern Europe"
+    },
+    {
+      "Country": "Luxembourg",
+      "Region": "Western Europe"
+    },
+    {
+      "Country": "Madagascar",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "Malawi",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "Malaysia",
+      "Region": "South-East Asia"
+    },
+    {
+      "Country": "Maldives",
+      "Region": "South Asia"
+    },
+    {
+      "Country": "Mali",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "Malta",
+      "Region": "Southern Europe"
+    },
+    {
+      "Country": "Mauritania",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "Mauritius",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "Mexico",
+      "Region": "Latin America & Caribbean"
+    },
+    {
+      "Country": "Micronesia, Federated States of...",
+      "Region": "Oceania"
+    },
+    {
+      "Country": "Moldova",
+      "Region": "Eastern Europe & Central Asia"
+    },
+    {
+      "Country": "Mongolia",
+      "Region": "East Asia"
+    },
+    {
+      "Country": "Montenegro",
+      "Region": "Southern Europe"
+    },
+    {
+      "Country": "Morocco",
+      "Region": "Middle East & North Africa"
+    },
+    {
+      "Country": "Mozambique",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "Myanmar",
+      "Region": "South-East Asia"
+    },
+    {
+      "Country": "Namibia",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "Nepal",
+      "Region": "South Asia"
+    },
+    {
+      "Country": "Netherlands",
+      "Region": "Western Europe"
+    },
+    {
+      "Country": "New Zealand",
+      "Region": "Oceania"
+    },
+    {
+      "Country": "Nicaragua",
+      "Region": "Latin America & Caribbean"
+    },
+    {
+      "Country": "Niger",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "Nigeria",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "North Korea",
+      "Region": "East Asia"
+    },
+    {
+      "Country": "Norway",
+      "Region": "Northern Europe"
+    },
+    {
+      "Country": "Oman",
+      "Region": "Middle East & North Africa"
+    },
+    {
+      "Country": "Pakistan",
+      "Region": "South Asia"
+    },
+    {
+      "Country": "Palau",
+      "Region": "Oceania"
+    },
+    {
+      "Country": "Palestine",
+      "Region": "Middle East & North Africa"
+    },
+    {
+      "Country": "Panama",
+      "Region": "Latin America & Caribbean"
+    },
+    {
+      "Country": "Papua New Guinea",
+      "Region": "Oceania"
+    },
+    {
+      "Country": "Paraguay",
+      "Region": "Latin America & Caribbean"
+    },
+    {
+      "Country": "Peru",
+      "Region": "Latin America & Caribbean"
+    },
+    {
+      "Country": "Philippines",
+      "Region": "South-East Asia"
+    },
+    {
+      "Country": "Poland",
+      "Region": "Eastern Europe & Central Asia"
+    },
+    {
+      "Country": "Portugal",
+      "Region": "Southern Europe"
+    },
+    {
+      "Country": "Qatar",
+      "Region": "Middle East & North Africa"
+    },
+    {
+      "Country": "Republic of Korea",
+      "Region": "East Asia"
+    },
+    {
+      "Country": "Republic of Moldova",
+      "Region": "Eastern Europe & Central Asia"
+    },
+    {
+      "Country": "Republic of North Macedonia",
+      "Region": "Southern Europe"
+    },
+    {
+      "Country": "Romania",
+      "Region": "Eastern Europe & Central Asia"
+    },
+    {
+      "Country": "Russian Federation",
+      "Region": "Eastern Europe & Central Asia"
+    },
+    {
+      "Country": "Rwanda",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "Saint Lucia",
+      "Region": "Latin America & Caribbean"
+    },
+    {
+      "Country": "San Marino",
+      "Region": "Southern Europe"
+    },
+    {
+      "Country": "Saudi Arabia",
+      "Region": "Middle East & North Africa"
+    },
+    {
+      "Country": "Senegal",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "Serbia",
+      "Region": "Southern Europe"
+    },
+    {
+      "Country": "Sierra Leone",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "Singapore",
+      "Region": "South-East Asia"
+    },
+    {
+      "Country": "Slovakia",
+      "Region": "Eastern Europe & Central Asia"
+    },
+    {
+      "Country": "Slovenia",
+      "Region": "Southern Europe"
+    },
+    {
+      "Country": "Somalia",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "South Africa",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "South Korea",
+      "Region": "East Asia"
+    },
+    {
+      "Country": "Spain",
+      "Region": "Southern Europe"
+    },
+    {
+      "Country": "Sri Lanka",
+      "Region": "South Asia"
+    },
+    {
+      "Country": "Sudan",
+      "Region": "Middle East & North Africa"
+    },
+    {
+      "Country": "Suriname",
+      "Region": "Latin America & Caribbean"
+    },
+    {
+      "Country": "Swaziland",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "Sweden",
+      "Region": "Northern Europe"
+    },
+    {
+      "Country": "Switzerland",
+      "Region": "Western Europe"
+    },
+    {
+      "Country": "Syrian Arab Republic",
+      "Region": "Middle East & North Africa"
+    },
+    {
+      "Country": "Taiwan",
+      "Region": "East Asia"
+    },
+    {
+      "Country": "Tajikistan",
+      "Region": "Eastern Europe & Central Asia"
+    },
+    {
+      "Country": "Thailand",
+      "Region": "South-East Asia"
+    },
+    {
+      "Country": "Timor-Leste",
+      "Region": "South-East Asia"
+    },
+    {
+      "Country": "Togo",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "Trinidad and Tobago",
+      "Region": "Latin America & Caribbean"
+    },
+    {
+      "Country": "Tunisia",
+      "Region": "Middle East & North Africa"
+    },
+    {
+      "Country": "Turkey",
+      "Region": "Middle East & North Africa"
+    },
+    {
+      "Country": "Turkmenistan",
+      "Region": "Eastern Europe & Central Asia"
+    },
+    {
+      "Country": "Uganda",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "Ukraine",
+      "Region": "Eastern Europe & Central Asia"
+    },
+    {
+      "Country": "United Arab Emirates",
+      "Region": "Middle East & North Africa"
+    },
+    {
+      "Country": "United Kingdom of Great Britain and Northern Ireland",
+      "Region": "Northern Europe"
+    },
+    {
+      "Country": "United Republic of Tanzania",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "United States of America",
+      "Region": "North America"
+    },
+    {
+      "Country": "Uruguay",
+      "Region": "Latin America & Caribbean"
+    },
+    {
+      "Country": "Uzbekistan",
+      "Region": "Eastern Europe & Central Asia"
+    },
+    {
+      "Country": "Venezuela, Bolivarian Republic of...",
+      "Region": "Latin America & Caribbean"
+    },
+    {
+      "Country": "Viet Nam",
+      "Region": "South-East Asia"
+    },
+    {
+      "Country": "Yemen",
+      "Region": "Middle East & North Africa"
+    },
+    {
+      "Country": "Zambia",
+      "Region": "Sub-Saharan Africa"
+    },
+    {
+      "Country": "Zimbabwe",
+      "Region": "Sub-Saharan Africa"
+    }
+  ],
+  "tech": {
+    "Language": [
+      "JavaScript",
+      "SQL",
+      "HTML/CSS",
+      "Python",
+      "TypeScript",
+      "Bash/Shell (all shells)",
+      "C#",
+      "Java",
+      "Rust",
+      "Go",
+      "C++",
+      "PowerShell",
+      "C",
+      "PHP",
+      "Kotlin",
+      "Lua",
+      "Swift",
+      "Ruby",
+      "Assembly",
+      "Dart",
+      "Zig",
+      "Elixir",
+      "R",
+      "Groovy",
+      "GDScript",
+      "Visual Basic (.Net)",
+      "Scala",
+      "Perl",
+      "Lisp",
+      "VBA",
+      "Delphi",
+      "MATLAB",
+      "Erlang",
+      "MicroPython",
+      "F#",
+      "Gleam",
+      "OCaml",
+      "Ada",
+      "Fortran",
+      "COBOL",
+      "Mojo",
+      "Prolog"
+    ],
+    "Database": [
+      "PostgreSQL",
+      "SQLite",
+      "MySQL",
+      "Redis",
+      "Microsoft SQL Server",
+      "MongoDB",
+      "MariaDB",
+      "Elasticsearch",
+      "Dynamodb",
+      "Oracle",
+      "Supabase",
+      "BigQuery",
+      "Cloud Firestore",
+      "DuckDB",
+      "Firebase Realtime Database",
+      "Snowflake",
+      "Cosmos DB",
+      "Cassandra",
+      "H2",
+      "Valkey",
+      "Databricks SQL",
+      "InfluxDB",
+      "Clickhouse",
+      "Neo4J",
+      "Microsoft Access",
+      "Amazon Redshift",
+      "IBM DB2",
+      "Cockroachdb",
+      "Pocketbase",
+      "Datomic"
+    ],
+    "Platform": [
+      "Docker",
+      "npm",
+      "Amazon Web Services (AWS)",
+      "Pip",
+      "Kubernetes",
+      "Vite",
+      "Microsoft Azure",
+      "Homebrew",
+      "Google Cloud",
+      "Terraform",
+      "Cloudflare",
+      "Make",
+      "Yarn",
+      "NuGet",
+      "APT",
+      "Cargo",
+      "Webpack",
+      "Maven (build tool)",
+      "pnpm",
+      "Gradle",
+      "Prometheus",
+      "Ansible",
+      "Firebase",
+      "Podman",
+      "Composer",
+      "Digital Ocean",
+      "Vercel",
+      "MSBuild",
+      "Datadog",
+      "Chocolatey",
+      "Pacman",
+      "Poetry",
+      "Bun",
+      "Supabase",
+      "Netlify",
+      "Heroku",
+      "Ninja",
+      "Splunk",
+      "New Relic",
+      "Railway",
+      "IBM Cloud",
+      "Yandex Cloud"
+    ],
+    "Webframe": [
+      "Node.js",
+      "React",
+      "Next.js",
+      "ASP.NET Core",
+      "Vue.js",
+      "jQuery",
+      "Express",
+      "Angular",
+      "FastAPI",
+      "Spring Boot",
+      "Django",
+      "Flask",
+      "ASP.NET",
+      "WordPress",
+      "Svelte",
+      "Laravel",
+      "Blazor",
+      "NestJS",
+      "Ruby on Rails",
+      "AngularJS",
+      "Deno",
+      "Astro",
+      "Nuxt.js",
+      "Symfony",
+      "Phoenix",
+      "Axum",
+      "Fastify",
+      "Drupal"
+    ],
+    "DevEnvs": [
+      "Visual Studio Code",
+      "IntelliJ IDEA",
+      "Visual Studio",
+      "Notepad++",
+      "Vim",
+      "Cursor",
+      "Neovim",
+      "PyCharm",
+      "Android Studio",
+      "Jupyter Notebook/JupyterLab",
+      "Claude Code",
+      "Nano",
+      "Sublime Text",
+      "Xcode",
+      "Zed",
+      "WebStorm",
+      "Rider",
+      "PhpStorm",
+      "VSCodium",
+      "Eclipse",
+      "Windsurf",
+      "RustRover",
+      "Cline and/or Roo",
+      "Lovable.dev",
+      "Bolt",
+      "Aider",
+      "Trae"
+    ],
+    "AIModels": [
+      "openAI GPT (chatbot models)",
+      "Anthropic: Claude Sonnet",
+      "Gemini (Flash general purpose models)",
+      "openAI Reasoning models",
+      "Gemini (Pro Reasoning models)",
+      "openAI Image generating models",
+      "DeepSeek (R- Reasoning models)",
+      "Meta Llama (all models)",
+      "DeepSeek (V- General purpose models)",
+      "X Grok models",
+      "Mistral AI models",
+      "Perplexity Sonar models",
+      "Alibaba Cloud Qwen models",
+      "Microsoft Phi-4 models",
+      "Amazon Titan models",
+      "Cohere: Command A",
+      "Reka (Flash 3 or other Reka models)"
+    ],
+    "SOTags": [
+      "Google Gemini",
+      "Large Language Model",
+      "Tailwind CSS 4",
+      ".NET 8 or higher",
+      "Ollama",
+      "RAG",
+      "uv",
+      "Pydantic",
+      "Shadcn/ui",
+      "c++23",
+      "Amazon Bedrock",
+      "Polars",
+      "LangGraph",
+      "hostinger",
+      "Microsoft Fabric",
+      "Odoo",
+      "Delphi 12+ Athens",
+      "SwiftData",
+      "visionOS",
+      "Ultralytics"
+    ]
+  },
+  "ed_level": [
+    "Primary/elementary school",
+    "Secondary school (e.g. American high school, German Realschule or Gymnasium, etc.)",
+    "Some college/university study without earning a degree",
+    "Associate degree (A.A., A.S., etc.)",
+    "Bachelor’s degree (B.A., B.S., B.Eng., etc.)",
+    "Master’s degree (M.A., M.S., M.Eng., MBA, etc.)",
+    "Professional degree (JD, MD, Ph.D, Ed.D, etc.)"
+  ],
+  "ai": {
+    "AISelect": [
+      "No, and I don't plan to",
+      "No, but I plan to soon",
+      "Yes, I use AI tools monthly or infrequently",
+      "Yes, I use AI tools weekly",
+      "Yes, I use AI tools daily"
+    ],
+    "AIAgents": [
+      "No, and I don't plan to",
+      "No, but I plan to",
+      "No, I use AI exclusively in copilot/autocomplete mode",
+      "Yes, I use AI agents at work monthly or infrequently",
+      "Yes, I use AI agents at work weekly",
+      "Yes, I use AI agents at work daily"
+    ],
+    "AIAcc": [
+      "Highly distrust",
+      "Somewhat distrust",
+      "Neither trust nor distrust",
+      "Somewhat trust",
+      "Highly trust"
+    ],
+    "AISent": [
+      "Very unfavorable",
+      "Unfavorable",
+      "Indifferent",
+      "Unsure",
+      "Favorable",
+      "Very favorable"
+    ]
+  },
+  "learn_code_ai": [
+    "No, I didn't spend time learning in the past year",
+    "No, I learned something that was not related to AI or AI enablement as required for my job or to benefit my career",
+    "No, I learned something that was not related to AI or AI enablement for my personal curiosity and/or hobbies",
+    "Yes, I learned how to use AI-enabled tools for my personal curiosity and/or hobbies",
+    "Yes, I learned how to use AI-enabled tools required for my job or to benefit my career"
+  ],
+  "context": {
+    "OrgSize": [
+      "Just me - I am a freelancer, sole proprietor, etc.",
+      "Less than 20 employees",
+      "20 to 99 employees",
+      "100 to 499 employees",
+      "500 to 999 employees",
+      "1,000 to 4,999 employees",
+      "5,000 to 9,999 employees",
+      "10,000 or more employees"
+    ],
+    "Industry": [
+      "Banking/Financial Services",
+      "Computer Systems Design and Services",
+      "Energy",
+      "Fintech",
+      "Government",
+      "Healthcare",
+      "Higher Education",
+      "Insurance",
+      "Internet, Telecomm or Information Services",
+      "Manufacturing",
+      "Media & Advertising Services",
+      "Other:",
+      "Retail and Consumer Services",
+      "Software Development",
+      "Transportation, or Supply Chain"
+    ],
+    "RemoteWork": [
+      "Hybrid (some in-person, leans heavy to flexibility)",
+      "Hybrid (some remote, leans heavy to in-person)",
+      "In-person",
+      "Remote",
+      "Your choice (very flexible, you can come in when you want or just as needed)"
+    ],
+    "ICorPM": [
+      "Individual contributor",
+      "People manager"
+    ]
+  },
+  "job_roles": [
+    {
+      "job_role": "Developer, full-stack",
+      "label": "Full-stack Developer",
+      "family": "Full-stack",
+      "description": "Builds both the user-facing and server side of web applications."
+    },
+    {
+      "job_role": "Developer, back-end",
+      "label": "Back-end Developer",
+      "family": "Backend",
+      "description": "Builds server-side logic, APIs, databases and integrations."
+    },
+    {
+      "job_role": "Developer, front-end",
+      "label": "Front-end Developer",
+      "family": "Frontend",
+      "description": "Builds the parts of web applications that users see and interact with."
+    },
+    {
+      "job_role": "UX, Research Ops or UI design professional",
+      "label": "UX / UI Designer",
+      "family": "Frontend",
+      "description": "Designs interfaces and user experiences, often prototyping in code."
+    },
+    {
+      "job_role": "Developer, mobile",
+      "label": "Mobile Developer",
+      "family": "Mobile",
+      "description": "Builds apps for Android and iOS devices."
+    },
+    {
+      "job_role": "Developer, desktop or enterprise applications",
+      "label": "Desktop / Enterprise Developer",
+      "family": "Desktop/Enterprise",
+      "description": "Builds desktop software and large internal business systems."
+    },
+    {
+      "job_role": "Developer, embedded applications or devices",
+      "label": "Embedded Developer",
+      "family": "Embedded/Systems",
+      "description": "Writes software that runs on hardware, devices and microcontrollers."
+    },
+    {
+      "job_role": "Developer, game or graphics",
+      "label": "Game / Graphics Developer",
+      "family": "Game/Graphics",
+      "description": "Builds games, game engines and graphics or rendering software."
+    },
+    {
+      "job_role": "Data engineer",
+      "label": "Data Engineer",
+      "family": "Data Eng",
+      "description": "Builds the pipelines and platforms that move and store data at scale."
+    },
+    {
+      "job_role": "Database administrator or engineer",
+      "label": "Database Administrator / Engineer",
+      "family": "Data Eng",
+      "description": "Designs, runs and tunes databases for reliability and performance."
+    },
+    {
+      "job_role": "Data scientist",
+      "label": "Data Scientist",
+      "family": "Data Sci/ML",
+      "description": "Uses statistics and machine learning to find insight in data."
+    },
+    {
+      "job_role": "AI/ML engineer",
+      "label": "AI / ML Engineer",
+      "family": "Data Sci/ML",
+      "description": "Builds, trains and deploys machine learning and AI models."
+    },
+    {
+      "job_role": "Applied scientist",
+      "label": "Applied Scientist",
+      "family": "Data Sci/ML",
+      "description": "Turns research methods into working models and products."
+    },
+    {
+      "job_role": "Developer, AI apps or physical AI",
+      "label": "AI Application Developer",
+      "family": "Data Sci/ML",
+      "description": "Builds applications on top of AI models, LLMs and agents."
+    },
+    {
+      "job_role": "Data or business analyst",
+      "label": "Data / Business Analyst",
+      "family": "Data Sci/ML",
+      "description": "Analyses data and reports insight to support business decisions."
+    },
+    {
+      "job_role": "DevOps engineer or professional",
+      "label": "DevOps Engineer",
+      "family": "DevOps/Cloud",
+      "description": "Automates building, testing, deploying and running software."
+    },
+    {
+      "job_role": "Cloud infrastructure engineer",
+      "label": "Cloud Infrastructure Engineer",
+      "family": "DevOps/Cloud",
+      "description": "Designs and manages cloud platforms and infrastructure as code."
+    },
+    {
+      "job_role": "System administrator",
+      "label": "System Administrator",
+      "family": "DevOps/Cloud",
+      "description": "Keeps servers, networks and internal systems running."
+    },
+    {
+      "job_role": "Cybersecurity or InfoSec professional",
+      "label": "Cybersecurity Specialist",
+      "family": "Security",
+      "description": "Protects systems and data from attacks and finds vulnerabilities."
+    },
+    {
+      "job_role": "Developer, QA or test",
+      "label": "QA / Test Engineer",
+      "family": "QA/Test",
+      "description": "Designs and automates tests to keep software quality high."
+    }
+  ],
+  "limits": {
+    "years_min": 0,
+    "years_max": 50
+  },
+  "attribution": "Data: Stack Overflow Annual Developer Survey 2025, licensed under the Open Database License (ODbL) v1.0. https://survey.stackoverflow.co/2025/"
+}

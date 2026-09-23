@@ -1,0 +1,122 @@
+{
+  "raw_rows": 49123,
+  "raw_columns": 170,
+  "steps": [
+    {
+      "rule": "near-empty responses (<= 10 answered fields)",
+      "rows_before": 49123,
+      "rows_removed": 5794,
+      "rows_after": 43329
+    },
+    {
+      "rule": "exact duplicate responses (all fields except ResponseId)",
+      "rows_before": 43329,
+      "rows_removed": 0,
+      "rows_after": 43329
+    },
+    {
+      "rule": "straight-lining: ticked >= 90% of the options in any technology list",
+      "rows_before": 43329,
+      "rows_removed": 87,
+      "rows_after": 43242,
+      "hits_per_block": {
+        "Language": 49,
+        "Database": 45,
+        "Platform": 33,
+        "Webframe": 28,
+        "DevEnvs": 29,
+        "AIModels": 28,
+        "SOTags": 32
+      }
+    }
+  ],
+  "experience": {
+    "WorkExp blank set to 0 (survey instruction)": 2919,
+    "YearsCode impossible for age band -> NaN": 73,
+    "WorkExp impossible for age band -> NaN": 100,
+    "WorkExp > YearsCode kept (career changers)": 3446
+  },
+  "feature_groups_core": {
+    "Language (want)": 45,
+    "Platform (want)": 45,
+    "Platform (have)": 44,
+    "Language (have)": 43,
+    "Database (want)": 33,
+    "Database (have)": 32,
+    "Webframe (want)": 31,
+    "Webframe (have)": 30,
+    "DevEnvs (want)": 30,
+    "DevEnvs (have)": 29,
+    "SOTags (want)": 23,
+    "SOTags (have)": 22,
+    "AIModels (want)": 19,
+    "AIModels (have)": 18,
+    "Region": 13,
+    "Ordinal (education, AI usage)": 10,
+    "Experience": 6,
+    "Nominal (AI learning, context)": 6
+  },
+  "n_features_core": 479,
+  "n_features_core_context": 506,
+  "ai_exposure": {
+    "matrix_respondents": 21257,
+    "index_computed": 20653,
+    "index_computed_train": 16538
+  },
+  "persona": {
+    "complete_ai_answers": 31233,
+    "after_excluding_role_test_ids": 26925,
+    "AIComplex_not_applicable": 4548
+  },
+  "salary": {
+    "cohort": 19443,
+    "excluded_role_test_ids": 3087,
+    "hard_bounds": {
+      "rule": "salary outside $1,000 to $1,000,000",
+      "rows_before": 16356,
+      "below_min": 353,
+      "above_max": 30,
+      "rows_after": 15973
+    },
+    "robust_rule": {
+      "rule": "robust z-score of log10 salary > 3.5 within country/region",
+      "rows_before": 15973,
+      "flag_low": 342,
+      "flag_high": 86,
+      "no_reference_group": 5,
+      "rows_after": 15545
+    },
+    "final_reference_rows": 15545,
+    "final_in_role_families": 12891
+  },
+  "role_cohort": [
+    {
+      "step": "Raw public results file",
+      "records": 49123
+    },
+    {
+      "step": "Remove near-empty, duplicate and straight-lined responses",
+      "records": 43242
+    },
+    {
+      "step": "Keep a specific developer role (drop missing DevType, Student, Retired, Other)",
+      "records": 38036
+    },
+    {
+      "step": "Keep skill-defined technical roles (drop management/seniority/non-technical)",
+      "records": 31406
+    },
+    {
+      "step": "Keep respondents who answered the main technology question",
+      "records": 23072
+    }
+  ],
+  "split": {
+    "train": 18457,
+    "test": 4615,
+    "test_size": 0.2,
+    "stratified_on": "JobRole",
+    "random_state": 42
+  },
+  "seconds": 14.7
+}

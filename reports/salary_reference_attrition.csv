@@ -1,0 +1,7 @@
+step,records
+Developer by profession,33542
+Employed or self-employed,31212
+Reported annual compensation,19443
+Exclude recommender test-set respondents,16356
+"Keep $1,000 to $1,000,000",15973
+Drop |robust z| > 3.5 within country/region,15545
