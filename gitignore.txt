@@ -1,0 +1,10 @@
+# raw survey files (140 MB, download from survey.stackoverflow.co)
+data/raw/*
+!data/raw/README.md
+data/interim/
+__pycache__/
+*.egg-info/
+.ipynb_checkpoints/
+.pytest_cache/
+.venv/
+.DS_Store
