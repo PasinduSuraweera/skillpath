@@ -1,0 +1,19 @@
+{
+  "generated": "2026-10-01 21:41:29",
+  "stage": "7 - optimisation and final model selection",
+  "selection_rule": "highest 5-fold macro-F1 on the training split; models within one standard deviation of the best are treated as tied and the cheapest to fit wins, because the web backend reloads this pipeline and an unreliable improvement does not justify a slower model",
+  "best_by_f1_macro": "Logistic Regression",
+  "tied_within_1sd": [
+    "Logistic Regression"
+  ],
+  "final_model": "Logistic Regression",
+  "final_cv_scores": {
+    "f1_macro": 0.303,
+    "top3_accuracy": 0.8387,
+    "balanced_accuracy": 0.2826,
+    "log_loss": 1.4146,
+    "family_f1_macro": 0.4294,
+    "family_top3_accuracy": 0.8733
+  },
+  "validation": "StratifiedKFold(5, shuffle=True, random_state=42)"
+}

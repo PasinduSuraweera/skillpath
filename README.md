@@ -15,8 +15,13 @@ AI / ML Engineer). Each job role belongs to one of 12 role families; a family's 
 sum of its job roles' probabilities (`skillpath.targets`), so one model gives the top-3 job roles
 and the top families.
 
-Status: **Stage 3 (EDA) and Stage 4 (preprocessing and feature engineering) complete.**
-Next: Stage 6-7 modelling, then the web app (Stages 9-10).
+Status: **Stages 3-4 (EDA, preprocessing) and Stages 6-7 (modelling, optimisation) complete.**
+Next: the web app (Stages 9-10).
+
+**Final model:** Logistic Regression (`C=0.218`, no class weighting) inside the Stage 4
+preprocessing pipeline, saved as `artifacts/model.joblib`. On the 4,615 held-out
+respondents: **top-3 accuracy 0.839** at job-role level and **0.878** at family level
+(macro-F1 0.285, accuracy 0.549). Start at `reports/modelling_decisions.md`.
 
 ---
 
@@ -34,13 +39,18 @@ skillpath/
 │   ├── features.py           custom sklearn transformers (TechBlockEncoder, ...)
 │   ├── pipeline.py           build_preprocessor(): the shared preprocessing pipeline
 │   ├── targets.py            job role -> family probabilities, top-3 recommendation helpers
+│   ├── modelling.py          Stage 6-7: candidates, metrics, resampling, experiment runner
 │   ├── profile.py            web API contract: JSON profile <-> survey-format row
 │   ├── viz.py                chart style
 │   └── resources/country_region.csv
 ├── scripts/
 │   ├── build_dataset.py      runs the whole preprocessing and writes all outputs (~15 s)
+│   ├── run_models.py         Stage 6: compares the 7 candidates (~29 min)
+│   ├── tune_models.py        Stage 7: experiment phases A-D (~41 min)
+│   ├── finalise_model.py     fits the chosen model, opens the test split ONCE
 │   └── run_notebooks.sh      executes the notebooks and exports HTML copies
-├── notebooks/                01 data understanding, 02 EDA, 03 preprocessing
+├── notebooks/                01 data understanding, 02 EDA, 03 preprocessing,
+│                             04 modelling, 05 optimisation
 │                             (.py = source, .ipynb = executed with outputs)
 ├── data/
 │   ├── raw/                  put the Stack Overflow files here (not committed, 140 MB)
@@ -48,12 +58,15 @@ skillpath/
 │   └── reference/            AI exposure, persona and salary datasets
 ├── artifacts/                fitted preprocessor, feature names, options.json for the web form
 ├── reports/
-│   ├── preprocessing_decisions.md   every decision with evidence + viva Q&A  <- start here
+│   ├── preprocessing_decisions.md   Stages 3-4: every decision with evidence + viva Q&A
+│   ├── modelling_decisions.md       Stages 6-7: results, experiments + viva Q&A  <- start here
 │   ├── feature_dictionary.csv       all 479 model features, source and transformation
 │   ├── build_report.json            counts from the last build
 │   ├── figures/                     report-ready PNGs
 │   └── html/                        notebooks as HTML (open in any browser)
-└── tests/test_preprocessing.py      17 checks: leakage, split, API parity, missing values, targets
+└── tests/
+    ├── test_preprocessing.py     leakage, split, API parity, missing values, targets
+    └── test_modelling.py         probabilities, family aggregation, resampling, selection
 ```
 
 ## Setup
