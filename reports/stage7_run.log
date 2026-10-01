@@ -1,0 +1,55 @@
+Stage 7 optimisation. Training rows 18,457, 5-fold stratified CV, primary metric f1_macro.
+
+--- Phase A: imbalance handling --------------------------------------------------
+  Logistic Regression + no imbalance handling   f1_macro 0.3003  acc 0.5480  (534s)
+  Logistic Regression + class_weight            f1_macro 0.2535  acc 0.3650  (369s)
+  Logistic Regression + oversampling to 10%     f1_macro 0.2914  acc 0.5123  (86s)
+  Random Forest + no imbalance handling         f1_macro 0.1869  acc 0.5411  (15s)
+  Random Forest + class_weight                  f1_macro 0.2548  acc 0.5535  (18s)
+  Random Forest + oversampling to 10%           f1_macro 0.2153  acc 0.5410  (19s)
+
+--- Phase B: feature set and selection --------------------------------------------
+    3-fold here: every row is a *relative* comparison against the same
+    reference on the same folds, so fewer folds costs precision we do not need.
+  core (reference)                              f1_macro 0.2541  top3 0.7301  (12s)
+  want lists removed                            f1_macro 0.2451  top3 0.7008  (6s)
+  rare pooling 0.25%                            f1_macro 0.2528  top3 0.7296  (9s)
+  rare pooling 1%                               f1_macro 0.2547  top3 0.7299  (12s)
+  SelectKBest chi2 k=100                        f1_macro 0.2277  top3 0.6489  (5s)
+  SelectKBest chi2 k=200                        f1_macro 0.2315  top3 0.6868  (6s)
+  SelectKBest chi2 k=300                        f1_macro 0.2353  top3 0.7102  (7s)
+  SelectKBest chi2 k=all                        f1_macro 0.2290  top3 0.7353  (7s)
+  core+context (506 features)                   f1_macro 0.2605  top3 0.7413  (12s)
+
+--- Phase C: hyper-parameter search -----------------------------------------------
+  Logistic Regression: 6 candidates x 3 folds
+    best search score 0.3010 in 60s
+    {'clf__C': 0.21751953118777648, 'clf__class_weight': None}
+  Logistic Regression (tuned)                   f1_macro 0.3030  top3 0.8387
+  Linear SVM (calibrated): 6 candidates x 5 folds
+    best search score 0.2536 in 149s
+    {'clf__estimator__C': 0.003550621427070771, 'clf__estimator__class_weight': 'balanced'}
+  Linear SVM (calibrated) (tuned)               f1_macro 0.2536  top3 0.8401
+  Random Forest: 16 candidates x 5 folds
+    best search score 0.2820 in 770s
+    {'clf__n_estimators': 300, 'clf__min_samples_leaf': 4, 'clf__max_features': 0.1, 'clf__max_depth': 40, 'clf__class_weight': 'balanced'}
+  Random Forest (tuned)                         f1_macro 0.2820  top3 0.8131
+  Hist Gradient Boosting: 5 candidates x 3 folds
+    best search score 0.2855 in 231s
+    {'clf__min_samples_leaf': 50, 'clf__max_leaf_nodes': 15, 'clf__max_iter': 200, 'clf__learning_rate': 0.2, 'clf__l2_regularization': 1.0}
+  Hist Gradient Boosting (tuned)                f1_macro 0.2860  top3 0.8309
+
+--- Phase D: tuned vs baseline, final selection -----------------------------------
+                  model  baseline_f1_macro  tuned_f1_macro   gain  tuned_f1_macro_std  baseline_top3  tuned_top3  tuned_balanced_accuracy  tuned_log_loss  tuned_family_f1_macro  tuned_family_top3  fit_seconds
+    Logistic Regression             0.2547          0.3030 0.0483              0.0082         0.7262      0.8387                   0.2826          1.4146                 0.4294             0.8733       3.3470
+ Hist Gradient Boosting             0.2724          0.2860 0.0135              0.0096         0.8289      0.8309                   0.2605          1.4226                 0.4030             0.8659      12.9254
+          Random Forest             0.2537          0.2820 0.0283              0.0081         0.8301      0.8131                   0.2936          1.7325                 0.3585             0.8211       4.2030
+Linear SVM (calibrated)             0.1911          0.2536 0.0625              0.0090         0.8092      0.8401                   0.2300          1.3998                 0.3842             0.8749       4.2883
+
+  best macro-F1 : Logistic Regression (0.3030)
+  within 1 SD   : Logistic Regression  (SD 0.0082)
+  FINAL MODEL   : Logistic Regression  (macro-F1 0.3030, top-3 0.8387, 3.3s to fit)
+
+  wrote reports/stage7_final_selection.json  -> scripts/finalise_model.py reads this
+
+Done in 40.9 min. All runs appended to reports/model_experiments.csv

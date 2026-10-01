@@ -1,0 +1,35 @@
+Training rows 18,457  raw input columns 29  job roles 20  validation 5-fold stratified
+
+  Dummy (most frequent)     f1_macro 0.0283  top3 0.4117  family_f1 0.0471  (11s)
+  Complement Naive Bayes    f1_macro 0.1786  top3 0.7210  family_f1 0.1583  (15s)
+  k-Nearest Neighbours      f1_macro 0.1676  top3 0.7814  family_f1 0.2822  (14s)
+  Logistic Regression       f1_macro 0.2547  top3 0.7262  family_f1 0.3485  (460s)
+  Linear SVM (calibrated)   f1_macro 0.1911  top3 0.8092  family_f1 0.3274  (60s)
+  Random Forest             f1_macro 0.2537  top3 0.8301  family_f1 0.3750  (24s)
+  Hist Gradient Boosting    f1_macro 0.2724  top3 0.8289  family_f1 0.3926  (911s)
+
+====================================================================================================
+                  model  f1_macro  f1_macro_std  balanced_accuracy  accuracy  top3_accuracy  log_loss  family_f1_macro  family_top3_accuracy  fit_seconds
+ Hist Gradient Boosting    0.2724        0.0095             0.2477    0.5602         0.8289    1.4739           0.3926                0.8614     179.4674
+    Logistic Regression    0.2547        0.0031             0.3321    0.3657         0.7262    2.2691           0.3485                0.7783      91.7110
+          Random Forest    0.2537        0.0082             0.2404    0.5541         0.8301    1.6078           0.3750                0.8548       4.2860
+Linear SVM (calibrated)    0.1911        0.0080             0.1776    0.5368         0.8092    1.5348           0.3274                0.8507      11.6381
+ Complement Naive Bayes    0.1786        0.0024             0.2030    0.4917         0.7210    2.3284           0.1583                0.6320       2.5034
+   k-Nearest Neighbours    0.1676        0.0038             0.1510    0.4997         0.7814    4.4130           0.2822                0.8192       1.4387
+  Dummy (most frequent)    0.0283        0.0000             0.0500    0.3944         0.4117   21.8289           0.0471                0.6614       1.8408
+====================================================================================================
+
+Best by macro-F1: Hist Gradient Boosting. Building out-of-fold predictions for diagnosis...
+
+Top confusions (share of the actual class sent to the wrong role):
+  UX, Research Ops or UI design professional    -> Developer, full-stack                         0.60  (different family)
+  Developer, front-end                          -> Developer, full-stack                         0.56  (different family)
+  Developer, AI apps or physical AI             -> Developer, full-stack                         0.50  (different family)
+  System administrator                          -> Developer, full-stack                         0.48  (different family)
+  Cybersecurity or InfoSec professional         -> Developer, full-stack                         0.42  (different family)
+  Developer, QA or test                         -> Developer, full-stack                         0.40  (different family)
+  Developer, desktop or enterprise applications -> Developer, full-stack                         0.39  (different family)
+  Cloud infrastructure engineer                 -> Developer, back-end                           0.39  (different family)
+
+Wrote reports/stage6_model_comparison.csv, stage6_per_class_report.csv, stage6_confusion_matrix.csv, stage6_report.json
+     reports/figures/04_*.png   (1723s total)

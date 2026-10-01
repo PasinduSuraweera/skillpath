@@ -1,0 +1,158 @@
+{
+  "generated": "2026-10-01 20:59:56",
+  "stage": "6 - model development",
+  "training_rows": 18457,
+  "job_roles": 20,
+  "validation": "StratifiedKFold(5, shuffle=True, random_state=42)",
+  "primary_metric": "f1_macro",
+  "models": {
+    "Dummy (most frequent)": {
+      "f1_macro": 0.0283,
+      "f1_weighted": 0.2231,
+      "balanced_accuracy": 0.05,
+      "accuracy": 0.3944,
+      "top3_accuracy": 0.4117,
+      "log_loss": 21.8289,
+      "family_f1_macro": 0.0471,
+      "family_balanced_accuracy": 0.0833,
+      "family_accuracy": 0.3944,
+      "family_top3_accuracy": 0.6614
+    },
+    "Complement Naive Bayes": {
+      "f1_macro": 0.1786,
+      "f1_weighted": 0.4509,
+      "balanced_accuracy": 0.203,
+      "accuracy": 0.4917,
+      "top3_accuracy": 0.721,
+      "log_loss": 2.3284,
+      "family_f1_macro": 0.1583,
+      "family_balanced_accuracy": 0.1827,
+      "family_accuracy": 0.3525,
+      "family_top3_accuracy": 0.632
+    },
+    "k-Nearest Neighbours": {
+      "f1_macro": 0.1676,
+      "f1_weighted": 0.4238,
+      "balanced_accuracy": 0.151,
+      "accuracy": 0.4997,
+      "top3_accuracy": 0.7814,
+      "log_loss": 4.413,
+      "family_f1_macro": 0.2822,
+      "family_balanced_accuracy": 0.2547,
+      "family_accuracy": 0.516,
+      "family_top3_accuracy": 0.8192
+    },
+    "Logistic Regression": {
+      "f1_macro": 0.2547,
+      "f1_weighted": 0.4003,
+      "balanced_accuracy": 0.3321,
+      "accuracy": 0.3657,
+      "top3_accuracy": 0.7262,
+      "log_loss": 2.2691,
+      "family_f1_macro": 0.3485,
+      "family_balanced_accuracy": 0.4342,
+      "family_accuracy": 0.4006,
+      "family_top3_accuracy": 0.7783
+    },
+    "Linear SVM (calibrated)": {
+      "f1_macro": 0.1911,
+      "f1_weighted": 0.4763,
+      "balanced_accuracy": 0.1776,
+      "accuracy": 0.5368,
+      "top3_accuracy": 0.8092,
+      "log_loss": 1.5348,
+      "family_f1_macro": 0.3274,
+      "family_balanced_accuracy": 0.2998,
+      "family_accuracy": 0.5545,
+      "family_top3_accuracy": 0.8507
+    },
+    "Random Forest": {
+      "f1_macro": 0.2537,
+      "f1_weighted": 0.5109,
+      "balanced_accuracy": 0.2404,
+      "accuracy": 0.5541,
+      "top3_accuracy": 0.8301,
+      "log_loss": 1.6078,
+      "family_f1_macro": 0.375,
+      "family_balanced_accuracy": 0.376,
+      "family_accuracy": 0.5706,
+      "family_top3_accuracy": 0.8548
+    },
+    "Hist Gradient Boosting": {
+      "f1_macro": 0.2724,
+      "f1_weighted": 0.5243,
+      "balanced_accuracy": 0.2477,
+      "accuracy": 0.5602,
+      "top3_accuracy": 0.8289,
+      "log_loss": 1.4739,
+      "family_f1_macro": 0.3926,
+      "family_balanced_accuracy": 0.3635,
+      "family_accuracy": 0.5767,
+      "family_top3_accuracy": 0.8614
+    }
+  },
+  "best_by_f1_macro": "Hist Gradient Boosting",
+  "top_confusions": [
+    {
+      "actual": "UX, Research Ops or UI design professional",
+      "predicted_as": "Developer, full-stack",
+      "share_of_actual": 0.596,
+      "same_family": false
+    },
+    {
+      "actual": "Developer, front-end",
+      "predicted_as": "Developer, full-stack",
+      "share_of_actual": 0.558,
+      "same_family": false
+    },
+    {
+      "actual": "Developer, AI apps or physical AI",
+      "predicted_as": "Developer, full-stack",
+      "share_of_actual": 0.5,
+      "same_family": false
+    },
+    {
+      "actual": "System administrator",
+      "predicted_as": "Developer, full-stack",
+      "share_of_actual": 0.478,
+      "same_family": false
+    },
+    {
+      "actual": "Cybersecurity or InfoSec professional",
+      "predicted_as": "Developer, full-stack",
+      "share_of_actual": 0.418,
+      "same_family": false
+    },
+    {
+      "actual": "Developer, QA or test",
+      "predicted_as": "Developer, full-stack",
+      "share_of_actual": 0.397,
+      "same_family": false
+    },
+    {
+      "actual": "Developer, desktop or enterprise applications",
+      "predicted_as": "Developer, full-stack",
+      "share_of_actual": 0.389,
+      "same_family": false
+    },
+    {
+      "actual": "Cloud infrastructure engineer",
+      "predicted_as": "Developer, back-end",
+      "share_of_actual": 0.387,
+      "same_family": false
+    },
+    {
+      "actual": "Developer, back-end",
+      "predicted_as": "Developer, full-stack",
+      "share_of_actual": 0.382,
+      "same_family": false
+    },
+    {
+      "actual": "Developer, QA or test",
+      "predicted_as": "Developer, back-end",
+      "share_of_actual": 0.362,
+      "same_family": false
+    }
+  ],
+  "seconds": 1723.1
+}
