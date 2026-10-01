@@ -1,0 +1,31 @@
+Final model from Stage 7: Logistic Regression
+  hyper-parameters : {'clf__C': 0.21751953118777648, 'clf__class_weight': None}
+  CV macro-F1      : 0.303
+  selection rule   : highest 5-fold macro-F1 on the training split; models within one standard deviation of the best are treated as tied and the cheapest to fit wins, because the web backend reloads this pipeline and an unreliable improvement does not justify a slower model
+
+Fitting on all 18,457 training rows...
+Opening the held-out test split (once)...
+
+============================================================
+HELD-OUT TEST RESULTS                      4,615 respondents
+============================================================
+  f1_macro                        0.2845
+  f1_weighted                     0.5238
+  balanced_accuracy               0.2657
+  accuracy                        0.5493
+  top3_accuracy                   0.8392
+  log_loss                        1.4146
+  family_f1_macro                 0.4149
+  family_balanced_accuracy        0.3923
+  family_accuracy                 0.5757
+  family_top3_accuracy            0.8778
+============================================================
+
+  CV macro-F1 0.3030 -> test 0.2845 (gap -0.0185)
+  A small gap means the cross-validated estimate was honest and the model generalises.
+
+  API parity check : 300 profiles through the web format, max probability difference 0.00e+00 -> PASS
+
+Wrote artifacts/model.joblib (108 KB) and artifacts/model_card.json
+     reports/stage7_test_results.json, stage7_test_per_class.csv
+     reports/figures/05_test_confusion.png   (12s total)

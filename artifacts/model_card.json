@@ -1,0 +1,56 @@
+{
+  "generated": "2026-10-01 21:42:30",
+  "model": "Logistic Regression",
+  "hyperparameters": {
+    "clf__C": 0.21751953118777648,
+    "clf__class_weight": null
+  },
+  "task": "20-class job-role classification; role-family probabilities are the sum of the job-role probabilities inside each family",
+  "target": "JobRole",
+  "feature_set": "core (479 features)",
+  "training_rows": 18457,
+  "test_rows": 4615,
+  "validation": "StratifiedKFold(5, shuffle=True, random_state=42)",
+  "selection_rule": "highest 5-fold macro-F1 on the training split; models within one standard deviation of the best are treated as tied and the cheapest to fit wins, because the web backend reloads this pipeline and an unreliable improvement does not justify a slower model",
+  "cv_scores_training_split": {
+    "f1_macro": 0.303,
+    "top3_accuracy": 0.8387,
+    "balanced_accuracy": 0.2826,
+    "log_loss": 1.4146,
+    "family_f1_macro": 0.4294,
+    "family_top3_accuracy": 0.8733
+  },
+  "test_scores": {
+    "f1_macro": 0.2845,
+    "f1_weighted": 0.5238,
+    "balanced_accuracy": 0.2657,
+    "accuracy": 0.5493,
+    "top3_accuracy": 0.8392,
+    "log_loss": 1.4146,
+    "family_f1_macro": 0.4149,
+    "family_balanced_accuracy": 0.3923,
+    "family_accuracy": 0.5757,
+    "family_top3_accuracy": 0.8778
+  },
+  "api_parity_check": {
+    "rows_checked": 300,
+    "max_probability_difference": 0.0,
+    "identical_top_1_share": 1.0,
+    "passed": true
+  },
+  "fit_seconds": 7.4,
+  "sklearn_version": "1.8.0",
+  "intended_use": "Suggest three plausible developer job roles and their career families from a self-reported skill and AI-attitude profile, as guidance.",
+  "not_for": [
+    "hiring, screening or any decision about an individual",
+    "salary setting -- the salary figures in the app are cohort benchmarks, not predictions",
+    "any claim that a person is unsuited to a role: a low probability means the profile is unlike that role's survey respondents, not that the person cannot do the job"
+  ],
+  "known_limitations": [
+    "Trained on Stack Overflow 2025 respondents, who are not a random sample of developers",
+    "Full-stack is 39% of the training data; rare roles such as UX/UI (47 examples) are predicted far less reliably -- see reports/stage7_test_per_class.csv",
+    "Some roles are genuinely close (Cloud Infrastructure vs DevOps), which is why the app shows three ranked roles and the family total rather than one answer",
+    "Age is deliberately not a feature; the model still reflects the survey population's regional and experience mix"
+  ],
+  "data": "Stack Overflow Annual Developer Survey 2025, ODbL v1.0"
+}

@@ -1,0 +1,24 @@
+{
+  "Logistic Regression": {
+    "clf__C": 0.21751953118777648,
+    "clf__class_weight": null
+  },
+  "Linear SVM (calibrated)": {
+    "clf__estimator__C": 0.003550621427070771,
+    "clf__estimator__class_weight": "balanced"
+  },
+  "Random Forest": {
+    "clf__n_estimators": 300,
+    "clf__min_samples_leaf": 4,
+    "clf__max_features": 0.1,
+    "clf__max_depth": 40,
+    "clf__class_weight": "balanced"
+  },
+  "Hist Gradient Boosting": {
+    "clf__min_samples_leaf": 50,
+    "clf__max_leaf_nodes": 15,
+    "clf__max_iter": 200,
+    "clf__learning_rate": 0.2,
+    "clf__l2_regularization": 1.0
+  }
+}

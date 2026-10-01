@@ -1,0 +1,3 @@
+max_iter=1500  tol=0.0001 f1_macro=0.2540 top3=0.7302  379s
+max_iter=400   tol=0.001  f1_macro=0.2541 top3=0.7301  193s
+max_iter=200   tol=0.001  f1_macro=0.2541 top3=0.7301  193s
