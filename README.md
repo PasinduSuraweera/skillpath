@@ -34,6 +34,10 @@ Top-1 macro-F1 is the metric used to *select* the model, because it penalises ig
 roles. It is not the user-facing claim: the app never shows one answer, it shows three roles
 plus the career family.
 
+**Evaluation 2 walkthrough:** `notebooks/06_evaluation2_showcase.ipynb` (or `reports/html/06_evaluation2_showcase.html`
+in a browser). It opens the processed data, then walks Stages 6-8 end to end; an Excel copy of the
+processed data is in `data/processed/excel/`.
+
 **Read next:** `reports/modelling_decisions.md` (decisions, evidence and viva Q&A) or
 `reports/SkillPath_Stage6-8_Report.pdf` (20-page technical report).
 
