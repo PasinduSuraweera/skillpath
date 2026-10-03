@@ -28,8 +28,8 @@
 # | **E** | The one held-out test evaluation, reproduced live from `model.joblib` | Stage 7 |
 # | **F** | Live prediction for a sample user, and which skills drive a prediction | bridge to Stages 9-10 |
 #
-# **Run it:** `Kernel → Restart & Run All`. Everything runs in under a minute from a clean
-# clone; the raw survey CSV is not needed.
+# **Run it:** `Kernel → Restart & Run All`. Everything runs in under a minute (plus about 90 s
+# the first time, to write the full feature-matrix Excel file); the raw survey CSV is not needed.
 
 # %%
 import json
@@ -189,22 +189,43 @@ after.round(3).to_frame("value").head(25)
 # %% [markdown]
 # ## A6 · Excel copy for viewing
 #
-# Writes `data/processed/excel/SkillPath_processed_data.xlsx`. The cleaned train and test
-# rows are complete; the 479-column feature matrix is the first 1,000 rows (the full matrix
-# stays in Parquet, where it belongs).
+# Writes two Excel files to `data/processed/excel/`, both with **every row** (nothing sampled):
+#
+# * `SkillPath_processed_data.xlsx`: the cleaned train and test rows, the feature
+#   dictionary and the split check
+# * `SkillPath_feature_matrix.xlsx`: the full transformed feature matrices, all 18,457
+#   training rows and all 4,615 test rows × 479 features (values rounded to 6 decimals)
+#
+# The feature matrix is in its own file because it is ~11 million cells; kept separate, the
+# first file still opens instantly on a lab PC.
 
 # %%
 out_dir = C.PROCESSED_DIR / "excel"
 out_dir.mkdir(exist_ok=True)
+feat_test = pd.read_parquet(C.PROCESSED_DIR / "features_core_test.parquet")
+
 xlsx = out_dir / "SkillPath_processed_data.xlsx"
-with pd.ExcelWriter(xlsx, engine="openpyxl") as xw:
+with pd.ExcelWriter(xlsx, engine="xlsxwriter") as xw:
     pd.DataFrame(rows).to_excel(xw, sheet_name="README", index=False)
     train.to_excel(xw, sheet_name="train_cleaned", index=False)
     test.to_excel(xw, sheet_name="test_cleaned", index=False)
-    feat_train.head(1000).to_excel(xw, sheet_name="features_train_first1000", index=False)
     fdict.to_excel(xw, sheet_name="feature_dictionary", index=False)
     dist.reset_index(names="job_role").to_excel(xw, sheet_name="split_check", index=False)
-print(f"wrote {xlsx.relative_to(C.PROJECT_ROOT)}  ({xlsx.stat().st_size / 1e6:.1f} MB)")
+
+# Writing ~11 million cells takes about 90 s, so this file is only rebuilt when missing
+# (set REBUILD = True to force it). Its contents never change unless build_dataset.py is rerun.
+REBUILD = False
+xlsx_feat = out_dir / "SkillPath_feature_matrix.xlsx"
+if REBUILD or not xlsx_feat.exists():
+    with pd.ExcelWriter(xlsx_feat, engine="xlsxwriter") as xw:
+        for name, df in [("features_train", feat_train), ("features_test", feat_test)]:
+            df.round(6).to_excel(xw, sheet_name=name, index=False)
+            xw.sheets[name].freeze_panes(1, 2)
+
+for f, parts in [(xlsx, [train, test]), (xlsx_feat, [feat_train, feat_test])]:
+    print(f"wrote {f.relative_to(C.PROJECT_ROOT)}  ({f.stat().st_size / 1e6:.1f} MB): "
+          + ", ".join(f"{len(d):,} × {d.shape[1]}" for d in parts))
+
 
 # %% [markdown]
 # ---

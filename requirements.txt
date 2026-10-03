@@ -13,3 +13,6 @@ jupytext>=1.16
 nbconvert>=7
 ipykernel
 pytest>=8
+
+# Excel export in notebook 06
+xlsxwriter>=3.1
