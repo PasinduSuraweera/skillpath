@@ -7796,7 +7796,7 @@ a.anchor-link {
 <!-- End of mermaid configuration --></head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 <main>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=b403cc29">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=091a1fff">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7847,17 +7847,87 @@ and recomputes the key numbers live from the saved model where that takes second
 </tr>
 </tbody>
 </table>
-<p><strong>Run it:</strong> <code>Kernel → Restart &amp; Run All</code>. Everything runs in under a minute (plus about 90 s
+<p><strong>Run it:</strong> on Google Colab or locally, <code>Runtime/Kernel → Restart &amp; Run All</code>. Everything runs in under a minute (plus about 90 s
 the first time, to write the full feature-matrix Excel file); the raw survey CSV is not needed.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=7c758fe3">
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=5c85e24f">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="Setup-(only-does-anything-on-Google-Colab)">Setup (only does anything on Google Colab)<a class="anchor-link" href="#Setup-(only-does-anything-on-Google-Colab)">¶</a></h3><p>On Colab this cell downloads the project from GitHub and installs the exact scikit-learn
+version the model was saved with (about 1 minute). On a laptop with the project's virtual
+environment it does nothing.</p>
+<p>The repository is private, so Colab needs a read-only GitHub token: click the <strong>key icon</strong>
+in Colab's left sidebar, add a secret named <code>GITHUB_TOKEN</code>, and switch on notebook access.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=413b5ca3">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
 <div class="jp-InputPrompt jp-InputArea-prompt">In [1]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="n">IN_COLAB</span> <span class="o">=</span> <span class="s2">"google.colab"</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span>
+<span class="n">REPO</span> <span class="o">=</span> <span class="s2">"PasinduSuraweera/skillpath"</span>
+<span class="n">BRANCH</span> <span class="o">=</span> <span class="s2">"feature/evaluation2-showcase"</span>
+
+<span class="k">if</span> <span class="n">IN_COLAB</span><span class="p">:</span>
+    <span class="n">repo_dir</span> <span class="o">=</span> <span class="s2">"/content/skillpath"</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">repo_dir</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">google.colab</span><span class="w"> </span><span class="kn">import</span> <span class="n">userdata</span>
+            <span class="n">token</span> <span class="o">=</span> <span class="n">userdata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"GITHUB_TOKEN"</span><span class="p">)</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"https://</span><span class="si">{</span><span class="n">token</span><span class="si">}</span><span class="s2">@github.com/</span><span class="si">{</span><span class="n">REPO</span><span class="si">}</span><span class="s2">.git"</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"https://github.com/</span><span class="si">{</span><span class="n">REPO</span><span class="si">}</span><span class="s2">.git"</span>   <span class="c1"># works only if the repo is public</span>
+        <span class="n">clone</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">"git"</span><span class="p">,</span> <span class="s2">"clone"</span><span class="p">,</span> <span class="s2">"-q"</span><span class="p">,</span> <span class="s2">"--depth"</span><span class="p">,</span> <span class="s2">"1"</span><span class="p">,</span> <span class="s2">"-b"</span><span class="p">,</span> <span class="n">BRANCH</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">repo_dir</span><span class="p">],</span>
+                               <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">clone</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>   <span class="c1"># message kept generic so the token is never printed</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"Could not download the repository. Check the GITHUB_TOKEN secret "</span>
+                               <span class="s2">"exists, has notebook access switched on, and can read the repo."</span><span class="p">)</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="s2">"-m"</span><span class="p">,</span> <span class="s2">"pip"</span><span class="p">,</span> <span class="s2">"install"</span><span class="p">,</span> <span class="s2">"-q"</span><span class="p">,</span>
+                    <span class="s2">"scikit-learn==1.8.0"</span><span class="p">,</span> <span class="s2">"xlsxwriter"</span><span class="p">,</span> <span class="s2">"pyarrow"</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">repo_dir</span><span class="si">}</span><span class="s2">/src"</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">repo_dir</span><span class="si">}</span><span class="s2">/notebooks"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Colab setup done:"</span><span class="p">,</span> <span class="n">repo_dir</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Running locally, no setup needed."</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Running locally, no setup needed.
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=54bef4cf">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
@@ -7894,7 +7964,7 @@ the first time, to write the full feature-matrix Excel file); the raw survey CSV
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=95d9e779">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=3a43251f">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7910,12 +7980,12 @@ at the end, exports an Excel copy that can be opened on any laptop.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=e6a73442">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=41de4d38">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">files</span> <span class="o">=</span> <span class="p">{</span>
@@ -7943,7 +8013,7 @@ at the end, exports an Excel copy that can be opened on any laptop.</p>
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[2]:</div>
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[3]:</div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
 <div>
 <style scoped="">
@@ -8027,7 +8097,7 @@ at the end, exports an Excel copy that can be opened on any laptop.</p>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=a3da3373">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=3f133876">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8039,12 +8109,12 @@ pipeline can be applied to a single profile from the web form.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=e39dae93">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=10e6ae44">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">C</span><span class="o">.</span><span class="n">PROCESSED_DIR</span> <span class="o">/</span> <span class="s2">"train.parquet"</span><span class="p">)</span>
@@ -8075,7 +8145,7 @@ columns fed to the model: 29  (the rest are IDs, the target, and app-only fields
 </div>
 </div>
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[3]:</div>
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[4]:</div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
 <div>
 <style scoped="">
@@ -8228,12 +8298,12 @@ columns fed to the model: 29  (the rest are IDs, the target, and app-only fields
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=73c013b3">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=591aa1c2">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">summary</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
@@ -8254,7 +8324,7 @@ columns fed to the model: 29  (the rest are IDs, the target, and app-only fields
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[4]:</div>
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[5]:</div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
 <div>
 <style scoped="">
@@ -8492,7 +8562,7 @@ columns fed to the model: 29  (the rest are IDs, the target, and app-only fields
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=f69cc85d">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=0aebdf8e">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8506,7 +8576,7 @@ median-imputed <em>inside each training fold</em> so no validation row influence
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=b6954258">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=4b40ee17">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8516,12 +8586,12 @@ median-imputed <em>inside each training fold</em> so no validation row influence
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=334f08f2">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=c851e199">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">overlap</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">train</span><span class="p">[</span><span class="s2">"ResponseId"</span><span class="p">])</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">test</span><span class="p">[</span><span class="s2">"ResponseId"</span><span class="p">])</span>
@@ -8554,7 +8624,7 @@ Test share: 20.0%
 </div>
 </div>
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[5]:</div>
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[6]:</div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
 <div>
 <style scoped="">
@@ -8736,7 +8806,7 @@ Test share: 20.0%
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=7874ccfe">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=af00f408">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8749,7 +8819,7 @@ too: Full-stack is about 39% of rows and UX/UI Designer is 47 rows, about 155:1.
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=904254d3">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=6054ccfb">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8759,12 +8829,12 @@ too: Full-stack is about 39% of rows and UX/UI Designer is 47 rows, about 155:1.
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=4666e305">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=68fa008a">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">feat_train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">C</span><span class="o">.</span><span class="n">PROCESSED_DIR</span> <span class="o">/</span> <span class="s2">"features_core_train.parquet"</span><span class="p">)</span>
@@ -8849,7 +8919,7 @@ too: Full-stack is about 39% of rows and UX/UI Designer is 47 rows, about 155:1.
 </div>
 </div>
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[6]:</div>
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[7]:</div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
 <div>
 <style scoped="">
@@ -9009,12 +9079,12 @@ too: Full-stack is about 39% of rows and UX/UI Designer is 47 rows, about 155:1.
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=750dda5a">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=db7cc8ca">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">cols_show</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"ResponseId"</span><span class="p">,</span> <span class="n">C</span><span class="o">.</span><span class="n">TARGET_JOB</span><span class="p">,</span> <span class="s2">"tech__Language_have__Python"</span><span class="p">,</span> <span class="s2">"tech__Language_have__SQL"</span><span class="p">,</span>
@@ -9030,7 +9100,7 @@ too: Full-stack is about 39% of rows and UX/UI Designer is 47 rows, about 155:1.
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[7]:</div>
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[8]:</div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
 <div>
 <style scoped="">
@@ -9170,7 +9240,7 @@ too: Full-stack is about 39% of rows and UX/UI Designer is 47 rows, about 155:1.
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=d669b5f6">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=50f03a50">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -9181,12 +9251,12 @@ non-zero part of their 479-number feature vector.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=acc9b62e">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=019c111c">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">rid</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">train</span><span class="p">[</span><span class="n">C</span><span class="o">.</span><span class="n">TARGET_JOB</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"Data engineer"</span><span class="p">,</span> <span class="s2">"ResponseId"</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> \
@@ -9311,7 +9381,7 @@ After preprocessing: 104 of 479 features are non-zero for respondent 243
 </div>
 </div>
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[8]:</div>
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[9]:</div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
 <div>
 <style scoped="">
@@ -9443,7 +9513,7 @@ After preprocessing: 104 of 479 features are non-zero for respondent 243
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=c1e2303d">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=f057a7b2">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -9461,12 +9531,12 @@ first file still opens instantly on a lab PC.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=78f01889">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=5e6cb4c0">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">out_dir</span> <span class="o">=</span> <span class="n">C</span><span class="o">.</span><span class="n">PROCESSED_DIR</span> <span class="o">/</span> <span class="s2">"excel"</span>
@@ -9514,7 +9584,7 @@ wrote data/processed/excel/SkillPath_feature_matrix.xlsx  (30.8 MB): 18,457 × 4
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=d186d45d">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=e6c67b44">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -9533,12 +9603,12 @@ separable, which is why the app shows three ranked roles, not one.</li>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=8842186b">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=4f9d90f7">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">counts</span> <span class="o">=</span> <span class="n">y_train</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
@@ -9565,7 +9635,7 @@ separable, which is why the app shows three ranked roles, not one.</li>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=a1604768">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=b5ded6a6">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -9579,12 +9649,12 @@ Linear SVM is wrapped in <code>CalibratedClassifierCV</code>.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=b583fb61">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=e6f5e67c">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [12]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">spec</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([{</span><span class="s2">"model"</span><span class="p">:</span> <span class="n">n</span><span class="p">,</span> <span class="s2">"family"</span><span class="p">:</span> <span class="n">s</span><span class="p">[</span><span class="s2">"family"</span><span class="p">],</span> <span class="s2">"why it is here"</span><span class="p">:</span> <span class="n">s</span><span class="p">[</span><span class="s2">"why"</span><span class="p">]}</span>
@@ -9677,7 +9747,7 @@ Linear SVM is wrapped in <code>CalibratedClassifierCV</code>.</p>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=75561765">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=e727f08a">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -9695,12 +9765,12 @@ training part. Fitting preprocessing once before CV would leak validation inform
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=cd4289cf">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=ee52d41f">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [12]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [13]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">cv</span><span class="p">())</span>
@@ -9726,7 +9796,7 @@ Every candidate is: Pipeline([('prep', build_preprocessor()), ('clf', &lt;model&
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=9f3f7f06">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=3ffffff1">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -9769,12 +9839,12 @@ Every candidate is: Pipeline([('prep', build_preprocessor()), ('clf', &lt;model&
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=56c039e1">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=08427873">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [13]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [14]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">stage6</span> <span class="o">=</span> <span class="n">read_csv</span><span class="p">(</span><span class="s2">"stage6_model_comparison.csv"</span><span class="p">)</span>
@@ -9791,7 +9861,7 @@ Every candidate is: Pipeline([('prep', build_preprocessor()), ('clf', &lt;model&
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[13]:</div>
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[14]:</div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
 <div>
 <style scoped="">
@@ -9922,12 +9992,12 @@ Every candidate is: Pipeline([('prep', build_preprocessor()), ('clf', &lt;model&
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=66ae25d9">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=e386a742">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [14]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [15]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">s6</span> <span class="o">=</span> <span class="n">stage6</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">"f1_macro"</span><span class="p">)</span>
@@ -9974,7 +10044,7 @@ Every candidate is: Pipeline([('prep', build_preprocessor()), ('clf', &lt;model&
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=9ed3aa04">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=761d455c">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -9997,7 +10067,7 @@ set by the <strong>data</strong>, not the algorithm. That shaped Stage 7.</li>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=6794712d">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=baa37d7c">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -10007,12 +10077,12 @@ set by the <strong>data</strong>, not the algorithm. That shaped Stage 7.</li>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=b91697b1">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=93667829">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [15]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [16]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">per_class</span> <span class="o">=</span> <span class="n">read_csv</span><span class="p">(</span><span class="s2">"stage6_per_class_report.csv"</span><span class="p">)</span>
@@ -10050,7 +10120,7 @@ set by the <strong>data</strong>, not the algorithm. That shaped Stage 7.</li>
 </div>
 </div>
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[15]:</div>
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[16]:</div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
 <div>
 <style scoped="">
@@ -10141,7 +10211,7 @@ set by the <strong>data</strong>, not the algorithm. That shaped Stage 7.</li>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=a5a47566">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=8317681f">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -10155,7 +10225,7 @@ starts with imbalance handling.</p>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=f94eebac">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=ca15c694">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -10169,12 +10239,12 @@ Oversampling sits <em>inside</em> the estimator so copies never cross a fold bou
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=a6b9bfb8">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=48e795a9">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [16]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [17]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">phase_a</span> <span class="o">=</span> <span class="n">read_csv</span><span class="p">(</span><span class="s2">"stage7_a_imbalance.csv"</span><span class="p">)</span>
@@ -10190,7 +10260,7 @@ Oversampling sits <em>inside</em> the estimator so copies never cross a fold bou
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[16]:</div>
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[17]:</div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
 <div>
 <style scoped="">
@@ -10288,7 +10358,7 @@ Oversampling sits <em>inside</em> the estimator so copies never cross a fold bou
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=7fef1d7d">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=a4e83aa1">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -10305,12 +10375,12 @@ weighting just makes the rare classes visible to the split criterion.
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=222157fc">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=723789c4">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [17]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [18]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">phase_b</span> <span class="o">=</span> <span class="n">read_csv</span><span class="p">(</span><span class="s2">"stage7_b_features.csv"</span><span class="p">)</span>
@@ -10329,7 +10399,7 @@ weighting just makes the rare classes visible to the split criterion.
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[17]:</div>
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[18]:</div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
 <div>
 <style scoped="">
@@ -10437,7 +10507,7 @@ weighting just makes the rare classes visible to the split criterion.
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=12f0f936">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=2726fa61">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -10462,12 +10532,12 @@ comparable.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=fa69792c">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=800bbce5">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [18]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [19]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">best_params</span> <span class="o">=</span> <span class="n">read_json</span><span class="p">(</span><span class="s2">"stage7_best_params.json"</span><span class="p">)</span>
@@ -10495,12 +10565,12 @@ Hist Gradient Boosting    min_samples_leaf=50, max_leaf_nodes=15, max_iter=200, 
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=af419fbc">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=07826526">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [19]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [20]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">search_lr</span> <span class="o">=</span> <span class="n">read_csv</span><span class="p">(</span><span class="s2">"stage7_c_search_logistic.csv"</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">"param_clf__C"</span><span class="p">)</span>
@@ -10535,7 +10605,7 @@ Hist Gradient Boosting    min_samples_leaf=50, max_leaf_nodes=15, max_iter=200, 
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=63d300b8">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=04b2c30a">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -10549,12 +10619,12 @@ smallest class, the defaults were overfitting.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=d686d14d">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=88f2e095">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [20]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [21]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">phase_d</span> <span class="o">=</span> <span class="n">read_csv</span><span class="p">(</span><span class="s2">"stage7_d_tuned_vs_baseline.csv"</span><span class="p">)</span>
@@ -10691,7 +10761,7 @@ smallest class, the defaults were overfitting.</p>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=e60d0750">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=176c4900">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -10705,7 +10775,7 @@ down from 91.7 s, because without class weights the solver converges quickly).</
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=e8621ac7">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=75a48098">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -10721,12 +10791,12 @@ as tied, and the cheapest to fit wins.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=10655586">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=a1f2747a">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [21]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [22]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">decision</span> <span class="o">=</span> <span class="n">read_json</span><span class="p">(</span><span class="s2">"stage7_final_selection.json"</span><span class="p">)</span>
@@ -10761,7 +10831,7 @@ Tied within 1 SD: ['Logistic Regression'] → the tie-break was not needed
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=04f0466c">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=cf069527">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -10814,7 +10884,7 @@ explainability for the non-technical presentation in Stage 12) all point the sam
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=6f98619b">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=261210f1">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -10828,12 +10898,12 @@ rerun, so it does not turn the test set into a validation set).</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=22cfa683">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=059060fc">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [22]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [23]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">C</span><span class="o">.</span><span class="n">ARTIFACTS_DIR</span> <span class="o">/</span> <span class="s2">"model.joblib"</span><span class="p">)</span>
@@ -10945,7 +11015,7 @@ Recomputed matches stored: True
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=9eba095f">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=c85455cd">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -10958,12 +11028,12 @@ time, which is why the app never shows only one answer.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=493ac0a0">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=7adc55ec">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [23]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [24]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">test_pc</span> <span class="o">=</span> <span class="n">read_csv</span><span class="p">(</span><span class="s2">"stage7_test_per_class.csv"</span><span class="p">)</span>
@@ -10980,7 +11050,7 @@ time, which is why the app never shows only one answer.</p>
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[23]:</div>
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[24]:</div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
 <div>
 <style scoped="">
@@ -11196,12 +11266,12 @@ time, which is why the app never shows only one answer.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=97830394">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=d0c923a0">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [24]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [25]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">confusion_matrix</span>
@@ -11237,7 +11307,7 @@ time, which is why the app never shows only one answer.</p>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=859ca573">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=531d870d">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -11250,12 +11320,12 @@ this path with a maximum probability difference of 0.0.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=4c8af18b">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=dee1cab9">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [25]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [26]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">profile</span> <span class="o">=</span> <span class="p">{</span>
@@ -11396,7 +11466,7 @@ this path with a maximum probability difference of 0.0.</p>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=bf9f0cb2">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=1d869def">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -11411,12 +11481,12 @@ ones are standardised, so coefficients can be compared within a role.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=0b265bac">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=ab2cca78">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [26]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [27]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">names</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s2">"prep"</span><span class="p">]</span><span class="o">.</span><span class="n">get_feature_names_out</span><span class="p">()</span>
@@ -11457,7 +11527,7 @@ ones are standardised, so coefficients can be compared within a role.</p>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=2c8d3c5c">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=5a2952b3">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>

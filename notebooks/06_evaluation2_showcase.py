@@ -28,8 +28,49 @@
 # | **E** | The one held-out test evaluation, reproduced live from `model.joblib` | Stage 7 |
 # | **F** | Live prediction for a sample user, and which skills drive a prediction | bridge to Stages 9-10 |
 #
-# **Run it:** `Kernel → Restart & Run All`. Everything runs in under a minute (plus about 90 s
+# **Run it:** on Google Colab or locally, `Runtime/Kernel → Restart & Run All`. Everything runs in under a minute (plus about 90 s
 # the first time, to write the full feature-matrix Excel file); the raw survey CSV is not needed.
+
+# %% [markdown]
+# ### Setup (only does anything on Google Colab)
+#
+# On Colab this cell downloads the project from GitHub and installs the exact scikit-learn
+# version the model was saved with (about 1 minute). On a laptop with the project's virtual
+# environment it does nothing.
+#
+# The repository is private, so Colab needs a read-only GitHub token: click the **key icon**
+# in Colab's left sidebar, add a secret named `GITHUB_TOKEN`, and switch on notebook access.
+
+# %%
+import os
+import subprocess
+import sys
+
+IN_COLAB = "google.colab" in sys.modules
+REPO = "PasinduSuraweera/skillpath"
+BRANCH = "feature/evaluation2-showcase"
+
+if IN_COLAB:
+    repo_dir = "/content/skillpath"
+    if not os.path.isdir(repo_dir):
+        try:
+            from google.colab import userdata
+            token = userdata.get("GITHUB_TOKEN")
+            url = f"https://{token}@github.com/{REPO}.git"
+        except Exception:
+            url = f"https://github.com/{REPO}.git"   # works only if the repo is public
+        clone = subprocess.run(["git", "clone", "-q", "--depth", "1", "-b", BRANCH, url, repo_dir],
+                               capture_output=True, text=True)
+        if clone.returncode != 0:   # message kept generic so the token is never printed
+            raise RuntimeError("Could not download the repository. Check the GITHUB_TOKEN secret "
+                               "exists, has notebook access switched on, and can read the repo.")
+    subprocess.run([sys.executable, "-m", "pip", "install", "-q",
+                    "scikit-learn==1.8.0", "xlsxwriter", "pyarrow"], check=True)
+    sys.path.insert(0, f"{repo_dir}/src")
+    os.chdir(f"{repo_dir}/notebooks")
+    print("Colab setup done:", repo_dir)
+else:
+    print("Running locally, no setup needed.")
 
 # %%
 import json
