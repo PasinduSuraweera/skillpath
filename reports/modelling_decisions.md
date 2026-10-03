@@ -5,8 +5,8 @@ Stages 6 and 7, prepared for Progress Evaluation 2.
 
 Companion to `preprocessing_decisions.md` (Stages 3–4). Every number below comes from
 `scripts/run_models.py` or `scripts/tune_models.py` and is recorded in
-`reports/model_experiments.csv`; the executed notebooks are `notebooks/04_modelling.py`
-and `notebooks/05_optimization.py`.
+`reports/model_experiments.csv`; the executed notebook is
+`notebooks/04_modelling_and_optimisation.py` (Part 1 is Stage 6, Part 2 is Stage 7).
 
 Data: Stack Overflow Annual Developer Survey 2025, ODbL v1.0.
 
