@@ -5,8 +5,9 @@
 Reads the reference datasets written by build_dataset.py and the final model's
 per-class test results written by finalise_model.py, and stores only group
 summaries (AI exposure per role, salary quantiles per peer group with 30+
-people, per-role reliability). No respondent-level row reaches the artifact, so
-the deployed app does not need data/ at all.
+people, per-role reliability, distinctive technologies per role from the
+training split). No respondent-level row reaches the artifact, so the deployed
+app does not need data/ at all.
 """
 from __future__ import annotations
 
@@ -22,8 +23,9 @@ def main():
     ai_ref = pd.read_parquet(C.REFERENCE_DIR / "ai_exposure_role_cohort.parquet")
     salary_ref = pd.read_parquet(C.REFERENCE_DIR / "salary_reference.parquet")
     per_class = pd.read_csv(C.REPORTS_DIR / "stage7_test_per_class.csv")
+    train = pd.read_parquet(C.PROCESSED_DIR / "train.parquet")
 
-    tables = insights.build_tables(ai_ref, salary_ref, per_class)
+    tables = insights.build_tables(ai_ref, salary_ref, per_class, train)
     insights.INSIGHTS_JSON.write_text(json.dumps(tables, indent=1, ensure_ascii=False))
 
     groups = tables["salary"]["groups"]
@@ -32,6 +34,8 @@ def main():
     print(f"  salary peer groups with {C.MIN_PEER_N}+ people: "
           + ", ".join(f"{k.split(' x experience')[0]} {len(v)}" for k, v in groups.items()))
     low = [C.JOB_ROLE_LABEL[k] for k, v in tables["roles"].items() if v["low_confidence"]]
+    skills = tables["skills"]["technologies"]
+    print(f"  skill gap: {sum(map(len, skills.values()))} distinctive technologies across {len(skills)} job roles")
     print(f"  low-confidence roles (test recall < {insights.LOW_CONFIDENCE_RECALL}): {', '.join(low)}")
 
 

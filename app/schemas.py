@@ -164,6 +164,21 @@ class SalaryBenchmark(BaseModel):
     peer_group: str | None = Field(None, description="Plain-English description of the peer group")
 
 
+class SkillSuggestion(BaseModel):
+    technology: str
+    area: str = Field(description="Technology area (block name)")
+    share_pct: float = Field(description="% of people in this role who used it in the past year")
+    lift: float = Field(description="How many times more common it is in this role than across all roles")
+    wanted: bool = Field(description="The user already listed it as something they want to learn")
+
+
+class SkillGap(BaseModel):
+    role_n: int = Field(description="Training respondents in this role")
+    typical_count: int = Field(description="Distinctive technologies stored for this role")
+    matched: list[str] = Field(description="Distinctive technologies the user already has")
+    missing: list[SkillSuggestion] = Field(description="Most distinctive ones the user has not used yet")
+
+
 class RoleRecommendation(BaseModel):
     rank: int
     job_role: str = Field(description="Survey DevType value (model class)")
@@ -174,6 +189,7 @@ class RoleRecommendation(BaseModel):
     low_confidence: bool = Field(description="Model rarely identifies this role correctly (test recall < 0.10)")
     ai_outlook: AIOutlook
     salary: SalaryBenchmark
+    skill_gap: SkillGap
 
 
 class FamilyRecommendation(BaseModel):
@@ -181,9 +197,17 @@ class FamilyRecommendation(BaseModel):
     probability: float = Field(description="Sum of the job-role probabilities in this family")
 
 
+class RankedRole(BaseModel):
+    job_role: str
+    label: str
+    family: str
+    probability: float
+
+
 class Recommendation(BaseModel):
     roles: list[RoleRecommendation]
     families: list[FamilyRecommendation]
+    ranking: list[RankedRole] = Field(description="All 20 job roles, most likely first")
     notes: list[str] = Field(description="Caveats to show with the result")
     profile: dict = Field(description="What the model used: region, experience band, answered sections")
     model: dict = Field(description="Final model name and its held-out test performance")

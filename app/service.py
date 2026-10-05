@@ -62,12 +62,16 @@ class Recommender:
                 "ai_outlook": insights.ai_outlook(self.tables, job),
                 "salary": insights.salary_benchmark(self.tables, job, profile.get("country"),
                                                     profile.get("work_exp")),
+                "skill_gap": insights.skill_gap(self.tables, job, profile.get("tech")),
             })
 
         answered = [b for b, a in (profile.get("tech") or {}).items() if a.get("have") or a.get("want") or a.get("none")]
         return {
             "roles": roles,
             "families": targets.top_k_families(proba, classes, k=TOP_K),
+            # every job role, so the frontend can compare two answers ("what if")
+            "ranking": [{k: r[k] for k in ("job_role", "label", "family", "probability")}
+                        for r in targets.top_k(proba, classes, k=len(classes))],
             "notes": self._notes(roles, answered),
             "profile": {
                 "region": insights.region_of(profile.get("country")),

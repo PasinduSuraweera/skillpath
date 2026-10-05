@@ -1,0 +1,12 @@
+/* Print / save as PDF: only the results are printed, without buttons. */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  .avoid-break {
+    break-inside: avoid;
+  }
+  @page {
+    margin: 12mm;
+  }
+}
