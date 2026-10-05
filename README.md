@@ -7,8 +7,8 @@ AI / ML Engineer). Each job role belongs to one of 12 role families; a family's 
 sum of its job roles' probabilities (`skillpath.targets`), so one model gives the top-3 job roles
 and the top families.
 
-Status: **Stages 3-4 (EDA, preprocessing), Stages 6-7 (modelling, optimisation) and Stage 9
-(backend API) complete.** Next: the frontend (Stage 10).
+Status: **Stages 3-4 (EDA, preprocessing), Stages 6-7 (modelling, optimisation), Stage 9
+(backend API) and Stage 10 (web app) complete.** Next: testing write-up, report and presentation.
 
 ## Result
 
@@ -51,7 +51,7 @@ skillpath/
 │   ├── targets.py            job role -> family probabilities, top-3 recommendation helpers
 │   ├── modelling.py          Stage 6-7: candidates, metrics, resampling, experiment runner
 │   ├── profile.py            web API contract: JSON profile <-> survey-format row
-│   ├── insights.py           AI outlook and salary benchmark lookups for the web app
+│   ├── insights.py           AI outlook, salary benchmark and skill-gap lookups for the web app
 │   ├── viz.py                chart style
 │   └── resources/country_region.csv
 ├── scripts/
@@ -63,6 +63,7 @@ skillpath/
 │   ├── build_report_pdf.py   rebuilds the technical report PDF from the result files
 │   └── run_notebooks.sh      executes the notebooks and exports HTML copies
 ├── app/                      Stage 9 web API (FastAPI): main.py, schemas.py, service.py
+├── frontend/                 Stage 10 web app (React + TypeScript + Vite + MUI)
 ├── notebooks/                01 data understanding, 02 EDA, 03 preprocessing,
 │                             04 modelling + optimisation (Stage 6 and 7 in one),
 │                             06 Evaluation 2 walkthrough (Stages 6-8)
@@ -76,7 +77,7 @@ skillpath/
 │   ├── model_card.json       what it is, how it scores, what it must not be used for
 │   ├── preprocessor_core.joblib, feature_names_core.json
 │   ├── options.json          every valid form value, for building the web form
-│   └── insights.json         AI outlook, salary peer groups, per-role reliability (summaries only)
+│   └── insights.json         AI outlook, salary peer groups, role reliability, skill gap (summaries only)
 ├── reports/
 │   ├── modelling_decisions.md       Stages 6-7: results, experiments + viva Q&A  <- start here
 │   ├── preprocessing_decisions.md   Stages 3-4: every decision with evidence + viva Q&A
@@ -219,13 +220,13 @@ uvicorn app.main:app --reload        # then open http://127.0.0.1:8000/docs to t
 |---|---|
 | `GET /api/health` | the service is up and the model is loaded |
 | `GET /api/options` | every valid answer (`artifacts/options.json`); the form is built from it |
-| `POST /api/predict` | profile in; top-3 job roles, top-3 families, AI outlook and salary benchmark out |
+| `POST /api/predict` | profile in; top-3 job roles with AI outlook, salary and skill gap, top-3 families, all 20 roles ranked |
 
 ```
 app/main.py      FastAPI app: loads the model once at startup, 3 endpoints, readable 422 errors
 app/schemas.py   request validation against options.json, response models (shown in /docs)
 app/service.py   profile -> profile_to_frame() -> model.joblib -> top-3 + insights + caveats
-src/skillpath/insights.py   AI outlook per job role, salary peer-group fallback, low-confidence flag
+src/skillpath/insights.py   AI outlook per job role, salary peer-group fallback, skill gap, low-confidence flag
 ```
 
 Request (every field optional; a skipped field is "unknown", `"none": true` is "I don't use any"):
@@ -238,8 +239,13 @@ Request (every field optional; a skipped field is "unknown", `"none": true` is "
 
 Each of the three roles in the response carries its probability, family, description, a
 `low_confidence` flag, the role's **AI outlook** (AI Exposure Index now and expected, % who see AI
-as a threat, with the all-roles average) and a **salary benchmark** (median and interquartile
-range of the most specific peer group with 30+ people, and which group that was).
+as a threat, with the all-roles average), a **salary benchmark** (median and interquartile
+range of the most specific peer group with 30+ people, and which group that was) and a **skill
+gap**: up to five of the role's distinctive technologies the user has not used yet. Distinctive
+means used by at least 20% of the role (and 10+ people) and at least 1.1 times as often as across
+all roles, ranked by share x log2(lift), from the training split only; AI models and Stack
+Overflow tags are left out because they are not skills to learn. `ranking` lists all 20 roles so
+the web app can compare two sets of answers.
 
 How the backend stays faithful to training:
 
@@ -258,6 +264,55 @@ How the backend stays faithful to training:
 * **Insights exclude test respondents** and contain group summaries only; the deployed app needs
   `artifacts/` and the package, not `data/`. No user input is stored or logged.
 * Pin the scikit-learn version the model was saved with; the service logs a warning if it differs.
+
+## Web app (Stage 10)
+
+A step-by-step form (About you, Technologies, AI usage) and a results page, in React +
+TypeScript with Material UI. It runs as a second server next to the API; Vite forwards `/api`
+calls to uvicorn, so the backend needs no CORS setup. Node.js 20 or newer is needed once, for
+`npm install`.
+
+```bash
+# terminal 1, project root
+source venv/bin/activate
+uvicorn app.main:app --reload
+
+# terminal 2
+cd frontend
+npm install                          # first time only
+npm run dev                          # then open http://localhost:5173
+```
+
+`npm run build` type-checks and builds to `frontend/dist/` (git-ignored); `npm run preview`
+serves that build on the same port with the same `/api` forwarding. To point the app at an API
+on another address, set `SKILLPATH_API`, e.g. `SKILLPATH_API=http://127.0.0.1:8001 npm run dev`.
+
+What the app does:
+
+* **Form built from `GET /api/options`**, so it only offers values the model was trained on.
+  Every question is optional, as in the survey. Each technology area has "used in the past
+  year", "want to work with next year" and "I don't use any" (none for Stack Overflow tags,
+  which had no such question).
+* **Validation in two layers.** The browser checks the same rules as the API (years 0-60,
+  country from the list, no ticking 90%+ of a list) before sending. Any 422 from the API is
+  shown on the field it names and the form jumps to that step.
+* **Results:** three role cards (match %, description, low-confidence badge, AI outlook against
+  the all-roles average, salary median and middle half with the peer group it came from, and the
+  skill gap); career families; the API's caveat notes; all 20 roles; model accuracy and the ODbL
+  attribution.
+* **What if...?** Press + next to a suggested skill, or "Change answers", and the app re-runs and
+  shows a before/after table of the job roles with the changes listed.
+* **Print / save as PDF** prints only the results, always in light colours (also for Ctrl/Cmd+P
+  in dark mode). **Dark mode** follows the system setting; the header button switches it.
+* **Try an example:** four sample profiles for the demo (Sri Lankan CS undergrad, Data/ML-leaning
+  graduate, Mobile developer, Career switcher), defined in `frontend/src/samples.ts`.
+
+```
+frontend/src/api/        types mirroring app/schemas.py, fetch client (422 -> field errors)
+frontend/src/form.ts     form state <-> API profile, client validation, what-if differences
+frontend/src/questions.ts  question wording from the 2025 questionnaire
+frontend/src/components/   wizard steps, role card, what-if panel, results page
+```
 
 ## Data licence and attribution
 

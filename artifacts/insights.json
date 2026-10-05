@@ -3120,9 +3120,1522 @@
   }
  },
  "low_confidence_recall": 0.1,
+ "skills": {
+  "role_n": {
+   "Developer, full-stack": 7279,
+   "Developer, back-end": 3750,
+   "Developer, desktop or enterprise applications": 1187,
+   "Developer, front-end": 1120,
+   "Developer, embedded applications or devices": 771,
+   "Developer, mobile": 739,
+   "DevOps engineer or professional": 645,
+   "Data engineer": 451,
+   "AI/ML engineer": 349,
+   "Data scientist": 349,
+   "System administrator": 272,
+   "Developer, game or graphics": 262,
+   "Cloud infrastructure engineer": 238,
+   "Cybersecurity or InfoSec professional": 220,
+   "Developer, QA or test": 199,
+   "Data or business analyst": 186,
+   "Applied scientist": 179,
+   "Developer, AI apps or physical AI": 116,
+   "Database administrator or engineer": 98,
+   "UX, Research Ops or UI design professional": 47
+  },
+  "technologies": {
+   "AI/ML engineer": [
+    {
+     "technology": "Jupyter Notebook/JupyterLab",
+     "area": "DevEnvs",
+     "share_pct": 53.0,
+     "lift": 5.2
+    },
+    {
+     "technology": "FastAPI",
+     "area": "Webframe",
+     "share_pct": 43.3,
+     "lift": 3.73
+    },
+    {
+     "technology": "Python",
+     "area": "Language",
+     "share_pct": 94.3,
+     "lift": 1.72
+    },
+    {
+     "technology": "Pip",
+     "area": "Platform",
+     "share_pct": 67.8,
+     "lift": 2.11
+    },
+    {
+     "technology": "Poetry",
+     "area": "Platform",
+     "share_pct": 24.8,
+     "lift": 3.44
+    },
+    {
+     "technology": "PyCharm",
+     "area": "DevEnvs",
+     "share_pct": 28.9,
+     "lift": 2.38
+    },
+    {
+     "technology": "Flask",
+     "area": "Webframe",
+     "share_pct": 24.1,
+     "lift": 2.24
+    },
+    {
+     "technology": "Google Cloud",
+     "area": "Platform",
+     "share_pct": 34.2,
+     "lift": 1.75
+    },
+    {
+     "technology": "Cursor",
+     "area": "DevEnvs",
+     "share_pct": 28.6,
+     "lift": 1.83
+    },
+    {
+     "technology": "Visual Studio Code",
+     "area": "DevEnvs",
+     "share_pct": 79.5,
+     "lift": 1.23
+    },
+    {
+     "technology": "Docker",
+     "area": "Platform",
+     "share_pct": 70.2,
+     "lift": 1.2
+    },
+    {
+     "technology": "Amazon Web Services (AWS)",
+     "area": "Platform",
+     "share_pct": 46.0,
+     "lift": 1.27
+    },
+    {
+     "technology": "Vim",
+     "area": "DevEnvs",
+     "share_pct": 28.9,
+     "lift": 1.41
+    },
+    {
+     "technology": "C++",
+     "area": "Language",
+     "share_pct": 28.7,
+     "lift": 1.38
+    },
+    {
+     "technology": "Make",
+     "area": "Platform",
+     "share_pct": 24.5,
+     "lift": 1.38
+    }
+   ],
+   "Applied scientist": [
+    {
+     "technology": "MATLAB",
+     "area": "Language",
+     "share_pct": 24.6,
+     "lift": 9.09
+    },
+    {
+     "technology": "R",
+     "area": "Language",
+     "share_pct": 24.6,
+     "lift": 6.6
+    },
+    {
+     "technology": "Jupyter Notebook/JupyterLab",
+     "area": "DevEnvs",
+     "share_pct": 31.0,
+     "lift": 3.04
+    },
+    {
+     "technology": "Python",
+     "area": "Language",
+     "share_pct": 82.1,
+     "lift": 1.5
+    },
+    {
+     "technology": "C++",
+     "area": "Language",
+     "share_pct": 39.1,
+     "lift": 1.88
+    },
+    {
+     "technology": "C",
+     "area": "Language",
+     "share_pct": 36.3,
+     "lift": 1.95
+    },
+    {
+     "technology": "Bash/Shell (all shells)",
+     "area": "Language",
+     "share_pct": 56.4,
+     "lift": 1.17
+    },
+    {
+     "technology": "Pip",
+     "area": "Platform",
+     "share_pct": 38.6,
+     "lift": 1.2
+    },
+    {
+     "technology": "Make",
+     "area": "Platform",
+     "share_pct": 20.5,
+     "lift": 1.15
+    },
+    {
+     "technology": "Vim",
+     "area": "DevEnvs",
+     "share_pct": 22.6,
+     "lift": 1.11
+    }
+   ],
+   "Cloud infrastructure engineer": [
+    {
+     "technology": "Terraform",
+     "area": "Platform",
+     "share_pct": 65.0,
+     "lift": 4.37
+    },
+    {
+     "technology": "Kubernetes",
+     "area": "Platform",
+     "share_pct": 67.5,
+     "lift": 2.83
+    },
+    {
+     "technology": "Go",
+     "area": "Language",
+     "share_pct": 53.4,
+     "lift": 3.15
+    },
+    {
+     "technology": "Prometheus",
+     "area": "Platform",
+     "share_pct": 38.9,
+     "lift": 4.04
+    },
+    {
+     "technology": "Ansible",
+     "area": "Platform",
+     "share_pct": 35.9,
+     "lift": 3.76
+    },
+    {
+     "technology": "Podman",
+     "area": "Platform",
+     "share_pct": 31.2,
+     "lift": 3.57
+    },
+    {
+     "technology": "Bash/Shell (all shells)",
+     "area": "Language",
+     "share_pct": 76.1,
+     "lift": 1.57
+    },
+    {
+     "technology": "Pip",
+     "area": "Platform",
+     "share_pct": 57.3,
+     "lift": 1.79
+    },
+    {
+     "technology": "Dynamodb",
+     "area": "Database",
+     "share_pct": 27.7,
+     "lift": 3.27
+    },
+    {
+     "technology": "APT",
+     "area": "Platform",
+     "share_pct": 35.0,
+     "lift": 2.47
+    },
+    {
+     "technology": "Amazon Web Services (AWS)",
+     "area": "Platform",
+     "share_pct": 60.3,
+     "lift": 1.67
+    },
+    {
+     "technology": "Docker",
+     "area": "Platform",
+     "share_pct": 83.8,
+     "lift": 1.43
+    },
+    {
+     "technology": "Make",
+     "area": "Platform",
+     "share_pct": 37.2,
+     "lift": 2.1
+    },
+    {
+     "technology": "Vim",
+     "area": "DevEnvs",
+     "share_pct": 40.0,
+     "lift": 1.96
+    },
+    {
+     "technology": "PostgreSQL",
+     "area": "Database",
+     "share_pct": 69.6,
+     "lift": 1.41
+    }
+   ],
+   "Cybersecurity or InfoSec professional": [
+    {
+     "technology": "C",
+     "area": "Language",
+     "share_pct": 44.5,
+     "lift": 2.39
+    },
+    {
+     "technology": "Python",
+     "area": "Language",
+     "share_pct": 85.9,
+     "lift": 1.57
+    },
+    {
+     "technology": "Assembly",
+     "area": "Language",
+     "share_pct": 24.1,
+     "lift": 4.43
+    },
+    {
+     "technology": "Pip",
+     "area": "Platform",
+     "share_pct": 56.5,
+     "lift": 1.76
+    },
+    {
+     "technology": "Rust",
+     "area": "Language",
+     "share_pct": 32.3,
+     "lift": 2.4
+    },
+    {
+     "technology": "PowerShell",
+     "area": "Language",
+     "share_pct": 43.6,
+     "lift": 1.9
+    },
+    {
+     "technology": "Flask",
+     "area": "Webframe",
+     "share_pct": 28.2,
+     "lift": 2.62
+    },
+    {
+     "technology": "Bash/Shell (all shells)",
+     "area": "Language",
+     "share_pct": 70.0,
+     "lift": 1.45
+    },
+    {
+     "technology": "Vim",
+     "area": "DevEnvs",
+     "share_pct": 39.1,
+     "lift": 1.92
+    },
+    {
+     "technology": "Make",
+     "area": "Platform",
+     "share_pct": 35.6,
+     "lift": 2.01
+    },
+    {
+     "technology": "APT",
+     "area": "Platform",
+     "share_pct": 30.1,
+     "lift": 2.12
+    },
+    {
+     "technology": "Cargo",
+     "area": "Platform",
+     "share_pct": 25.0,
+     "lift": 2.41
+    },
+    {
+     "technology": "Django",
+     "area": "Webframe",
+     "share_pct": 24.3,
+     "lift": 2.43
+    },
+    {
+     "technology": "Ansible",
+     "area": "Platform",
+     "share_pct": 23.1,
+     "lift": 2.42
+    },
+    {
+     "technology": "Go",
+     "area": "Language",
+     "share_pct": 31.4,
+     "lift": 1.85
+    }
+   ],
+   "Data engineer": [
+    {
+     "technology": "Jupyter Notebook/JupyterLab",
+     "area": "DevEnvs",
+     "share_pct": 37.0,
+     "lift": 3.63
+    },
+    {
+     "technology": "Python",
+     "area": "Language",
+     "share_pct": 91.6,
+     "lift": 1.67
+    },
+    {
+     "technology": "Databricks SQL",
+     "area": "Database",
+     "share_pct": 20.7,
+     "lift": 7.81
+    },
+    {
+     "technology": "Snowflake",
+     "area": "Database",
+     "share_pct": 22.1,
+     "lift": 6.36
+    },
+    {
+     "technology": "BigQuery",
+     "area": "Database",
+     "share_pct": 24.7,
+     "lift": 4.47
+    },
+    {
+     "technology": "Pip",
+     "area": "Platform",
+     "share_pct": 56.0,
+     "lift": 1.75
+    },
+    {
+     "technology": "SQL",
+     "area": "Language",
+     "share_pct": 81.6,
+     "lift": 1.35
+    },
+    {
+     "technology": "PyCharm",
+     "area": "DevEnvs",
+     "share_pct": 28.4,
+     "lift": 2.34
+    },
+    {
+     "technology": "Poetry",
+     "area": "Platform",
+     "share_pct": 20.0,
+     "lift": 2.78
+    },
+    {
+     "technology": "Terraform",
+     "area": "Platform",
+     "share_pct": 29.0,
+     "lift": 1.95
+    },
+    {
+     "technology": "FastAPI",
+     "area": "Webframe",
+     "share_pct": 24.6,
+     "lift": 2.12
+    },
+    {
+     "technology": "Amazon Web Services (AWS)",
+     "area": "Platform",
+     "share_pct": 48.4,
+     "lift": 1.34
+    },
+    {
+     "technology": "PostgreSQL",
+     "area": "Database",
+     "share_pct": 61.8,
+     "lift": 1.25
+    },
+    {
+     "technology": "Flask",
+     "area": "Webframe",
+     "share_pct": 20.9,
+     "lift": 1.94
+    },
+    {
+     "technology": "Microsoft SQL Server",
+     "area": "Database",
+     "share_pct": 38.2,
+     "lift": 1.43
+    }
+   ],
+   "Data or business analyst": [
+    {
+     "technology": "R",
+     "area": "Language",
+     "share_pct": 28.0,
+     "lift": 7.51
+    },
+    {
+     "technology": "Jupyter Notebook/JupyterLab",
+     "area": "DevEnvs",
+     "share_pct": 35.3,
+     "lift": 3.46
+    },
+    {
+     "technology": "VBA",
+     "area": "Language",
+     "share_pct": 21.0,
+     "lift": 5.94
+    },
+    {
+     "technology": "Microsoft SQL Server",
+     "area": "Database",
+     "share_pct": 47.5,
+     "lift": 1.78
+    },
+    {
+     "technology": "Python",
+     "area": "Language",
+     "share_pct": 77.4,
+     "lift": 1.41
+    },
+    {
+     "technology": "SQL",
+     "area": "Language",
+     "share_pct": 72.6,
+     "lift": 1.2
+    },
+    {
+     "technology": "Notepad++",
+     "area": "DevEnvs",
+     "share_pct": 30.0,
+     "lift": 1.28
+    },
+    {
+     "technology": "PowerShell",
+     "area": "Language",
+     "share_pct": 29.0,
+     "lift": 1.26
+    },
+    {
+     "technology": "Google Cloud",
+     "area": "Platform",
+     "share_pct": 22.0,
+     "lift": 1.13
+    }
+   ],
+   "Data scientist": [
+    {
+     "technology": "R",
+     "area": "Language",
+     "share_pct": 41.3,
+     "lift": 11.09
+    },
+    {
+     "technology": "Jupyter Notebook/JupyterLab",
+     "area": "DevEnvs",
+     "share_pct": 52.9,
+     "lift": 5.19
+    },
+    {
+     "technology": "Python",
+     "area": "Language",
+     "share_pct": 90.0,
+     "lift": 1.64
+    },
+    {
+     "technology": "Pip",
+     "area": "Platform",
+     "share_pct": 48.5,
+     "lift": 1.51
+    },
+    {
+     "technology": "Flask",
+     "area": "Webframe",
+     "share_pct": 22.1,
+     "lift": 2.05
+    },
+    {
+     "technology": "PyCharm",
+     "area": "DevEnvs",
+     "share_pct": 22.2,
+     "lift": 1.83
+    },
+    {
+     "technology": "Microsoft Azure",
+     "area": "Platform",
+     "share_pct": 29.5,
+     "lift": 1.4
+    },
+    {
+     "technology": "Google Cloud",
+     "area": "Platform",
+     "share_pct": 24.1,
+     "lift": 1.23
+    },
+    {
+     "technology": "Microsoft SQL Server",
+     "area": "Database",
+     "share_pct": 30.1,
+     "lift": 1.13
+    },
+    {
+     "technology": "Notepad++",
+     "area": "DevEnvs",
+     "share_pct": 26.1,
+     "lift": 1.12
+    }
+   ],
+   "Database administrator or engineer": [
+    {
+     "technology": "Microsoft SQL Server",
+     "area": "Database",
+     "share_pct": 54.6,
+     "lift": 2.05
+    },
+    {
+     "technology": "Oracle",
+     "area": "Database",
+     "share_pct": 29.9,
+     "lift": 3.28
+    },
+    {
+     "technology": "SQL",
+     "area": "Language",
+     "share_pct": 86.7,
+     "lift": 1.44
+    },
+    {
+     "technology": "PowerShell",
+     "area": "Language",
+     "share_pct": 37.8,
+     "lift": 1.64
+    },
+    {
+     "technology": "Notepad++",
+     "area": "DevEnvs",
+     "share_pct": 33.3,
+     "lift": 1.43
+    },
+    {
+     "technology": "Microsoft Azure",
+     "area": "Platform",
+     "share_pct": 27.2,
+     "lift": 1.29
+    },
+    {
+     "technology": "MariaDB",
+     "area": "Database",
+     "share_pct": 23.7,
+     "lift": 1.21
+    }
+   ],
+   "DevOps engineer or professional": [
+    {
+     "technology": "Ansible",
+     "area": "Platform",
+     "share_pct": 49.1,
+     "lift": 5.14
+    },
+    {
+     "technology": "Terraform",
+     "area": "Platform",
+     "share_pct": 56.6,
+     "lift": 3.81
+    },
+    {
+     "technology": "Kubernetes",
+     "area": "Platform",
+     "share_pct": 60.9,
+     "lift": 2.55
+    },
+    {
+     "technology": "Prometheus",
+     "area": "Platform",
+     "share_pct": 39.4,
+     "lift": 4.1
+    },
+    {
+     "technology": "Go",
+     "area": "Language",
+     "share_pct": 41.6,
+     "lift": 2.45
+    },
+    {
+     "technology": "Bash/Shell (all shells)",
+     "area": "Language",
+     "share_pct": 77.5,
+     "lift": 1.6
+    },
+    {
+     "technology": "Docker",
+     "area": "Platform",
+     "share_pct": 87.8,
+     "lift": 1.49
+    },
+    {
+     "technology": "Pip",
+     "area": "Platform",
+     "share_pct": 57.9,
+     "lift": 1.8
+    },
+    {
+     "technology": "APT",
+     "area": "Platform",
+     "share_pct": 35.9,
+     "lift": 2.53
+    },
+    {
+     "technology": "Python",
+     "area": "Language",
+     "share_pct": 76.6,
+     "lift": 1.4
+    },
+    {
+     "technology": "Podman",
+     "area": "Platform",
+     "share_pct": 24.6,
+     "lift": 2.82
+    },
+    {
+     "technology": "Vim",
+     "area": "DevEnvs",
+     "share_pct": 38.9,
+     "lift": 1.9
+    },
+    {
+     "technology": "Make",
+     "area": "Platform",
+     "share_pct": 35.5,
+     "lift": 2.0
+    },
+    {
+     "technology": "Amazon Web Services (AWS)",
+     "area": "Platform",
+     "share_pct": 55.2,
+     "lift": 1.53
+    },
+    {
+     "technology": "Elasticsearch",
+     "area": "Database",
+     "share_pct": 29.1,
+     "lift": 2.02
+    }
+   ],
+   "Developer, AI apps or physical AI": [
+    {
+     "technology": "FastAPI",
+     "area": "Webframe",
+     "share_pct": 30.2,
+     "lift": 2.61
+    },
+    {
+     "technology": "Python",
+     "area": "Language",
+     "share_pct": 74.1,
+     "lift": 1.35
+    },
+    {
+     "technology": "Pip",
+     "area": "Platform",
+     "share_pct": 49.5,
+     "lift": 1.54
+    },
+    {
+     "technology": "Firebase",
+     "area": "Platform",
+     "share_pct": 23.4,
+     "lift": 2.27
+    },
+    {
+     "technology": "PyCharm",
+     "area": "DevEnvs",
+     "share_pct": 25.0,
+     "lift": 2.06
+    },
+    {
+     "technology": "Google Cloud",
+     "area": "Platform",
+     "share_pct": 32.7,
+     "lift": 1.67
+    },
+    {
+     "technology": "MongoDB",
+     "area": "Database",
+     "share_pct": 33.0,
+     "lift": 1.59
+    },
+    {
+     "technology": "Flask",
+     "area": "Webframe",
+     "share_pct": 21.7,
+     "lift": 2.01
+    },
+    {
+     "technology": "C++",
+     "area": "Language",
+     "share_pct": 32.8,
+     "lift": 1.58
+    },
+    {
+     "technology": "Cursor",
+     "area": "DevEnvs",
+     "share_pct": 25.9,
+     "lift": 1.66
+    },
+    {
+     "technology": "PostgreSQL",
+     "area": "Database",
+     "share_pct": 59.4,
+     "lift": 1.2
+    },
+    {
+     "technology": "Amazon Web Services (AWS)",
+     "area": "Platform",
+     "share_pct": 44.9,
+     "lift": 1.24
+    },
+    {
+     "technology": "Redis",
+     "area": "Database",
+     "share_pct": 32.1,
+     "lift": 1.28
+    },
+    {
+     "technology": "Kubernetes",
+     "area": "Platform",
+     "share_pct": 29.9,
+     "lift": 1.25
+    },
+    {
+     "technology": "C",
+     "area": "Language",
+     "share_pct": 24.1,
+     "lift": 1.3
+    }
+   ],
+   "Developer, QA or test": [
+    {
+     "technology": "Python",
+     "area": "Language",
+     "share_pct": 67.3,
+     "lift": 1.23
+    },
+    {
+     "technology": "PyCharm",
+     "area": "DevEnvs",
+     "share_pct": 21.4,
+     "lift": 1.76
+    },
+    {
+     "technology": "Notepad++",
+     "area": "DevEnvs",
+     "share_pct": 30.7,
+     "lift": 1.31
+    },
+    {
+     "technology": "IntelliJ IDEA",
+     "area": "DevEnvs",
+     "share_pct": 30.2,
+     "lift": 1.27
+    },
+    {
+     "technology": "Microsoft SQL Server",
+     "area": "Database",
+     "share_pct": 33.2,
+     "lift": 1.24
+    },
+    {
+     "technology": "PowerShell",
+     "area": "Language",
+     "share_pct": 27.1,
+     "lift": 1.18
+    }
+   ],
+   "Developer, back-end": [
+    {
+     "technology": "Kubernetes",
+     "area": "Platform",
+     "share_pct": 38.5,
+     "lift": 1.61
+    },
+    {
+     "technology": "Redis",
+     "area": "Database",
+     "share_pct": 37.8,
+     "lift": 1.51
+    },
+    {
+     "technology": "Docker",
+     "area": "Platform",
+     "share_pct": 71.4,
+     "lift": 1.21
+    },
+    {
+     "technology": "IntelliJ IDEA",
+     "area": "DevEnvs",
+     "share_pct": 34.7,
+     "lift": 1.46
+    },
+    {
+     "technology": "Spring Boot",
+     "area": "Webframe",
+     "share_pct": 21.0,
+     "lift": 1.71
+    },
+    {
+     "technology": "PostgreSQL",
+     "area": "Database",
+     "share_pct": 59.6,
+     "lift": 1.21
+    },
+    {
+     "technology": "Amazon Web Services (AWS)",
+     "area": "Platform",
+     "share_pct": 45.7,
+     "lift": 1.27
+    },
+    {
+     "technology": "Java",
+     "area": "Language",
+     "share_pct": 36.6,
+     "lift": 1.27
+    },
+    {
+     "technology": "Maven (build tool)",
+     "area": "Platform",
+     "share_pct": 20.4,
+     "lift": 1.54
+    },
+    {
+     "technology": "Go",
+     "area": "Language",
+     "share_pct": 24.2,
+     "lift": 1.43
+    },
+    {
+     "technology": "Elasticsearch",
+     "area": "Database",
+     "share_pct": 21.1,
+     "lift": 1.46
+    },
+    {
+     "technology": "Terraform",
+     "area": "Platform",
+     "share_pct": 21.0,
+     "lift": 1.41
+    },
+    {
+     "technology": "Make",
+     "area": "Platform",
+     "share_pct": 21.4,
+     "lift": 1.21
+    },
+    {
+     "technology": "Homebrew",
+     "area": "Platform",
+     "share_pct": 24.3,
+     "lift": 1.15
+    }
+   ],
+   "Developer, desktop or enterprise applications": [
+    {
+     "technology": "C++",
+     "area": "Language",
+     "share_pct": 43.7,
+     "lift": 2.11
+    },
+    {
+     "technology": "Visual Studio",
+     "area": "DevEnvs",
+     "share_pct": 46.2,
+     "lift": 1.88
+    },
+    {
+     "technology": "C#",
+     "area": "Language",
+     "share_pct": 46.1,
+     "lift": 1.63
+    },
+    {
+     "technology": "C",
+     "area": "Language",
+     "share_pct": 30.4,
+     "lift": 1.63
+    },
+    {
+     "technology": "Microsoft SQL Server",
+     "area": "Database",
+     "share_pct": 37.9,
+     "lift": 1.42
+    },
+    {
+     "technology": "Notepad++",
+     "area": "DevEnvs",
+     "share_pct": 33.6,
+     "lift": 1.44
+    },
+    {
+     "technology": "PowerShell",
+     "area": "Language",
+     "share_pct": 31.0,
+     "lift": 1.35
+    },
+    {
+     "technology": "NuGet",
+     "area": "Platform",
+     "share_pct": 22.6,
+     "lift": 1.46
+    }
+   ],
+   "Developer, embedded applications or devices": [
+    {
+     "technology": "C",
+     "area": "Language",
+     "share_pct": 80.2,
+     "lift": 4.31
+    },
+    {
+     "technology": "C++",
+     "area": "Language",
+     "share_pct": 73.3,
+     "lift": 3.53
+    },
+    {
+     "technology": "Assembly",
+     "area": "Language",
+     "share_pct": 28.4,
+     "lift": 5.22
+    },
+    {
+     "technology": "Ninja",
+     "area": "Platform",
+     "share_pct": 22.0,
+     "lift": 5.87
+    },
+    {
+     "technology": "Python",
+     "area": "Language",
+     "share_pct": 78.7,
+     "lift": 1.44
+    },
+    {
+     "technology": "Make",
+     "area": "Platform",
+     "share_pct": 35.4,
+     "lift": 2.0
+    },
+    {
+     "technology": "Bash/Shell (all shells)",
+     "area": "Language",
+     "share_pct": 66.9,
+     "lift": 1.38
+    },
+    {
+     "technology": "Rust",
+     "area": "Language",
+     "share_pct": 22.3,
+     "lift": 1.66
+    },
+    {
+     "technology": "Vim",
+     "area": "DevEnvs",
+     "share_pct": 25.2,
+     "lift": 1.23
+    },
+    {
+     "technology": "Pip",
+     "area": "Platform",
+     "share_pct": 36.2,
+     "lift": 1.13
+    },
+    {
+     "technology": "Notepad++",
+     "area": "DevEnvs",
+     "share_pct": 27.3,
+     "lift": 1.17
+    }
+   ],
+   "Developer, front-end": [
+    {
+     "technology": "React",
+     "area": "Webframe",
+     "share_pct": 69.3,
+     "lift": 1.86
+    },
+    {
+     "technology": "TypeScript",
+     "area": "Language",
+     "share_pct": 78.5,
+     "lift": 1.7
+    },
+    {
+     "technology": "JavaScript",
+     "area": "Language",
+     "share_pct": 92.9,
+     "lift": 1.38
+    },
+    {
+     "technology": "Next.js",
+     "area": "Webframe",
+     "share_pct": 37.8,
+     "lift": 2.18
+    },
+    {
+     "technology": "HTML/CSS",
+     "area": "Language",
+     "share_pct": 85.6,
+     "lift": 1.37
+    },
+    {
+     "technology": "Vite",
+     "area": "Platform",
+     "share_pct": 40.4,
+     "lift": 1.9
+    },
+    {
+     "technology": "Node.js",
+     "area": "Webframe",
+     "share_pct": 60.3,
+     "lift": 1.53
+    },
+    {
+     "technology": "Webpack",
+     "area": "Platform",
+     "share_pct": 31.8,
+     "lift": 2.02
+    },
+    {
+     "technology": "Express",
+     "area": "Webframe",
+     "share_pct": 28.0,
+     "lift": 1.73
+    },
+    {
+     "technology": "Angular",
+     "area": "Webframe",
+     "share_pct": 24.5,
+     "lift": 1.61
+    },
+    {
+     "technology": "Yarn",
+     "area": "Platform",
+     "share_pct": 27.4,
+     "lift": 1.53
+    },
+    {
+     "technology": "Visual Studio Code",
+     "area": "DevEnvs",
+     "share_pct": 73.6,
+     "lift": 1.14
+    },
+    {
+     "technology": "Vue.js",
+     "area": "Webframe",
+     "share_pct": 22.4,
+     "lift": 1.52
+    },
+    {
+     "technology": "npm",
+     "area": "Platform",
+     "share_pct": 55.2,
+     "lift": 1.18
+    },
+    {
+     "technology": "Cursor",
+     "area": "DevEnvs",
+     "share_pct": 21.5,
+     "lift": 1.37
+    }
+   ],
+   "Developer, full-stack": [
+    {
+     "technology": "HTML/CSS",
+     "area": "Language",
+     "share_pct": 82.8,
+     "lift": 1.33
+    },
+    {
+     "technology": "JavaScript",
+     "area": "Language",
+     "share_pct": 87.1,
+     "lift": 1.29
+    },
+    {
+     "technology": "TypeScript",
+     "area": "Language",
+     "share_pct": 64.7,
+     "lift": 1.4
+    },
+    {
+     "technology": "npm",
+     "area": "Platform",
+     "share_pct": 62.6,
+     "lift": 1.34
+    },
+    {
+     "technology": "Node.js",
+     "area": "Webframe",
+     "share_pct": 54.3,
+     "lift": 1.38
+    },
+    {
+     "technology": "React",
+     "area": "Webframe",
+     "share_pct": 51.8,
+     "lift": 1.39
+    },
+    {
+     "technology": "Vite",
+     "area": "Platform",
+     "share_pct": 33.9,
+     "lift": 1.59
+    },
+    {
+     "technology": "SQL",
+     "area": "Language",
+     "share_pct": 72.0,
+     "lift": 1.19
+    },
+    {
+     "technology": "jQuery",
+     "area": "Webframe",
+     "share_pct": 30.0,
+     "lift": 1.51
+    },
+    {
+     "technology": "Webpack",
+     "area": "Platform",
+     "share_pct": 25.5,
+     "lift": 1.63
+    },
+    {
+     "technology": "PHP",
+     "area": "Language",
+     "share_pct": 27.9,
+     "lift": 1.42
+    },
+    {
+     "technology": "ASP.NET Core",
+     "area": "Webframe",
+     "share_pct": 24.2,
+     "lift": 1.49
+    },
+    {
+     "technology": "Express",
+     "area": "Webframe",
+     "share_pct": 24.0,
+     "lift": 1.48
+    },
+    {
+     "technology": "Next.js",
+     "area": "Webframe",
+     "share_pct": 24.9,
+     "lift": 1.44
+    },
+    {
+     "technology": "C#",
+     "area": "Language",
+     "share_pct": 35.9,
+     "lift": 1.27
+    }
+   ],
+   "Developer, game or graphics": [
+    {
+     "technology": "C++",
+     "area": "Language",
+     "share_pct": 67.2,
+     "lift": 3.24
+    },
+    {
+     "technology": "C#",
+     "area": "Language",
+     "share_pct": 55.3,
+     "lift": 1.96
+    },
+    {
+     "technology": "C",
+     "area": "Language",
+     "share_pct": 40.1,
+     "lift": 2.15
+    },
+    {
+     "technology": "Rider",
+     "area": "DevEnvs",
+     "share_pct": 20.6,
+     "lift": 3.35
+    },
+    {
+     "technology": "Lua",
+     "area": "Language",
+     "share_pct": 22.1,
+     "lift": 2.7
+    },
+    {
+     "technology": "Visual Studio",
+     "area": "DevEnvs",
+     "share_pct": 38.1,
+     "lift": 1.55
+    },
+    {
+     "technology": "Rust",
+     "area": "Language",
+     "share_pct": 20.6,
+     "lift": 1.53
+    }
+   ],
+   "Developer, mobile": [
+    {
+     "technology": "Swift",
+     "area": "Language",
+     "share_pct": 51.6,
+     "lift": 9.74
+    },
+    {
+     "technology": "Xcode",
+     "area": "DevEnvs",
+     "share_pct": 53.9,
+     "lift": 6.4
+    },
+    {
+     "technology": "Kotlin",
+     "area": "Language",
+     "share_pct": 57.0,
+     "lift": 5.17
+    },
+    {
+     "technology": "Android Studio",
+     "area": "DevEnvs",
+     "share_pct": 58.7,
+     "lift": 4.81
+    },
+    {
+     "technology": "Firebase",
+     "area": "Platform",
+     "share_pct": 39.6,
+     "lift": 3.84
+    },
+    {
+     "technology": "Dart",
+     "area": "Language",
+     "share_pct": 30.3,
+     "lift": 5.27
+    },
+    {
+     "technology": "Gradle",
+     "area": "Platform",
+     "share_pct": 30.6,
+     "lift": 2.65
+    },
+    {
+     "technology": "Java",
+     "area": "Language",
+     "share_pct": 41.9,
+     "lift": 1.46
+    },
+    {
+     "technology": "Homebrew",
+     "area": "Platform",
+     "share_pct": 31.9,
+     "lift": 1.51
+    },
+    {
+     "technology": "SQLite",
+     "area": "Database",
+     "share_pct": 38.7,
+     "lift": 1.23
+    },
+    {
+     "technology": "IntelliJ IDEA",
+     "area": "DevEnvs",
+     "share_pct": 28.7,
+     "lift": 1.21
+    },
+    {
+     "technology": "Google Cloud",
+     "area": "Platform",
+     "share_pct": 23.3,
+     "lift": 1.19
+    }
+   ],
+   "System administrator": [
+    {
+     "technology": "MariaDB",
+     "area": "Database",
+     "share_pct": 43.0,
+     "lift": 2.2
+    },
+    {
+     "technology": "PowerShell",
+     "area": "Language",
+     "share_pct": 45.2,
+     "lift": 1.97
+    },
+    {
+     "technology": "Ansible",
+     "area": "Platform",
+     "share_pct": 25.1,
+     "lift": 2.63
+    },
+    {
+     "technology": "Bash/Shell (all shells)",
+     "area": "Language",
+     "share_pct": 68.4,
+     "lift": 1.41
+    },
+    {
+     "technology": "APT",
+     "area": "Platform",
+     "share_pct": 30.6,
+     "lift": 2.15
+    },
+    {
+     "technology": "PHP",
+     "area": "Language",
+     "share_pct": 36.0,
+     "lift": 1.84
+    },
+    {
+     "technology": "WordPress",
+     "area": "Webframe",
+     "share_pct": 25.0,
+     "lift": 2.33
+    },
+    {
+     "technology": "Podman",
+     "area": "Platform",
+     "share_pct": 20.4,
+     "lift": 2.33
+    },
+    {
+     "technology": "Nano",
+     "area": "DevEnvs",
+     "share_pct": 21.0,
+     "lift": 2.13
+    },
+    {
+     "technology": "Microsoft SQL Server",
+     "area": "Database",
+     "share_pct": 38.4,
+     "lift": 1.44
+    },
+    {
+     "technology": "Python",
+     "area": "Language",
+     "share_pct": 64.3,
+     "lift": 1.18
+    },
+    {
+     "technology": "SQLite",
+     "area": "Database",
+     "share_pct": 40.3,
+     "lift": 1.28
+    },
+    {
+     "technology": "Vim",
+     "area": "DevEnvs",
+     "share_pct": 28.4,
+     "lift": 1.39
+    },
+    {
+     "technology": "Cloudflare",
+     "area": "Platform",
+     "share_pct": 23.1,
+     "lift": 1.48
+    },
+    {
+     "technology": "Notepad++",
+     "area": "DevEnvs",
+     "share_pct": 30.7,
+     "lift": 1.31
+    }
+   ],
+   "UX, Research Ops or UI design professional": [
+    {
+     "technology": "WordPress",
+     "area": "Webframe",
+     "share_pct": 31.0,
+     "lift": 2.88
+    },
+    {
+     "technology": "HTML/CSS",
+     "area": "Language",
+     "share_pct": 85.1,
+     "lift": 1.36
+    },
+    {
+     "technology": "Next.js",
+     "area": "Webframe",
+     "share_pct": 33.3,
+     "lift": 1.92
+    },
+    {
+     "technology": "Vue.js",
+     "area": "Webframe",
+     "share_pct": 28.6,
+     "lift": 1.94
+    },
+    {
+     "technology": "JavaScript",
+     "area": "Language",
+     "share_pct": 83.0,
+     "lift": 1.23
+    },
+    {
+     "technology": "PHP",
+     "area": "Language",
+     "share_pct": 31.9,
+     "lift": 1.63
+    },
+    {
+     "technology": "Cursor",
+     "area": "DevEnvs",
+     "share_pct": 27.3,
+     "lift": 1.74
+    },
+    {
+     "technology": "jQuery",
+     "area": "Webframe",
+     "share_pct": 31.0,
+     "lift": 1.56
+    },
+    {
+     "technology": "React",
+     "area": "Webframe",
+     "share_pct": 47.6,
+     "lift": 1.28
+    },
+    {
+     "technology": "Node.js",
+     "area": "Webframe",
+     "share_pct": 47.6,
+     "lift": 1.21
+    },
+    {
+     "technology": "Google Cloud",
+     "area": "Platform",
+     "share_pct": 25.0,
+     "lift": 1.28
+    },
+    {
+     "technology": "Yarn",
+     "area": "Platform",
+     "share_pct": 22.7,
+     "lift": 1.27
+    }
+   ]
+  }
+ },
  "sources": {
   "ai_rows": 18457,
   "salary_rows": 15545,
-  "note": "Both tables exclude the 4,615 recommender test respondents."
+  "skill_rows": 18457,
+  "note": "All tables exclude the 4,615 recommender test respondents."
  }
 }
