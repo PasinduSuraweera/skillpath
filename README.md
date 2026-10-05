@@ -57,7 +57,7 @@ skillpath/
 │   ├── build_report_pdf.py   rebuilds the technical report PDF from the result files
 │   └── run_notebooks.sh      executes the notebooks and exports HTML copies
 ├── notebooks/                01 data understanding, 02 EDA, 03 preprocessing,
-│                             04 modelling, 05 optimisation
+│                             04 modelling + optimisation (Stage 6 and 7 in one)
 │                             (.py = source, .ipynb = executed with outputs)
 ├── data/
 │   ├── raw/                  put the Stack Overflow files here (not committed, 140 MB)
