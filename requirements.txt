@@ -13,3 +13,11 @@ jupytext>=1.16
 nbconvert>=7
 ipykernel
 pytest>=8
+# Excel export in notebook 06
+xlsxwriter>=3.1
+# technical report PDF (scripts/build_report_pdf.py)
+reportlab>=4
+# web app (Stages 9-10); httpx2 is needed by FastAPI's TestClient
+fastapi>=0.115
+uvicorn[standard]>=0.30
+httpx2>=2.0

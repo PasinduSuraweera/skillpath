@@ -26,6 +26,10 @@ Top-1 macro-F1 is the metric used to *select* the model, because it penalises ig
 roles. It is not the user-facing claim: the app never shows one answer, it shows three roles
 plus the career family.
 
+**Evaluation 2 walkthrough:** `notebooks/06_evaluation2_showcase.ipynb` (or `reports/html/06_evaluation2_showcase.html`
+in a browser). It opens the processed data, then walks Stages 6-8 end to end. Running it writes an
+Excel copy of the processed data to `data/processed/excel/` (git-ignored, about 35 MB).
+
 **Read next:** `reports/modelling_decisions.md` (decisions, evidence and viva Q&A) or
 `reports/SkillPath_Stage6-8_Report.pdf` (20-page technical report).
 
@@ -57,7 +61,8 @@ skillpath/
 │   ├── build_report_pdf.py   rebuilds the technical report PDF from the result files
 │   └── run_notebooks.sh      executes the notebooks and exports HTML copies
 ├── notebooks/                01 data understanding, 02 EDA, 03 preprocessing,
-│                             04 modelling + optimisation (Stage 6 and 7 in one)
+│                             04 modelling + optimisation (Stage 6 and 7 in one),
+│                             06 Evaluation 2 walkthrough (Stages 6-8)
 │                             (.py = source, .ipynb = executed with outputs)
 ├── data/
 │   ├── raw/                  put the Stack Overflow files here (not committed, 140 MB)
