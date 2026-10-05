@@ -7,8 +7,8 @@ AI / ML Engineer). Each job role belongs to one of 12 role families; a family's 
 sum of its job roles' probabilities (`skillpath.targets`), so one model gives the top-3 job roles
 and the top families.
 
-Status: **Stages 3-4 (EDA, preprocessing) and Stages 6-7 (modelling, optimisation) complete.**
-Next: the web app (Stages 9-10).
+Status: **Stages 3-4 (EDA, preprocessing), Stages 6-7 (modelling, optimisation) and Stage 9
+(backend API) complete.** Next: the frontend (Stage 10).
 
 ## Result
 
@@ -51,6 +51,7 @@ skillpath/
 │   ├── targets.py            job role -> family probabilities, top-3 recommendation helpers
 │   ├── modelling.py          Stage 6-7: candidates, metrics, resampling, experiment runner
 │   ├── profile.py            web API contract: JSON profile <-> survey-format row
+│   ├── insights.py           AI outlook and salary benchmark lookups for the web app
 │   ├── viz.py                chart style
 │   └── resources/country_region.csv
 ├── scripts/
@@ -58,8 +59,10 @@ skillpath/
 │   ├── run_models.py         Stage 6: compares the 7 candidates (~29 min)
 │   ├── tune_models.py        Stage 7: experiment phases A-D (~41 min)
 │   ├── finalise_model.py     fits the chosen model, opens the test split ONCE
+│   ├── build_app_tables.py   writes artifacts/insights.json for the web app (~1 s)
 │   ├── build_report_pdf.py   rebuilds the technical report PDF from the result files
 │   └── run_notebooks.sh      executes the notebooks and exports HTML copies
+├── app/                      Stage 9 web API (FastAPI): main.py, schemas.py, service.py
 ├── notebooks/                01 data understanding, 02 EDA, 03 preprocessing,
 │                             04 modelling + optimisation (Stage 6 and 7 in one),
 │                             06 Evaluation 2 walkthrough (Stages 6-8)
@@ -72,7 +75,8 @@ skillpath/
 │   ├── model.joblib          THE final fitted Pipeline (preprocessor + classifier)
 │   ├── model_card.json       what it is, how it scores, what it must not be used for
 │   ├── preprocessor_core.joblib, feature_names_core.json
-│   └── options.json          every valid form value, for building the web form
+│   ├── options.json          every valid form value, for building the web form
+│   └── insights.json         AI outlook, salary peer groups, per-role reliability (summaries only)
 ├── reports/
 │   ├── modelling_decisions.md       Stages 6-7: results, experiments + viva Q&A  <- start here
 │   ├── preprocessing_decisions.md   Stages 3-4: every decision with evidence + viva Q&A
@@ -204,35 +208,56 @@ families, so a model without probabilities cannot be deployed whatever it scores
 Do not touch `data/processed/test.parquet`. `features_core_train.parquet` is only for quick
 exploration, not for cross-validation.
 
-## Using it in the web backend
+## Web API (Stage 9)
 
-```python
-import joblib
-from skillpath import targets
-from skillpath.profile import profile_to_frame
-from skillpath.pipeline import model_input_columns
-
-model = joblib.load("artifacts/model.joblib")   # final Pipeline(prep + classifier)
-
-row = profile_to_frame(request_json)[model_input_columns()]
-probs = model.predict_proba(row)[0]
-job_roles = targets.top_k(probs, model.classes_, k=3)          # label, family, description
-families = targets.top_k_families(probs, model.classes_, k=3)  # summed job-role probabilities
+```bash
+python scripts/build_app_tables.py   # artifacts/insights.json (only after build_dataset.py or finalise_model.py)
+uvicorn app.main:app --reload        # then open http://127.0.0.1:8000/docs to try it
 ```
 
-* `artifacts/options.json` holds every valid form value; build the form from it.
-* A section the user skips is treated as "unknown"; ticking "I don't use any" is a true zero,
-  exactly like the survey's gate questions in training.
-* Deploy the package and the artifacts only, never the raw survey file. Store no user input.
-* Pin the same scikit-learn version the model was saved with (see `requirements.txt`).
-* `profile_to_frame()` is the API contract and is verified: 300 real rows sent through the
-  web request format give predictions identical to the training path (max probability
-  difference exactly 0.0). Do not reimplement any preprocessing in the backend.
+| Endpoint | Purpose |
+|---|---|
+| `GET /api/health` | the service is up and the model is loaded |
+| `GET /api/options` | every valid answer (`artifacts/options.json`); the form is built from it |
+| `POST /api/predict` | profile in; top-3 job roles, top-3 families, AI outlook and salary benchmark out |
 
-**Two roles are never predicted.** `Developer, AI apps or physical AI` and
-`UX, Research Ops or UI design` score F1 0.000 on the held-out split — there are only 116 and
-47 training examples. The UI should either drop them from the possible outputs or mark them
-as low confidence. Full limitations are in `artifacts/model_card.json`.
+```
+app/main.py      FastAPI app: loads the model once at startup, 3 endpoints, readable 422 errors
+app/schemas.py   request validation against options.json, response models (shown in /docs)
+app/service.py   profile -> profile_to_frame() -> model.joblib -> top-3 + insights + caveats
+src/skillpath/insights.py   AI outlook per job role, salary peer-group fallback, low-confidence flag
+```
+
+Request (every field optional; a skipped field is "unknown", `"none": true` is "I don't use any"):
+
+```json
+{"country": "Sri Lanka", "years_code": 5, "work_exp": 1,
+ "tech": {"Language": {"have": ["Python", "SQL"], "want": ["Rust"]}, "Webframe": {"none": true}},
+ "ai": {"AISelect": "Yes, I use AI tools daily"}}
+```
+
+Each of the three roles in the response carries its probability, family, description, a
+`low_confidence` flag, the role's **AI outlook** (AI Exposure Index now and expected, % who see AI
+as a threat, with the all-roles average) and a **salary benchmark** (median and interquartile
+range of the most specific peer group with 30+ people, and which group that was).
+
+How the backend stays faithful to training:
+
+* **No preprocessing is reimplemented.** The validated profile goes through `profile_to_frame()`
+  into the saved Pipeline. 990 real training rows sent through HTTP give the same probabilities as
+  the direct model call; the only exception is a row whose work experience was blanked in cleaning
+  (see the next point).
+* **Blank work experience means 0** when years coding is given, the survey's own instruction and
+  the rule `clean_experience()` applied in training.
+* **Validation mirrors the cleaning rules:** values must be in `options.json`, years 0-60 (the
+  cleaning ceiling when age is unknown; the app does not ask for age), and ticking 90%+ of a
+  technology list is rejected, as straight-lined survey answers were.
+* **Low confidence:** seven roles the model picks first for under 1 in 10 of their real members on
+  the test split (recall < 0.10), including the two never predicted (`AI apps`, `UX/UI`; 116 and
+  47 training examples) are flagged rather than hidden.
+* **Insights exclude test respondents** and contain group summaries only; the deployed app needs
+  `artifacts/` and the package, not `data/`. No user input is stored or logged.
+* Pin the scikit-learn version the model was saved with; the service logs a warning if it differs.
 
 ## Data licence and attribution
 

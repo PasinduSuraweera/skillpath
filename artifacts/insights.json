@@ -1,0 +1,3128 @@
+{
+ "ai": {
+  "job_role": {
+   "AI/ML engineer": {
+    "n": 308,
+    "exposure_now": 31.5,
+    "exposure_expected": 50.6,
+    "threat_yes_pct": 17.9,
+    "threat_n": 346
+   },
+   "Applied scientist": {
+    "n": 160,
+    "exposure_now": 14.5,
+    "exposure_expected": 32.9,
+    "threat_yes_pct": 9.1,
+    "threat_n": 175
+   },
+   "Cloud infrastructure engineer": {
+    "n": 218,
+    "exposure_now": 18.1,
+    "exposure_expected": 38.4,
+    "threat_yes_pct": 13.9,
+    "threat_n": 237
+   },
+   "Cybersecurity or InfoSec professional": {
+    "n": 200,
+    "exposure_now": 21.3,
+    "exposure_expected": 38.6,
+    "threat_yes_pct": 13.4,
+    "threat_n": 217
+   },
+   "Data engineer": {
+    "n": 405,
+    "exposure_now": 20.8,
+    "exposure_expected": 42.9,
+    "threat_yes_pct": 11.8,
+    "threat_n": 449
+   },
+   "Data or business analyst": {
+    "n": 164,
+    "exposure_now": 18.9,
+    "exposure_expected": 42.7,
+    "threat_yes_pct": 22.3,
+    "threat_n": 184
+   },
+   "Data scientist": {
+    "n": 304,
+    "exposure_now": 22.7,
+    "exposure_expected": 41.4,
+    "threat_yes_pct": 13.8,
+    "threat_n": 348
+   },
+   "Database administrator or engineer": {
+    "n": 78,
+    "exposure_now": 14.2,
+    "exposure_expected": 37.3,
+    "threat_yes_pct": 11.7,
+    "threat_n": 94
+   },
+   "DevOps engineer or professional": {
+    "n": 578,
+    "exposure_now": 20.2,
+    "exposure_expected": 39.9,
+    "threat_yes_pct": 11.8,
+    "threat_n": 644
+   },
+   "Developer, AI apps or physical AI": {
+    "n": 100,
+    "exposure_now": 35.2,
+    "exposure_expected": 55.6,
+    "threat_yes_pct": 15.2,
+    "threat_n": 112
+   },
+   "Developer, QA or test": {
+    "n": 173,
+    "exposure_now": 19.1,
+    "exposure_expected": 41.4,
+    "threat_yes_pct": 15.1,
+    "threat_n": 199
+   },
+   "Developer, back-end": {
+    "n": 3358,
+    "exposure_now": 18.3,
+    "exposure_expected": 38.8,
+    "threat_yes_pct": 14.6,
+    "threat_n": 3739
+   },
+   "Developer, desktop or enterprise applications": {
+    "n": 1066,
+    "exposure_now": 13.7,
+    "exposure_expected": 31.7,
+    "threat_yes_pct": 11.8,
+    "threat_n": 1173
+   },
+   "Developer, embedded applications or devices": {
+    "n": 708,
+    "exposure_now": 11.5,
+    "exposure_expected": 27.9,
+    "threat_yes_pct": 8.9,
+    "threat_n": 762
+   },
+   "Developer, front-end": {
+    "n": 970,
+    "exposure_now": 22.4,
+    "exposure_expected": 44.2,
+    "threat_yes_pct": 18.8,
+    "threat_n": 1116
+   },
+   "Developer, full-stack": {
+    "n": 6592,
+    "exposure_now": 19.9,
+    "exposure_expected": 39.6,
+    "threat_yes_pct": 14.4,
+    "threat_n": 7247
+   },
+   "Developer, game or graphics": {
+    "n": 241,
+    "exposure_now": 10.8,
+    "exposure_expected": 23.8,
+    "threat_yes_pct": 11.5,
+    "threat_n": 260
+   },
+   "Developer, mobile": {
+    "n": 636,
+    "exposure_now": 22.6,
+    "exposure_expected": 44.8,
+    "threat_yes_pct": 20.5,
+    "threat_n": 735
+   },
+   "System administrator": {
+    "n": 238,
+    "exposure_now": 13.9,
+    "exposure_expected": 32.2,
+    "threat_yes_pct": 10.6,
+    "threat_n": 264
+   },
+   "UX, Research Ops or UI design professional": {
+    "n": 41,
+    "exposure_now": 25.5,
+    "exposure_expected": 51.4,
+    "threat_yes_pct": 27.7,
+    "threat_n": 47
+   }
+  },
+  "family": {
+   "Backend": {
+    "n": 3358,
+    "exposure_now": 18.3,
+    "exposure_expected": 38.8,
+    "threat_yes_pct": 14.6,
+    "threat_n": 3739
+   },
+   "Data Eng": {
+    "n": 483,
+    "exposure_now": 19.7,
+    "exposure_expected": 42.0,
+    "threat_yes_pct": 11.8,
+    "threat_n": 543
+   },
+   "Data Sci/ML": {
+    "n": 1036,
+    "exposure_now": 24.7,
+    "exposure_expected": 44.4,
+    "threat_yes_pct": 15.8,
+    "threat_n": 1165
+   },
+   "Desktop/Enterprise": {
+    "n": 1066,
+    "exposure_now": 13.7,
+    "exposure_expected": 31.7,
+    "threat_yes_pct": 11.8,
+    "threat_n": 1173
+   },
+   "DevOps/Cloud": {
+    "n": 1034,
+    "exposure_now": 18.3,
+    "exposure_expected": 37.8,
+    "threat_yes_pct": 12.0,
+    "threat_n": 1145
+   },
+   "Embedded/Systems": {
+    "n": 708,
+    "exposure_now": 11.5,
+    "exposure_expected": 27.9,
+    "threat_yes_pct": 8.9,
+    "threat_n": 762
+   },
+   "Frontend": {
+    "n": 1011,
+    "exposure_now": 22.5,
+    "exposure_expected": 44.5,
+    "threat_yes_pct": 19.2,
+    "threat_n": 1163
+   },
+   "Full-stack": {
+    "n": 6592,
+    "exposure_now": 19.9,
+    "exposure_expected": 39.6,
+    "threat_yes_pct": 14.4,
+    "threat_n": 7247
+   },
+   "Game/Graphics": {
+    "n": 241,
+    "exposure_now": 10.8,
+    "exposure_expected": 23.8,
+    "threat_yes_pct": 11.5,
+    "threat_n": 260
+   },
+   "Mobile": {
+    "n": 636,
+    "exposure_now": 22.6,
+    "exposure_expected": 44.8,
+    "threat_yes_pct": 20.5,
+    "threat_n": 735
+   },
+   "QA/Test": {
+    "n": 173,
+    "exposure_now": 19.1,
+    "exposure_expected": 41.4,
+    "threat_yes_pct": 15.1,
+    "threat_n": 199
+   },
+   "Security": {
+    "n": 200,
+    "exposure_now": 21.3,
+    "exposure_expected": 38.6,
+    "threat_yes_pct": 13.4,
+    "threat_n": 217
+   }
+  },
+  "all": {
+   "n": 16538,
+   "exposure_now": 19.1,
+   "exposure_expected": 39.0,
+   "threat_yes_pct": 14.4,
+   "threat_n": 18348
+  }
+ },
+ "salary": {
+  "min_peer_n": 30,
+  "levels": [
+   "JobRole x Country x experience",
+   "JobRole x Region x experience",
+   "RoleFamily x Country x experience",
+   "RoleFamily x Region x experience",
+   "JobRole x Global x experience",
+   "RoleFamily x Global x experience"
+  ],
+  "groups": {
+   "JobRole x Country x experience": {
+    "Developer, back-end|Brazil|11-20": {
+     "n": 38,
+     "p25": 26500,
+     "median": 43200,
+     "p75": 66000
+    },
+    "Developer, back-end|Brazil|6-10": {
+     "n": 37,
+     "p25": 22600,
+     "median": 37100,
+     "p75": 54600
+    },
+    "Developer, back-end|Canada|11-20": {
+     "n": 41,
+     "p25": 105800,
+     "median": 127700,
+     "p75": 159000
+    },
+    "Developer, back-end|Czech Republic|11-20": {
+     "n": 36,
+     "p25": 65300,
+     "median": 74400,
+     "p75": 93600
+    },
+    "Developer, back-end|France|11-20": {
+     "n": 45,
+     "p25": 63800,
+     "median": 75400,
+     "p75": 104400
+    },
+    "Developer, back-end|France|6-10": {
+     "n": 35,
+     "p25": 53300,
+     "median": 71900,
+     "p75": 91700
+    },
+    "Developer, back-end|Germany|11-20": {
+     "n": 87,
+     "p25": 78300,
+     "median": 93100,
+     "p75": 106200
+    },
+    "Developer, back-end|Germany|20+": {
+     "n": 37,
+     "p25": 75400,
+     "median": 92800,
+     "p75": 116000
+    },
+    "Developer, back-end|Germany|3-5": {
+     "n": 30,
+     "p25": 54500,
+     "median": 68400,
+     "p75": 78900
+    },
+    "Developer, back-end|Germany|6-10": {
+     "n": 54,
+     "p25": 73100,
+     "median": 83300,
+     "p75": 99800
+    },
+    "Developer, back-end|India|0-2": {
+     "n": 34,
+     "p25": 4600,
+     "median": 7800,
+     "p75": 16000
+    },
+    "Developer, back-end|India|3-5": {
+     "n": 45,
+     "p25": 10500,
+     "median": 17400,
+     "p75": 31400
+    },
+    "Developer, back-end|India|6-10": {
+     "n": 52,
+     "p25": 21500,
+     "median": 34300,
+     "p75": 54100
+    },
+    "Developer, back-end|Netherlands|11-20": {
+     "n": 33,
+     "p25": 84200,
+     "median": 98600,
+     "p75": 116000
+    },
+    "Developer, back-end|Poland|11-20": {
+     "n": 38,
+     "p25": 68900,
+     "median": 95500,
+     "p75": 120100
+    },
+    "Developer, back-end|Poland|6-10": {
+     "n": 37,
+     "p25": 62800,
+     "median": 81900,
+     "p75": 100000
+    },
+    "Developer, back-end|Sweden|11-20": {
+     "n": 31,
+     "p25": 64200,
+     "median": 75500,
+     "p75": 84300
+    },
+    "Developer, back-end|Ukraine|11-20": {
+     "n": 40,
+     "p25": 30000,
+     "median": 60000,
+     "p75": 80400
+    },
+    "Developer, back-end|Ukraine|3-5": {
+     "n": 45,
+     "p25": 12000,
+     "median": 28000,
+     "p75": 36600
+    },
+    "Developer, back-end|Ukraine|6-10": {
+     "n": 57,
+     "p25": 5400,
+     "median": 40000,
+     "p75": 65700
+    },
+    "Developer, back-end|United Kingdom of Great Britain and Northern Ireland|11-20": {
+     "n": 77,
+     "p25": 95300,
+     "median": 122500,
+     "p75": 163400
+    },
+    "Developer, back-end|United Kingdom of Great Britain and Northern Ireland|20+": {
+     "n": 58,
+     "p25": 89500,
+     "median": 122500,
+     "p75": 157100
+    },
+    "Developer, back-end|United Kingdom of Great Britain and Northern Ireland|6-10": {
+     "n": 42,
+     "p25": 91900,
+     "median": 105500,
+     "p75": 141200
+    },
+    "Developer, back-end|United States of America|11-20": {
+     "n": 184,
+     "p25": 150000,
+     "median": 188200,
+     "p75": 250500
+    },
+    "Developer, back-end|United States of America|20+": {
+     "n": 134,
+     "p25": 150300,
+     "median": 185000,
+     "p75": 250000
+    },
+    "Developer, back-end|United States of America|3-5": {
+     "n": 58,
+     "p25": 106000,
+     "median": 130000,
+     "p75": 163800
+    },
+    "Developer, back-end|United States of America|6-10": {
+     "n": 114,
+     "p25": 140000,
+     "median": 175000,
+     "p75": 230000
+    },
+    "Developer, desktop or enterprise applications|United States of America|11-20": {
+     "n": 41,
+     "p25": 116000,
+     "median": 145000,
+     "p75": 200000
+    },
+    "Developer, desktop or enterprise applications|United States of America|20+": {
+     "n": 80,
+     "p25": 118800,
+     "median": 149000,
+     "p75": 180000
+    },
+    "Developer, desktop or enterprise applications|United States of America|6-10": {
+     "n": 35,
+     "p25": 92500,
+     "median": 113000,
+     "p75": 150000
+    },
+    "Developer, embedded applications or devices|United States of America|20+": {
+     "n": 51,
+     "p25": 140500,
+     "median": 170000,
+     "p75": 194000
+    },
+    "Developer, front-end|United States of America|11-20": {
+     "n": 52,
+     "p25": 135000,
+     "median": 162500,
+     "p75": 203000
+    },
+    "Developer, front-end|United States of America|6-10": {
+     "n": 43,
+     "p25": 120000,
+     "median": 145000,
+     "p75": 177500
+    },
+    "Developer, full-stack|Australia|11-20": {
+     "n": 45,
+     "p25": 81300,
+     "median": 97500,
+     "p75": 120300
+    },
+    "Developer, full-stack|Australia|20+": {
+     "n": 33,
+     "p25": 78000,
+     "median": 97500,
+     "p75": 130000
+    },
+    "Developer, full-stack|Australia|6-10": {
+     "n": 30,
+     "p25": 81700,
+     "median": 91000,
+     "p75": 110500
+    },
+    "Developer, full-stack|Brazil|11-20": {
+     "n": 54,
+     "p25": 27300,
+     "median": 47000,
+     "p75": 92400
+    },
+    "Developer, full-stack|Brazil|6-10": {
+     "n": 33,
+     "p25": 15800,
+     "median": 34600,
+     "p75": 60100
+    },
+    "Developer, full-stack|Canada|11-20": {
+     "n": 79,
+     "p25": 80300,
+     "median": 94800,
+     "p75": 122400
+    },
+    "Developer, full-stack|Canada|20+": {
+     "n": 59,
+     "p25": 73000,
+     "median": 83900,
+     "p75": 116700
+    },
+    "Developer, full-stack|Canada|3-5": {
+     "n": 35,
+     "p25": 58400,
+     "median": 65700,
+     "p75": 73000
+    },
+    "Developer, full-stack|Canada|6-10": {
+     "n": 51,
+     "p25": 63100,
+     "median": 80300,
+     "p75": 116700
+    },
+    "Developer, full-stack|France|11-20": {
+     "n": 76,
+     "p25": 58000,
+     "median": 76000,
+     "p75": 87000
+    },
+    "Developer, full-stack|France|3-5": {
+     "n": 33,
+     "p25": 39400,
+     "median": 47300,
+     "p75": 52200
+    },
+    "Developer, full-stack|France|6-10": {
+     "n": 75,
+     "p25": 46400,
+     "median": 55700,
+     "p75": 75400
+    },
+    "Developer, full-stack|Germany|11-20": {
+     "n": 153,
+     "p25": 69600,
+     "median": 83500,
+     "p75": 104400
+    },
+    "Developer, full-stack|Germany|20+": {
+     "n": 81,
+     "p25": 69600,
+     "median": 92800,
+     "p75": 116000
+    },
+    "Developer, full-stack|Germany|3-5": {
+     "n": 74,
+     "p25": 51200,
+     "median": 63800,
+     "p75": 75400
+    },
+    "Developer, full-stack|Germany|6-10": {
+     "n": 129,
+     "p25": 66800,
+     "median": 78900,
+     "p75": 90500
+    },
+    "Developer, full-stack|India|0-2": {
+     "n": 56,
+     "p25": 4600,
+     "median": 5800,
+     "p75": 9900
+    },
+    "Developer, full-stack|India|11-20": {
+     "n": 43,
+     "p25": 17100,
+     "median": 34900,
+     "p75": 48200
+    },
+    "Developer, full-stack|India|3-5": {
+     "n": 80,
+     "p25": 7000,
+     "median": 11600,
+     "p75": 18700
+    },
+    "Developer, full-stack|India|6-10": {
+     "n": 72,
+     "p25": 13900,
+     "median": 23200,
+     "p75": 36300
+    },
+    "Developer, full-stack|Italy|11-20": {
+     "n": 39,
+     "p25": 40600,
+     "median": 49300,
+     "p75": 58000
+    },
+    "Developer, full-stack|Italy|6-10": {
+     "n": 36,
+     "p25": 37700,
+     "median": 46400,
+     "p75": 71100
+    },
+    "Developer, full-stack|Netherlands|11-20": {
+     "n": 55,
+     "p25": 69500,
+     "median": 85900,
+     "p75": 104400
+    },
+    "Developer, full-stack|Netherlands|20+": {
+     "n": 32,
+     "p25": 75400,
+     "median": 92800,
+     "p75": 127600
+    },
+    "Developer, full-stack|Netherlands|6-10": {
+     "n": 34,
+     "p25": 58600,
+     "median": 73700,
+     "p75": 103000
+    },
+    "Developer, full-stack|Poland|11-20": {
+     "n": 33,
+     "p25": 62200,
+     "median": 81900,
+     "p75": 106400
+    },
+    "Developer, full-stack|Spain|11-20": {
+     "n": 39,
+     "p25": 58000,
+     "median": 69600,
+     "p75": 92800
+    },
+    "Developer, full-stack|Sweden|11-20": {
+     "n": 41,
+     "p25": 62900,
+     "median": 73800,
+     "p75": 81800
+    },
+    "Developer, full-stack|Switzerland|11-20": {
+     "n": 32,
+     "p25": 124000,
+     "median": 136400,
+     "p75": 156500
+    },
+    "Developer, full-stack|Ukraine|3-5": {
+     "n": 37,
+     "p25": 14400,
+     "median": 27800,
+     "p75": 44000
+    },
+    "Developer, full-stack|Ukraine|6-10": {
+     "n": 31,
+     "p25": 5600,
+     "median": 40300,
+     "p75": 67400
+    },
+    "Developer, full-stack|United Kingdom of Great Britain and Northern Ireland|11-20": {
+     "n": 130,
+     "p25": 76600,
+     "median": 98700,
+     "p75": 122500
+    },
+    "Developer, full-stack|United Kingdom of Great Britain and Northern Ireland|20+": {
+     "n": 98,
+     "p25": 74900,
+     "median": 95300,
+     "p75": 122500
+    },
+    "Developer, full-stack|United Kingdom of Great Britain and Northern Ireland|3-5": {
+     "n": 62,
+     "p25": 51400,
+     "median": 61900,
+     "p75": 81700
+    },
+    "Developer, full-stack|United Kingdom of Great Britain and Northern Ireland|6-10": {
+     "n": 76,
+     "p25": 54500,
+     "median": 77700,
+     "p75": 107100
+    },
+    "Developer, full-stack|United States of America|0-2": {
+     "n": 73,
+     "p25": 60000,
+     "median": 80000,
+     "p75": 100000
+    },
+    "Developer, full-stack|United States of America|11-20": {
+     "n": 388,
+     "p25": 122500,
+     "median": 150000,
+     "p75": 200000
+    },
+    "Developer, full-stack|United States of America|20+": {
+     "n": 322,
+     "p25": 125000,
+     "median": 150000,
+     "p75": 190000
+    },
+    "Developer, full-stack|United States of America|3-5": {
+     "n": 148,
+     "p25": 77200,
+     "median": 101500,
+     "p75": 121200
+    },
+    "Developer, full-stack|United States of America|6-10": {
+     "n": 317,
+     "p25": 105000,
+     "median": 136000,
+     "p75": 184000
+    },
+    "Developer, mobile|United States of America|11-20": {
+     "n": 32,
+     "p25": 150000,
+     "median": 193000,
+     "p75": 222900
+    },
+    "Developer, mobile|United States of America|20+": {
+     "n": 34,
+     "p25": 145800,
+     "median": 170000,
+     "p75": 220000
+    }
+   },
+   "JobRole x Region x experience": {
+    "DevOps engineer or professional|North America|11-20": {
+     "n": 37,
+     "p25": 131300,
+     "median": 167000,
+     "p75": 205000
+    },
+    "DevOps engineer or professional|North America|20+": {
+     "n": 33,
+     "p25": 122000,
+     "median": 180000,
+     "p75": 200000
+    },
+    "DevOps engineer or professional|Western Europe|11-20": {
+     "n": 33,
+     "p25": 75400,
+     "median": 98600,
+     "p75": 116000
+    },
+    "DevOps engineer or professional|Western Europe|6-10": {
+     "n": 31,
+     "p25": 69600,
+     "median": 81200,
+     "p75": 97200
+    },
+    "Developer, back-end|Eastern Europe & Central Asia|0-2": {
+     "n": 36,
+     "p25": 11700,
+     "median": 19400,
+     "p75": 29900
+    },
+    "Developer, back-end|Eastern Europe & Central Asia|11-20": {
+     "n": 160,
+     "p25": 55600,
+     "median": 75200,
+     "p75": 95600
+    },
+    "Developer, back-end|Eastern Europe & Central Asia|20+": {
+     "n": 46,
+     "p25": 46200,
+     "median": 70700,
+     "p75": 88400
+    },
+    "Developer, back-end|Eastern Europe & Central Asia|3-5": {
+     "n": 102,
+     "p25": 24000,
+     "median": 33800,
+     "p75": 47900
+    },
+    "Developer, back-end|Eastern Europe & Central Asia|6-10": {
+     "n": 156,
+     "p25": 39000,
+     "median": 61000,
+     "p75": 80000
+    },
+    "Developer, back-end|Latin America & Caribbean|11-20": {
+     "n": 74,
+     "p25": 26200,
+     "median": 44000,
+     "p75": 71400
+    },
+    "Developer, back-end|Latin America & Caribbean|3-5": {
+     "n": 37,
+     "p25": 12100,
+     "median": 15100,
+     "p75": 26500
+    },
+    "Developer, back-end|Latin America & Caribbean|6-10": {
+     "n": 68,
+     "p25": 23900,
+     "median": 39700,
+     "p75": 54600
+    },
+    "Developer, back-end|North America|11-20": {
+     "n": 225,
+     "p25": 140000,
+     "median": 180000,
+     "p75": 240800
+    },
+    "Developer, back-end|North America|20+": {
+     "n": 153,
+     "p25": 148000,
+     "median": 180000,
+     "p75": 245000
+    },
+    "Developer, back-end|North America|3-5": {
+     "n": 65,
+     "p25": 94800,
+     "median": 125000,
+     "p75": 160000
+    },
+    "Developer, back-end|North America|6-10": {
+     "n": 138,
+     "p25": 117500,
+     "median": 160000,
+     "p75": 215000
+    },
+    "Developer, back-end|Northern Europe|11-20": {
+     "n": 145,
+     "p25": 81700,
+     "median": 99600,
+     "p75": 136100
+    },
+    "Developer, back-end|Northern Europe|20+": {
+     "n": 93,
+     "p25": 83900,
+     "median": 111600,
+     "p75": 145000
+    },
+    "Developer, back-end|Northern Europe|3-5": {
+     "n": 37,
+     "p25": 62600,
+     "median": 76100,
+     "p75": 93300
+    },
+    "Developer, back-end|Northern Europe|6-10": {
+     "n": 92,
+     "p25": 77100,
+     "median": 95300,
+     "p75": 115700
+    },
+    "Developer, back-end|South Asia|0-2": {
+     "n": 42,
+     "p25": 3800,
+     "median": 7000,
+     "p75": 14800
+    },
+    "Developer, back-end|South Asia|11-20": {
+     "n": 33,
+     "p25": 23200,
+     "median": 39500,
+     "p75": 63900
+    },
+    "Developer, back-end|South Asia|3-5": {
+     "n": 59,
+     "p25": 9100,
+     "median": 15100,
+     "p75": 29700
+    },
+    "Developer, back-end|South Asia|6-10": {
+     "n": 71,
+     "p25": 17700,
+     "median": 29100,
+     "p75": 53200
+    },
+    "Developer, back-end|Southern Europe|11-20": {
+     "n": 77,
+     "p25": 58000,
+     "median": 72200,
+     "p75": 93600
+    },
+    "Developer, back-end|Southern Europe|20+": {
+     "n": 31,
+     "p25": 59700,
+     "median": 75400,
+     "p75": 104400
+    },
+    "Developer, back-end|Southern Europe|3-5": {
+     "n": 41,
+     "p25": 29600,
+     "median": 39400,
+     "p75": 46400
+    },
+    "Developer, back-end|Southern Europe|6-10": {
+     "n": 68,
+     "p25": 46400,
+     "median": 61500,
+     "p75": 81200
+    },
+    "Developer, back-end|Western Europe|11-20": {
+     "n": 202,
+     "p25": 75400,
+     "median": 93500,
+     "p75": 116000
+    },
+    "Developer, back-end|Western Europe|20+": {
+     "n": 77,
+     "p25": 81200,
+     "median": 104400,
+     "p75": 139200
+    },
+    "Developer, back-end|Western Europe|3-5": {
+     "n": 74,
+     "p25": 52200,
+     "median": 64400,
+     "p75": 81200
+    },
+    "Developer, back-end|Western Europe|6-10": {
+     "n": 131,
+     "p25": 69000,
+     "median": 81200,
+     "p75": 104400
+    },
+    "Developer, desktop or enterprise applications|Eastern Europe & Central Asia|11-20": {
+     "n": 35,
+     "p25": 41300,
+     "median": 55100,
+     "p75": 69600
+    },
+    "Developer, desktop or enterprise applications|North America|11-20": {
+     "n": 51,
+     "p25": 110000,
+     "median": 140000,
+     "p75": 175100
+    },
+    "Developer, desktop or enterprise applications|North America|20+": {
+     "n": 96,
+     "p25": 110000,
+     "median": 145300,
+     "p75": 180000
+    },
+    "Developer, desktop or enterprise applications|North America|6-10": {
+     "n": 41,
+     "p25": 90000,
+     "median": 110000,
+     "p75": 138600
+    },
+    "Developer, desktop or enterprise applications|Northern Europe|11-20": {
+     "n": 33,
+     "p25": 69200,
+     "median": 98000,
+     "p75": 122200
+    },
+    "Developer, desktop or enterprise applications|Northern Europe|20+": {
+     "n": 34,
+     "p25": 75600,
+     "median": 90300,
+     "p75": 110500
+    },
+    "Developer, desktop or enterprise applications|Western Europe|11-20": {
+     "n": 32,
+     "p25": 67000,
+     "median": 84100,
+     "p75": 110200
+    },
+    "Developer, desktop or enterprise applications|Western Europe|20+": {
+     "n": 63,
+     "p25": 65000,
+     "median": 92800,
+     "p75": 113800
+    },
+    "Developer, desktop or enterprise applications|Western Europe|6-10": {
+     "n": 41,
+     "p25": 63800,
+     "median": 76600,
+     "p75": 89300
+    },
+    "Developer, embedded applications or devices|North America|20+": {
+     "n": 54,
+     "p25": 140000,
+     "median": 165000,
+     "p75": 194500
+    },
+    "Developer, embedded applications or devices|Northern Europe|20+": {
+     "n": 36,
+     "p25": 83700,
+     "median": 115600,
+     "p75": 136300
+    },
+    "Developer, embedded applications or devices|Western Europe|11-20": {
+     "n": 40,
+     "p25": 79600,
+     "median": 87600,
+     "p75": 118900
+    },
+    "Developer, embedded applications or devices|Western Europe|6-10": {
+     "n": 38,
+     "p25": 57100,
+     "median": 81200,
+     "p75": 103800
+    },
+    "Developer, front-end|Eastern Europe & Central Asia|11-20": {
+     "n": 31,
+     "p25": 52400,
+     "median": 65500,
+     "p75": 83900
+    },
+    "Developer, front-end|Eastern Europe & Central Asia|3-5": {
+     "n": 36,
+     "p25": 11800,
+     "median": 24100,
+     "p75": 36000
+    },
+    "Developer, front-end|Eastern Europe & Central Asia|6-10": {
+     "n": 52,
+     "p25": 41400,
+     "median": 51600,
+     "p75": 67400
+    },
+    "Developer, front-end|North America|11-20": {
+     "n": 65,
+     "p25": 121000,
+     "median": 158000,
+     "p75": 200000
+    },
+    "Developer, front-end|North America|20+": {
+     "n": 30,
+     "p25": 102500,
+     "median": 136000,
+     "p75": 180000
+    },
+    "Developer, front-end|North America|6-10": {
+     "n": 47,
+     "p25": 94000,
+     "median": 140000,
+     "p75": 172500
+    },
+    "Developer, front-end|Northern Europe|11-20": {
+     "n": 35,
+     "p25": 73600,
+     "median": 88500,
+     "p75": 109400
+    },
+    "Developer, front-end|Western Europe|11-20": {
+     "n": 38,
+     "p25": 61500,
+     "median": 91100,
+     "p75": 114900
+    },
+    "Developer, front-end|Western Europe|6-10": {
+     "n": 50,
+     "p25": 69600,
+     "median": 81200,
+     "p75": 94600
+    },
+    "Developer, full-stack|Eastern Europe & Central Asia|0-2": {
+     "n": 33,
+     "p25": 11500,
+     "median": 22100,
+     "p75": 26200
+    },
+    "Developer, full-stack|Eastern Europe & Central Asia|11-20": {
+     "n": 126,
+     "p25": 49400,
+     "median": 75000,
+     "p75": 98000
+    },
+    "Developer, full-stack|Eastern Europe & Central Asia|20+": {
+     "n": 42,
+     "p25": 44900,
+     "median": 58900,
+     "p75": 98500
+    },
+    "Developer, full-stack|Eastern Europe & Central Asia|3-5": {
+     "n": 100,
+     "p25": 22800,
+     "median": 32300,
+     "p75": 45200
+    },
+    "Developer, full-stack|Eastern Europe & Central Asia|6-10": {
+     "n": 124,
+     "p25": 34400,
+     "median": 52300,
+     "p75": 73800
+    },
+    "Developer, full-stack|Latin America & Caribbean|0-2": {
+     "n": 43,
+     "p25": 6200,
+     "median": 10900,
+     "p75": 16300
+    },
+    "Developer, full-stack|Latin America & Caribbean|11-20": {
+     "n": 111,
+     "p25": 27300,
+     "median": 46800,
+     "p75": 78000
+    },
+    "Developer, full-stack|Latin America & Caribbean|20+": {
+     "n": 40,
+     "p25": 25100,
+     "median": 45500,
+     "p75": 62100
+    },
+    "Developer, full-stack|Latin America & Caribbean|3-5": {
+     "n": 72,
+     "p25": 12000,
+     "median": 17900,
+     "p75": 32000
+    },
+    "Developer, full-stack|Latin America & Caribbean|6-10": {
+     "n": 101,
+     "p25": 15600,
+     "median": 30700,
+     "p75": 58100
+    },
+    "Developer, full-stack|Middle East & North Africa|11-20": {
+     "n": 37,
+     "p25": 36400,
+     "median": 65000,
+     "p75": 118500
+    },
+    "Developer, full-stack|North America|0-2": {
+     "n": 91,
+     "p25": 55000,
+     "median": 74000,
+     "p75": 92500
+    },
+    "Developer, full-stack|North America|11-20": {
+     "n": 467,
+     "p25": 109400,
+     "median": 150000,
+     "p75": 185000
+    },
+    "Developer, full-stack|North America|20+": {
+     "n": 381,
+     "p25": 111000,
+     "median": 145900,
+     "p75": 180000
+    },
+    "Developer, full-stack|North America|3-5": {
+     "n": 183,
+     "p25": 70000,
+     "median": 92000,
+     "p75": 120000
+    },
+    "Developer, full-stack|North America|6-10": {
+     "n": 368,
+     "p25": 100000,
+     "median": 130000,
+     "p75": 171200
+    },
+    "Developer, full-stack|Northern Europe|0-2": {
+     "n": 40,
+     "p25": 43400,
+     "median": 50900,
+     "p75": 67400
+    },
+    "Developer, full-stack|Northern Europe|11-20": {
+     "n": 237,
+     "p25": 73400,
+     "median": 96000,
+     "p75": 118600
+    },
+    "Developer, full-stack|Northern Europe|20+": {
+     "n": 162,
+     "p25": 68100,
+     "median": 92100,
+     "p75": 122500
+    },
+    "Developer, full-stack|Northern Europe|3-5": {
+     "n": 118,
+     "p25": 54500,
+     "median": 64200,
+     "p75": 80000
+    },
+    "Developer, full-stack|Northern Europe|6-10": {
+     "n": 171,
+     "p25": 63400,
+     "median": 79300,
+     "p75": 98300
+    },
+    "Developer, full-stack|Oceania|11-20": {
+     "n": 64,
+     "p25": 81300,
+     "median": 91400,
+     "p75": 117500
+    },
+    "Developer, full-stack|Oceania|20+": {
+     "n": 52,
+     "p25": 77200,
+     "median": 97500,
+     "p75": 124300
+    },
+    "Developer, full-stack|Oceania|6-10": {
+     "n": 38,
+     "p25": 72900,
+     "median": 86900,
+     "p75": 104000
+    },
+    "Developer, full-stack|South Asia|0-2": {
+     "n": 73,
+     "p25": 4100,
+     "median": 5600,
+     "p75": 8100
+    },
+    "Developer, full-stack|South Asia|11-20": {
+     "n": 58,
+     "p25": 18100,
+     "median": 33700,
+     "p75": 49300
+    },
+    "Developer, full-stack|South Asia|3-5": {
+     "n": 119,
+     "p25": 6800,
+     "median": 10500,
+     "p75": 18800
+    },
+    "Developer, full-stack|South Asia|6-10": {
+     "n": 116,
+     "p25": 9800,
+     "median": 19500,
+     "p75": 34900
+    },
+    "Developer, full-stack|Southern Europe|0-2": {
+     "n": 31,
+     "p25": 22600,
+     "median": 26000,
+     "p75": 32800
+    },
+    "Developer, full-stack|Southern Europe|11-20": {
+     "n": 135,
+     "p25": 43700,
+     "median": 58000,
+     "p75": 81200
+    },
+    "Developer, full-stack|Southern Europe|20+": {
+     "n": 60,
+     "p25": 37100,
+     "median": 58000,
+     "p75": 87000
+    },
+    "Developer, full-stack|Southern Europe|3-5": {
+     "n": 83,
+     "p25": 26100,
+     "median": 34800,
+     "p75": 42100
+    },
+    "Developer, full-stack|Southern Europe|6-10": {
+     "n": 106,
+     "p25": 40600,
+     "median": 50500,
+     "p75": 75400
+    },
+    "Developer, full-stack|Sub-Saharan Africa|3-5": {
+     "n": 36,
+     "p25": 3400,
+     "median": 13900,
+     "p75": 36000
+    },
+    "Developer, full-stack|Sub-Saharan Africa|6-10": {
+     "n": 37,
+     "p25": 12000,
+     "median": 30000,
+     "p75": 53400
+    },
+    "Developer, full-stack|Western Europe|0-2": {
+     "n": 52,
+     "p25": 45800,
+     "median": 50000,
+     "p75": 63500
+    },
+    "Developer, full-stack|Western Europe|11-20": {
+     "n": 358,
+     "p25": 67300,
+     "median": 83500,
+     "p75": 110200
+    },
+    "Developer, full-stack|Western Europe|20+": {
+     "n": 177,
+     "p25": 69600,
+     "median": 94000,
+     "p75": 116000
+    },
+    "Developer, full-stack|Western Europe|3-5": {
+     "n": 165,
+     "p25": 47600,
+     "median": 58000,
+     "p75": 74200
+    },
+    "Developer, full-stack|Western Europe|6-10": {
+     "n": 298,
+     "p25": 58000,
+     "median": 75400,
+     "p75": 92800
+    },
+    "Developer, mobile|North America|11-20": {
+     "n": 38,
+     "p25": 130000,
+     "median": 181500,
+     "p75": 210000
+    },
+    "Developer, mobile|North America|20+": {
+     "n": 37,
+     "p25": 140000,
+     "median": 165000,
+     "p75": 220000
+    },
+    "Developer, mobile|South Asia|3-5": {
+     "n": 32,
+     "p25": 5400,
+     "median": 8400,
+     "p75": 14000
+    },
+    "Developer, mobile|Western Europe|11-20": {
+     "n": 53,
+     "p25": 77700,
+     "median": 98600,
+     "p75": 111400
+    }
+   },
+   "RoleFamily x Country x experience": {
+    "Backend|Brazil|11-20": {
+     "n": 38,
+     "p25": 26500,
+     "median": 43200,
+     "p75": 66000
+    },
+    "Backend|Brazil|6-10": {
+     "n": 37,
+     "p25": 22600,
+     "median": 37100,
+     "p75": 54600
+    },
+    "Backend|Canada|11-20": {
+     "n": 41,
+     "p25": 105800,
+     "median": 127700,
+     "p75": 159000
+    },
+    "Backend|Czech Republic|11-20": {
+     "n": 36,
+     "p25": 65300,
+     "median": 74400,
+     "p75": 93600
+    },
+    "Backend|France|11-20": {
+     "n": 45,
+     "p25": 63800,
+     "median": 75400,
+     "p75": 104400
+    },
+    "Backend|France|6-10": {
+     "n": 35,
+     "p25": 53300,
+     "median": 71900,
+     "p75": 91700
+    },
+    "Backend|Germany|11-20": {
+     "n": 87,
+     "p25": 78300,
+     "median": 93100,
+     "p75": 106200
+    },
+    "Backend|Germany|20+": {
+     "n": 37,
+     "p25": 75400,
+     "median": 92800,
+     "p75": 116000
+    },
+    "Backend|Germany|3-5": {
+     "n": 30,
+     "p25": 54500,
+     "median": 68400,
+     "p75": 78900
+    },
+    "Backend|Germany|6-10": {
+     "n": 54,
+     "p25": 73100,
+     "median": 83300,
+     "p75": 99800
+    },
+    "Backend|India|0-2": {
+     "n": 34,
+     "p25": 4600,
+     "median": 7800,
+     "p75": 16000
+    },
+    "Backend|India|3-5": {
+     "n": 45,
+     "p25": 10500,
+     "median": 17400,
+     "p75": 31400
+    },
+    "Backend|India|6-10": {
+     "n": 52,
+     "p25": 21500,
+     "median": 34300,
+     "p75": 54100
+    },
+    "Backend|Netherlands|11-20": {
+     "n": 33,
+     "p25": 84200,
+     "median": 98600,
+     "p75": 116000
+    },
+    "Backend|Poland|11-20": {
+     "n": 38,
+     "p25": 68900,
+     "median": 95500,
+     "p75": 120100
+    },
+    "Backend|Poland|6-10": {
+     "n": 37,
+     "p25": 62800,
+     "median": 81900,
+     "p75": 100000
+    },
+    "Backend|Sweden|11-20": {
+     "n": 31,
+     "p25": 64200,
+     "median": 75500,
+     "p75": 84300
+    },
+    "Backend|Ukraine|11-20": {
+     "n": 40,
+     "p25": 30000,
+     "median": 60000,
+     "p75": 80400
+    },
+    "Backend|Ukraine|3-5": {
+     "n": 45,
+     "p25": 12000,
+     "median": 28000,
+     "p75": 36600
+    },
+    "Backend|Ukraine|6-10": {
+     "n": 57,
+     "p25": 5400,
+     "median": 40000,
+     "p75": 65700
+    },
+    "Backend|United Kingdom of Great Britain and Northern Ireland|11-20": {
+     "n": 77,
+     "p25": 95300,
+     "median": 122500,
+     "p75": 163400
+    },
+    "Backend|United Kingdom of Great Britain and Northern Ireland|20+": {
+     "n": 58,
+     "p25": 89500,
+     "median": 122500,
+     "p75": 157100
+    },
+    "Backend|United Kingdom of Great Britain and Northern Ireland|6-10": {
+     "n": 42,
+     "p25": 91900,
+     "median": 105500,
+     "p75": 141200
+    },
+    "Backend|United States of America|11-20": {
+     "n": 184,
+     "p25": 150000,
+     "median": 188200,
+     "p75": 250500
+    },
+    "Backend|United States of America|20+": {
+     "n": 134,
+     "p25": 150300,
+     "median": 185000,
+     "p75": 250000
+    },
+    "Backend|United States of America|3-5": {
+     "n": 58,
+     "p25": 106000,
+     "median": 130000,
+     "p75": 163800
+    },
+    "Backend|United States of America|6-10": {
+     "n": 114,
+     "p25": 140000,
+     "median": 175000,
+     "p75": 230000
+    },
+    "Data Eng|United States of America|20+": {
+     "n": 30,
+     "p25": 153800,
+     "median": 191000,
+     "p75": 243800
+    },
+    "Data Sci/ML|United States of America|11-20": {
+     "n": 34,
+     "p25": 138200,
+     "median": 200000,
+     "p75": 253000
+    },
+    "Data Sci/ML|United States of America|20+": {
+     "n": 33,
+     "p25": 150000,
+     "median": 200000,
+     "p75": 300000
+    },
+    "Data Sci/ML|United States of America|6-10": {
+     "n": 46,
+     "p25": 100000,
+     "median": 154900,
+     "p75": 215000
+    },
+    "Desktop/Enterprise|United States of America|11-20": {
+     "n": 41,
+     "p25": 116000,
+     "median": 145000,
+     "p75": 200000
+    },
+    "Desktop/Enterprise|United States of America|20+": {
+     "n": 80,
+     "p25": 118800,
+     "median": 149000,
+     "p75": 180000
+    },
+    "Desktop/Enterprise|United States of America|6-10": {
+     "n": 35,
+     "p25": 92500,
+     "median": 113000,
+     "p75": 150000
+    },
+    "DevOps/Cloud|United States of America|11-20": {
+     "n": 54,
+     "p25": 165000,
+     "median": 184000,
+     "p75": 219500
+    },
+    "DevOps/Cloud|United States of America|20+": {
+     "n": 33,
+     "p25": 149000,
+     "median": 185000,
+     "p75": 220000
+    },
+    "DevOps/Cloud|United States of America|6-10": {
+     "n": 34,
+     "p25": 131000,
+     "median": 157500,
+     "p75": 233000
+    },
+    "Embedded/Systems|United States of America|20+": {
+     "n": 51,
+     "p25": 140500,
+     "median": 170000,
+     "p75": 194000
+    },
+    "Frontend|United States of America|11-20": {
+     "n": 55,
+     "p25": 135000,
+     "median": 165000,
+     "p75": 206000
+    },
+    "Frontend|United States of America|6-10": {
+     "n": 43,
+     "p25": 120000,
+     "median": 145000,
+     "p75": 177500
+    },
+    "Full-stack|Australia|11-20": {
+     "n": 45,
+     "p25": 81300,
+     "median": 97500,
+     "p75": 120300
+    },
+    "Full-stack|Australia|20+": {
+     "n": 33,
+     "p25": 78000,
+     "median": 97500,
+     "p75": 130000
+    },
+    "Full-stack|Australia|6-10": {
+     "n": 30,
+     "p25": 81700,
+     "median": 91000,
+     "p75": 110500
+    },
+    "Full-stack|Brazil|11-20": {
+     "n": 54,
+     "p25": 27300,
+     "median": 47000,
+     "p75": 92400
+    },
+    "Full-stack|Brazil|6-10": {
+     "n": 33,
+     "p25": 15800,
+     "median": 34600,
+     "p75": 60100
+    },
+    "Full-stack|Canada|11-20": {
+     "n": 79,
+     "p25": 80300,
+     "median": 94800,
+     "p75": 122400
+    },
+    "Full-stack|Canada|20+": {
+     "n": 59,
+     "p25": 73000,
+     "median": 83900,
+     "p75": 116700
+    },
+    "Full-stack|Canada|3-5": {
+     "n": 35,
+     "p25": 58400,
+     "median": 65700,
+     "p75": 73000
+    },
+    "Full-stack|Canada|6-10": {
+     "n": 51,
+     "p25": 63100,
+     "median": 80300,
+     "p75": 116700
+    },
+    "Full-stack|France|11-20": {
+     "n": 76,
+     "p25": 58000,
+     "median": 76000,
+     "p75": 87000
+    },
+    "Full-stack|France|3-5": {
+     "n": 33,
+     "p25": 39400,
+     "median": 47300,
+     "p75": 52200
+    },
+    "Full-stack|France|6-10": {
+     "n": 75,
+     "p25": 46400,
+     "median": 55700,
+     "p75": 75400
+    },
+    "Full-stack|Germany|11-20": {
+     "n": 153,
+     "p25": 69600,
+     "median": 83500,
+     "p75": 104400
+    },
+    "Full-stack|Germany|20+": {
+     "n": 81,
+     "p25": 69600,
+     "median": 92800,
+     "p75": 116000
+    },
+    "Full-stack|Germany|3-5": {
+     "n": 74,
+     "p25": 51200,
+     "median": 63800,
+     "p75": 75400
+    },
+    "Full-stack|Germany|6-10": {
+     "n": 129,
+     "p25": 66800,
+     "median": 78900,
+     "p75": 90500
+    },
+    "Full-stack|India|0-2": {
+     "n": 56,
+     "p25": 4600,
+     "median": 5800,
+     "p75": 9900
+    },
+    "Full-stack|India|11-20": {
+     "n": 43,
+     "p25": 17100,
+     "median": 34900,
+     "p75": 48200
+    },
+    "Full-stack|India|3-5": {
+     "n": 80,
+     "p25": 7000,
+     "median": 11600,
+     "p75": 18700
+    },
+    "Full-stack|India|6-10": {
+     "n": 72,
+     "p25": 13900,
+     "median": 23200,
+     "p75": 36300
+    },
+    "Full-stack|Italy|11-20": {
+     "n": 39,
+     "p25": 40600,
+     "median": 49300,
+     "p75": 58000
+    },
+    "Full-stack|Italy|6-10": {
+     "n": 36,
+     "p25": 37700,
+     "median": 46400,
+     "p75": 71100
+    },
+    "Full-stack|Netherlands|11-20": {
+     "n": 55,
+     "p25": 69500,
+     "median": 85900,
+     "p75": 104400
+    },
+    "Full-stack|Netherlands|20+": {
+     "n": 32,
+     "p25": 75400,
+     "median": 92800,
+     "p75": 127600
+    },
+    "Full-stack|Netherlands|6-10": {
+     "n": 34,
+     "p25": 58600,
+     "median": 73700,
+     "p75": 103000
+    },
+    "Full-stack|Poland|11-20": {
+     "n": 33,
+     "p25": 62200,
+     "median": 81900,
+     "p75": 106400
+    },
+    "Full-stack|Spain|11-20": {
+     "n": 39,
+     "p25": 58000,
+     "median": 69600,
+     "p75": 92800
+    },
+    "Full-stack|Sweden|11-20": {
+     "n": 41,
+     "p25": 62900,
+     "median": 73800,
+     "p75": 81800
+    },
+    "Full-stack|Switzerland|11-20": {
+     "n": 32,
+     "p25": 124000,
+     "median": 136400,
+     "p75": 156500
+    },
+    "Full-stack|Ukraine|3-5": {
+     "n": 37,
+     "p25": 14400,
+     "median": 27800,
+     "p75": 44000
+    },
+    "Full-stack|Ukraine|6-10": {
+     "n": 31,
+     "p25": 5600,
+     "median": 40300,
+     "p75": 67400
+    },
+    "Full-stack|United Kingdom of Great Britain and Northern Ireland|11-20": {
+     "n": 130,
+     "p25": 76600,
+     "median": 98700,
+     "p75": 122500
+    },
+    "Full-stack|United Kingdom of Great Britain and Northern Ireland|20+": {
+     "n": 98,
+     "p25": 74900,
+     "median": 95300,
+     "p75": 122500
+    },
+    "Full-stack|United Kingdom of Great Britain and Northern Ireland|3-5": {
+     "n": 62,
+     "p25": 51400,
+     "median": 61900,
+     "p75": 81700
+    },
+    "Full-stack|United Kingdom of Great Britain and Northern Ireland|6-10": {
+     "n": 76,
+     "p25": 54500,
+     "median": 77700,
+     "p75": 107100
+    },
+    "Full-stack|United States of America|0-2": {
+     "n": 73,
+     "p25": 60000,
+     "median": 80000,
+     "p75": 100000
+    },
+    "Full-stack|United States of America|11-20": {
+     "n": 388,
+     "p25": 122500,
+     "median": 150000,
+     "p75": 200000
+    },
+    "Full-stack|United States of America|20+": {
+     "n": 322,
+     "p25": 125000,
+     "median": 150000,
+     "p75": 190000
+    },
+    "Full-stack|United States of America|3-5": {
+     "n": 148,
+     "p25": 77200,
+     "median": 101500,
+     "p75": 121200
+    },
+    "Full-stack|United States of America|6-10": {
+     "n": 317,
+     "p25": 105000,
+     "median": 136000,
+     "p75": 184000
+    },
+    "Mobile|United States of America|11-20": {
+     "n": 32,
+     "p25": 150000,
+     "median": 193000,
+     "p75": 222900
+    },
+    "Mobile|United States of America|20+": {
+     "n": 34,
+     "p25": 145800,
+     "median": 170000,
+     "p75": 220000
+    }
+   },
+   "RoleFamily x Region x experience": {
+    "Backend|Eastern Europe & Central Asia|0-2": {
+     "n": 36,
+     "p25": 11700,
+     "median": 19400,
+     "p75": 29900
+    },
+    "Backend|Eastern Europe & Central Asia|11-20": {
+     "n": 160,
+     "p25": 55600,
+     "median": 75200,
+     "p75": 95600
+    },
+    "Backend|Eastern Europe & Central Asia|20+": {
+     "n": 46,
+     "p25": 46200,
+     "median": 70700,
+     "p75": 88400
+    },
+    "Backend|Eastern Europe & Central Asia|3-5": {
+     "n": 102,
+     "p25": 24000,
+     "median": 33800,
+     "p75": 47900
+    },
+    "Backend|Eastern Europe & Central Asia|6-10": {
+     "n": 156,
+     "p25": 39000,
+     "median": 61000,
+     "p75": 80000
+    },
+    "Backend|Latin America & Caribbean|11-20": {
+     "n": 74,
+     "p25": 26200,
+     "median": 44000,
+     "p75": 71400
+    },
+    "Backend|Latin America & Caribbean|3-5": {
+     "n": 37,
+     "p25": 12100,
+     "median": 15100,
+     "p75": 26500
+    },
+    "Backend|Latin America & Caribbean|6-10": {
+     "n": 68,
+     "p25": 23900,
+     "median": 39700,
+     "p75": 54600
+    },
+    "Backend|North America|11-20": {
+     "n": 225,
+     "p25": 140000,
+     "median": 180000,
+     "p75": 240800
+    },
+    "Backend|North America|20+": {
+     "n": 153,
+     "p25": 148000,
+     "median": 180000,
+     "p75": 245000
+    },
+    "Backend|North America|3-5": {
+     "n": 65,
+     "p25": 94800,
+     "median": 125000,
+     "p75": 160000
+    },
+    "Backend|North America|6-10": {
+     "n": 138,
+     "p25": 117500,
+     "median": 160000,
+     "p75": 215000
+    },
+    "Backend|Northern Europe|11-20": {
+     "n": 145,
+     "p25": 81700,
+     "median": 99600,
+     "p75": 136100
+    },
+    "Backend|Northern Europe|20+": {
+     "n": 93,
+     "p25": 83900,
+     "median": 111600,
+     "p75": 145000
+    },
+    "Backend|Northern Europe|3-5": {
+     "n": 37,
+     "p25": 62600,
+     "median": 76100,
+     "p75": 93300
+    },
+    "Backend|Northern Europe|6-10": {
+     "n": 92,
+     "p25": 77100,
+     "median": 95300,
+     "p75": 115700
+    },
+    "Backend|South Asia|0-2": {
+     "n": 42,
+     "p25": 3800,
+     "median": 7000,
+     "p75": 14800
+    },
+    "Backend|South Asia|11-20": {
+     "n": 33,
+     "p25": 23200,
+     "median": 39500,
+     "p75": 63900
+    },
+    "Backend|South Asia|3-5": {
+     "n": 59,
+     "p25": 9100,
+     "median": 15100,
+     "p75": 29700
+    },
+    "Backend|South Asia|6-10": {
+     "n": 71,
+     "p25": 17700,
+     "median": 29100,
+     "p75": 53200
+    },
+    "Backend|Southern Europe|11-20": {
+     "n": 77,
+     "p25": 58000,
+     "median": 72200,
+     "p75": 93600
+    },
+    "Backend|Southern Europe|20+": {
+     "n": 31,
+     "p25": 59700,
+     "median": 75400,
+     "p75": 104400
+    },
+    "Backend|Southern Europe|3-5": {
+     "n": 41,
+     "p25": 29600,
+     "median": 39400,
+     "p75": 46400
+    },
+    "Backend|Southern Europe|6-10": {
+     "n": 68,
+     "p25": 46400,
+     "median": 61500,
+     "p75": 81200
+    },
+    "Backend|Western Europe|11-20": {
+     "n": 202,
+     "p25": 75400,
+     "median": 93500,
+     "p75": 116000
+    },
+    "Backend|Western Europe|20+": {
+     "n": 77,
+     "p25": 81200,
+     "median": 104400,
+     "p75": 139200
+    },
+    "Backend|Western Europe|3-5": {
+     "n": 74,
+     "p25": 52200,
+     "median": 64400,
+     "p75": 81200
+    },
+    "Backend|Western Europe|6-10": {
+     "n": 131,
+     "p25": 69000,
+     "median": 81200,
+     "p75": 104400
+    },
+    "Data Eng|North America|20+": {
+     "n": 33,
+     "p25": 147000,
+     "median": 180000,
+     "p75": 240300
+    },
+    "Data Sci/ML|North America|11-20": {
+     "n": 42,
+     "p25": 127000,
+     "median": 180000,
+     "p75": 238800
+    },
+    "Data Sci/ML|North America|20+": {
+     "n": 36,
+     "p25": 103800,
+     "median": 200000,
+     "p75": 294000
+    },
+    "Data Sci/ML|North America|6-10": {
+     "n": 54,
+     "p25": 95200,
+     "median": 139000,
+     "p75": 200000
+    },
+    "Data Sci/ML|Western Europe|6-10": {
+     "n": 40,
+     "p25": 74800,
+     "median": 95100,
+     "p75": 127200
+    },
+    "Desktop/Enterprise|Eastern Europe & Central Asia|11-20": {
+     "n": 35,
+     "p25": 41300,
+     "median": 55100,
+     "p75": 69600
+    },
+    "Desktop/Enterprise|North America|11-20": {
+     "n": 51,
+     "p25": 110000,
+     "median": 140000,
+     "p75": 175100
+    },
+    "Desktop/Enterprise|North America|20+": {
+     "n": 96,
+     "p25": 110000,
+     "median": 145300,
+     "p75": 180000
+    },
+    "Desktop/Enterprise|North America|6-10": {
+     "n": 41,
+     "p25": 90000,
+     "median": 110000,
+     "p75": 138600
+    },
+    "Desktop/Enterprise|Northern Europe|11-20": {
+     "n": 33,
+     "p25": 69200,
+     "median": 98000,
+     "p75": 122200
+    },
+    "Desktop/Enterprise|Northern Europe|20+": {
+     "n": 34,
+     "p25": 75600,
+     "median": 90300,
+     "p75": 110500
+    },
+    "Desktop/Enterprise|Western Europe|11-20": {
+     "n": 32,
+     "p25": 67000,
+     "median": 84100,
+     "p75": 110200
+    },
+    "Desktop/Enterprise|Western Europe|20+": {
+     "n": 63,
+     "p25": 65000,
+     "median": 92800,
+     "p75": 113800
+    },
+    "Desktop/Enterprise|Western Europe|6-10": {
+     "n": 41,
+     "p25": 63800,
+     "median": 76600,
+     "p75": 89300
+    },
+    "DevOps/Cloud|North America|11-20": {
+     "n": 64,
+     "p25": 150000,
+     "median": 173200,
+     "p75": 216500
+    },
+    "DevOps/Cloud|North America|20+": {
+     "n": 39,
+     "p25": 123500,
+     "median": 180000,
+     "p75": 207500
+    },
+    "DevOps/Cloud|North America|6-10": {
+     "n": 41,
+     "p25": 124000,
+     "median": 153200,
+     "p75": 210000
+    },
+    "DevOps/Cloud|Western Europe|11-20": {
+     "n": 44,
+     "p25": 80600,
+     "median": 104400,
+     "p75": 123300
+    },
+    "DevOps/Cloud|Western Europe|3-5": {
+     "n": 33,
+     "p25": 48300,
+     "median": 62500,
+     "p75": 75400
+    },
+    "DevOps/Cloud|Western Europe|6-10": {
+     "n": 36,
+     "p25": 69600,
+     "median": 81200,
+     "p75": 98600
+    },
+    "Embedded/Systems|North America|20+": {
+     "n": 54,
+     "p25": 140000,
+     "median": 165000,
+     "p75": 194500
+    },
+    "Embedded/Systems|Northern Europe|20+": {
+     "n": 36,
+     "p25": 83700,
+     "median": 115600,
+     "p75": 136300
+    },
+    "Embedded/Systems|Western Europe|11-20": {
+     "n": 40,
+     "p25": 79600,
+     "median": 87600,
+     "p75": 118900
+    },
+    "Embedded/Systems|Western Europe|6-10": {
+     "n": 38,
+     "p25": 57100,
+     "median": 81200,
+     "p75": 103800
+    },
+    "Frontend|Eastern Europe & Central Asia|11-20": {
+     "n": 31,
+     "p25": 52400,
+     "median": 65500,
+     "p75": 83900
+    },
+    "Frontend|Eastern Europe & Central Asia|3-5": {
+     "n": 36,
+     "p25": 11800,
+     "median": 24100,
+     "p75": 36000
+    },
+    "Frontend|Eastern Europe & Central Asia|6-10": {
+     "n": 52,
+     "p25": 41400,
+     "median": 51600,
+     "p75": 67400
+    },
+    "Frontend|North America|11-20": {
+     "n": 68,
+     "p25": 119900,
+     "median": 158000,
+     "p75": 200000
+    },
+    "Frontend|North America|20+": {
+     "n": 30,
+     "p25": 102500,
+     "median": 136000,
+     "p75": 180000
+    },
+    "Frontend|North America|6-10": {
+     "n": 47,
+     "p25": 94000,
+     "median": 140000,
+     "p75": 172500
+    },
+    "Frontend|Northern Europe|11-20": {
+     "n": 39,
+     "p25": 73600,
+     "median": 88500,
+     "p75": 103300
+    },
+    "Frontend|Western Europe|11-20": {
+     "n": 38,
+     "p25": 61500,
+     "median": 91100,
+     "p75": 114900
+    },
+    "Frontend|Western Europe|6-10": {
+     "n": 51,
+     "p25": 66700,
+     "median": 81200,
+     "p75": 94000
+    },
+    "Full-stack|Eastern Europe & Central Asia|0-2": {
+     "n": 33,
+     "p25": 11500,
+     "median": 22100,
+     "p75": 26200
+    },
+    "Full-stack|Eastern Europe & Central Asia|11-20": {
+     "n": 126,
+     "p25": 49400,
+     "median": 75000,
+     "p75": 98000
+    },
+    "Full-stack|Eastern Europe & Central Asia|20+": {
+     "n": 42,
+     "p25": 44900,
+     "median": 58900,
+     "p75": 98500
+    },
+    "Full-stack|Eastern Europe & Central Asia|3-5": {
+     "n": 100,
+     "p25": 22800,
+     "median": 32300,
+     "p75": 45200
+    },
+    "Full-stack|Eastern Europe & Central Asia|6-10": {
+     "n": 124,
+     "p25": 34400,
+     "median": 52300,
+     "p75": 73800
+    },
+    "Full-stack|Latin America & Caribbean|0-2": {
+     "n": 43,
+     "p25": 6200,
+     "median": 10900,
+     "p75": 16300
+    },
+    "Full-stack|Latin America & Caribbean|11-20": {
+     "n": 111,
+     "p25": 27300,
+     "median": 46800,
+     "p75": 78000
+    },
+    "Full-stack|Latin America & Caribbean|20+": {
+     "n": 40,
+     "p25": 25100,
+     "median": 45500,
+     "p75": 62100
+    },
+    "Full-stack|Latin America & Caribbean|3-5": {
+     "n": 72,
+     "p25": 12000,
+     "median": 17900,
+     "p75": 32000
+    },
+    "Full-stack|Latin America & Caribbean|6-10": {
+     "n": 101,
+     "p25": 15600,
+     "median": 30700,
+     "p75": 58100
+    },
+    "Full-stack|Middle East & North Africa|11-20": {
+     "n": 37,
+     "p25": 36400,
+     "median": 65000,
+     "p75": 118500
+    },
+    "Full-stack|North America|0-2": {
+     "n": 91,
+     "p25": 55000,
+     "median": 74000,
+     "p75": 92500
+    },
+    "Full-stack|North America|11-20": {
+     "n": 467,
+     "p25": 109400,
+     "median": 150000,
+     "p75": 185000
+    },
+    "Full-stack|North America|20+": {
+     "n": 381,
+     "p25": 111000,
+     "median": 145900,
+     "p75": 180000
+    },
+    "Full-stack|North America|3-5": {
+     "n": 183,
+     "p25": 70000,
+     "median": 92000,
+     "p75": 120000
+    },
+    "Full-stack|North America|6-10": {
+     "n": 368,
+     "p25": 100000,
+     "median": 130000,
+     "p75": 171200
+    },
+    "Full-stack|Northern Europe|0-2": {
+     "n": 40,
+     "p25": 43400,
+     "median": 50900,
+     "p75": 67400
+    },
+    "Full-stack|Northern Europe|11-20": {
+     "n": 237,
+     "p25": 73400,
+     "median": 96000,
+     "p75": 118600
+    },
+    "Full-stack|Northern Europe|20+": {
+     "n": 162,
+     "p25": 68100,
+     "median": 92100,
+     "p75": 122500
+    },
+    "Full-stack|Northern Europe|3-5": {
+     "n": 118,
+     "p25": 54500,
+     "median": 64200,
+     "p75": 80000
+    },
+    "Full-stack|Northern Europe|6-10": {
+     "n": 171,
+     "p25": 63400,
+     "median": 79300,
+     "p75": 98300
+    },
+    "Full-stack|Oceania|11-20": {
+     "n": 64,
+     "p25": 81300,
+     "median": 91400,
+     "p75": 117500
+    },
+    "Full-stack|Oceania|20+": {
+     "n": 52,
+     "p25": 77200,
+     "median": 97500,
+     "p75": 124300
+    },
+    "Full-stack|Oceania|6-10": {
+     "n": 38,
+     "p25": 72900,
+     "median": 86900,
+     "p75": 104000
+    },
+    "Full-stack|South Asia|0-2": {
+     "n": 73,
+     "p25": 4100,
+     "median": 5600,
+     "p75": 8100
+    },
+    "Full-stack|South Asia|11-20": {
+     "n": 58,
+     "p25": 18100,
+     "median": 33700,
+     "p75": 49300
+    },
+    "Full-stack|South Asia|3-5": {
+     "n": 119,
+     "p25": 6800,
+     "median": 10500,
+     "p75": 18800
+    },
+    "Full-stack|South Asia|6-10": {
+     "n": 116,
+     "p25": 9800,
+     "median": 19500,
+     "p75": 34900
+    },
+    "Full-stack|Southern Europe|0-2": {
+     "n": 31,
+     "p25": 22600,
+     "median": 26000,
+     "p75": 32800
+    },
+    "Full-stack|Southern Europe|11-20": {
+     "n": 135,
+     "p25": 43700,
+     "median": 58000,
+     "p75": 81200
+    },
+    "Full-stack|Southern Europe|20+": {
+     "n": 60,
+     "p25": 37100,
+     "median": 58000,
+     "p75": 87000
+    },
+    "Full-stack|Southern Europe|3-5": {
+     "n": 83,
+     "p25": 26100,
+     "median": 34800,
+     "p75": 42100
+    },
+    "Full-stack|Southern Europe|6-10": {
+     "n": 106,
+     "p25": 40600,
+     "median": 50500,
+     "p75": 75400
+    },
+    "Full-stack|Sub-Saharan Africa|3-5": {
+     "n": 36,
+     "p25": 3400,
+     "median": 13900,
+     "p75": 36000
+    },
+    "Full-stack|Sub-Saharan Africa|6-10": {
+     "n": 37,
+     "p25": 12000,
+     "median": 30000,
+     "p75": 53400
+    },
+    "Full-stack|Western Europe|0-2": {
+     "n": 52,
+     "p25": 45800,
+     "median": 50000,
+     "p75": 63500
+    },
+    "Full-stack|Western Europe|11-20": {
+     "n": 358,
+     "p25": 67300,
+     "median": 83500,
+     "p75": 110200
+    },
+    "Full-stack|Western Europe|20+": {
+     "n": 177,
+     "p25": 69600,
+     "median": 94000,
+     "p75": 116000
+    },
+    "Full-stack|Western Europe|3-5": {
+     "n": 165,
+     "p25": 47600,
+     "median": 58000,
+     "p75": 74200
+    },
+    "Full-stack|Western Europe|6-10": {
+     "n": 298,
+     "p25": 58000,
+     "median": 75400,
+     "p75": 92800
+    },
+    "Mobile|North America|11-20": {
+     "n": 38,
+     "p25": 130000,
+     "median": 181500,
+     "p75": 210000
+    },
+    "Mobile|North America|20+": {
+     "n": 37,
+     "p25": 140000,
+     "median": 165000,
+     "p75": 220000
+    },
+    "Mobile|South Asia|3-5": {
+     "n": 32,
+     "p25": 5400,
+     "median": 8400,
+     "p75": 14000
+    },
+    "Mobile|Western Europe|11-20": {
+     "n": 53,
+     "p25": 77700,
+     "median": 98600,
+     "p75": 111400
+    }
+   },
+   "JobRole x Global x experience": {
+    "AI/ML engineer|0-2": {
+     "n": 34,
+     "p25": 15900,
+     "median": 37800,
+     "p75": 69900
+    },
+    "AI/ML engineer|11-20": {
+     "n": 46,
+     "p25": 83100,
+     "median": 128100,
+     "p75": 179500
+    },
+    "AI/ML engineer|20+": {
+     "n": 33,
+     "p25": 96400,
+     "median": 150000,
+     "p75": 238200
+    },
+    "AI/ML engineer|3-5": {
+     "n": 55,
+     "p25": 35300,
+     "median": 55700,
+     "p75": 99700
+    },
+    "AI/ML engineer|6-10": {
+     "n": 66,
+     "p25": 77200,
+     "median": 106100,
+     "p75": 171200
+    },
+    "Cloud infrastructure engineer|11-20": {
+     "n": 59,
+     "p25": 103700,
+     "median": 150000,
+     "p75": 197200
+    },
+    "Cloud infrastructure engineer|6-10": {
+     "n": 34,
+     "p25": 66200,
+     "median": 105200,
+     "p75": 159200
+    },
+    "Data engineer|11-20": {
+     "n": 89,
+     "p25": 57000,
+     "median": 90000,
+     "p75": 136100
+    },
+    "Data engineer|20+": {
+     "n": 55,
+     "p25": 75600,
+     "median": 143000,
+     "p75": 185000
+    },
+    "Data engineer|3-5": {
+     "n": 67,
+     "p25": 39900,
+     "median": 64000,
+     "p75": 88900
+    },
+    "Data engineer|6-10": {
+     "n": 95,
+     "p25": 59400,
+     "median": 90500,
+     "p75": 125500
+    },
+    "Data scientist|11-20": {
+     "n": 44,
+     "p25": 69700,
+     "median": 104000,
+     "p75": 141300
+    },
+    "Data scientist|3-5": {
+     "n": 31,
+     "p25": 42900,
+     "median": 58000,
+     "p75": 77200
+    },
+    "Data scientist|6-10": {
+     "n": 54,
+     "p25": 77600,
+     "median": 103200,
+     "p75": 127600
+    },
+    "DevOps engineer or professional|11-20": {
+     "n": 116,
+     "p25": 74900,
+     "median": 106800,
+     "p75": 160400
+    },
+    "DevOps engineer or professional|20+": {
+     "n": 80,
+     "p25": 78500,
+     "median": 120900,
+     "p75": 187000
+    },
+    "DevOps engineer or professional|3-5": {
+     "n": 61,
+     "p25": 37100,
+     "median": 63800,
+     "p75": 90000
+    },
+    "DevOps engineer or professional|6-10": {
+     "n": 100,
+     "p25": 62900,
+     "median": 83600,
+     "p75": 118100
+    },
+    "Developer, back-end|0-2": {
+     "n": 200,
+     "p25": 10100,
+     "median": 25500,
+     "p75": 54500
+    },
+    "Developer, back-end|11-20": {
+     "n": 995,
+     "p25": 69100,
+     "median": 95900,
+     "p75": 145900
+    },
+    "Developer, back-end|20+": {
+     "n": 466,
+     "p25": 78000,
+     "median": 117100,
+     "p75": 170000
+    },
+    "Developer, back-end|3-5": {
+     "n": 471,
+     "p25": 24000,
+     "median": 46400,
+     "p75": 76300
+    },
+    "Developer, back-end|6-10": {
+     "n": 805,
+     "p25": 46800,
+     "median": 74900,
+     "p75": 111000
+    },
+    "Developer, desktop or enterprise applications|0-2": {
+     "n": 67,
+     "p25": 24000,
+     "median": 48700,
+     "p75": 75000
+    },
+    "Developer, desktop or enterprise applications|11-20": {
+     "n": 201,
+     "p25": 52800,
+     "median": 81200,
+     "p75": 123000
+    },
+    "Developer, desktop or enterprise applications|20+": {
+     "n": 284,
+     "p25": 63200,
+     "median": 96800,
+     "p75": 144700
+    },
+    "Developer, desktop or enterprise applications|3-5": {
+     "n": 106,
+     "p25": 28100,
+     "median": 48500,
+     "p75": 83400
+    },
+    "Developer, desktop or enterprise applications|6-10": {
+     "n": 154,
+     "p25": 54300,
+     "median": 72600,
+     "p75": 103500
+    },
+    "Developer, embedded applications or devices|0-2": {
+     "n": 57,
+     "p25": 30100,
+     "median": 52900,
+     "p75": 70600
+    },
+    "Developer, embedded applications or devices|11-20": {
+     "n": 135,
+     "p25": 64400,
+     "median": 92800,
+     "p75": 137800
+    },
+    "Developer, embedded applications or devices|20+": {
+     "n": 135,
+     "p25": 84800,
+     "median": 120300,
+     "p75": 163400
+    },
+    "Developer, embedded applications or devices|3-5": {
+     "n": 97,
+     "p25": 36400,
+     "median": 58000,
+     "p75": 90000
+    },
+    "Developer, embedded applications or devices|6-10": {
+     "n": 122,
+     "p25": 55900,
+     "median": 80800,
+     "p75": 119200
+    },
+    "Developer, front-end|0-2": {
+     "n": 81,
+     "p25": 6200,
+     "median": 14800,
+     "p75": 42200
+    },
+    "Developer, front-end|11-20": {
+     "n": 229,
+     "p25": 65700,
+     "median": 93600,
+     "p75": 132700
+    },
+    "Developer, front-end|20+": {
+     "n": 81,
+     "p25": 76600,
+     "median": 102100,
+     "p75": 140000
+    },
+    "Developer, front-end|3-5": {
+     "n": 149,
+     "p25": 14000,
+     "median": 40900,
+     "p75": 63800
+    },
+    "Developer, front-end|6-10": {
+     "n": 251,
+     "p25": 42500,
+     "median": 69100,
+     "p75": 97300
+    },
+    "Developer, full-stack|0-2": {
+     "n": 432,
+     "p25": 10300,
+     "median": 30600,
+     "p75": 55100
+    },
+    "Developer, full-stack|11-20": {
+     "n": 1660,
+     "p25": 60800,
+     "median": 90000,
+     "p75": 131000
+    },
+    "Developer, full-stack|20+": {
+     "n": 973,
+     "p25": 69600,
+     "median": 104400,
+     "p75": 148200
+    },
+    "Developer, full-stack|3-5": {
+     "n": 958,
+     "p25": 23200,
+     "median": 47600,
+     "p75": 74300
+    },
+    "Developer, full-stack|6-10": {
+     "n": 1436,
+     "p25": 43900,
+     "median": 73700,
+     "p75": 110000
+    },
+    "Developer, game or graphics|11-20": {
+     "n": 48,
+     "p25": 62300,
+     "median": 82100,
+     "p75": 119100
+    },
+    "Developer, game or graphics|6-10": {
+     "n": 35,
+     "p25": 57800,
+     "median": 76400,
+     "p75": 91700
+    },
+    "Developer, mobile|0-2": {
+     "n": 37,
+     "p25": 9300,
+     "median": 36500,
+     "p75": 53500
+    },
+    "Developer, mobile|11-20": {
+     "n": 194,
+     "p25": 69300,
+     "median": 98000,
+     "p75": 139200
+    },
+    "Developer, mobile|20+": {
+     "n": 62,
+     "p25": 102600,
+     "median": 138900,
+     "p75": 189000
+    },
+    "Developer, mobile|3-5": {
+     "n": 103,
+     "p25": 10200,
+     "median": 30000,
+     "p75": 42500
+    },
+    "Developer, mobile|6-10": {
+     "n": 169,
+     "p25": 33200,
+     "median": 68100,
+     "p75": 100000
+    }
+   },
+   "RoleFamily x Global x experience": {
+    "Backend|0-2": {
+     "n": 200,
+     "p25": 10100,
+     "median": 25500,
+     "p75": 54500
+    },
+    "Backend|11-20": {
+     "n": 995,
+     "p25": 69100,
+     "median": 95900,
+     "p75": 145900
+    },
+    "Backend|20+": {
+     "n": 466,
+     "p25": 78000,
+     "median": 117100,
+     "p75": 170000
+    },
+    "Backend|3-5": {
+     "n": 471,
+     "p25": 24000,
+     "median": 46400,
+     "p75": 76300
+    },
+    "Backend|6-10": {
+     "n": 805,
+     "p25": 46800,
+     "median": 74900,
+     "p75": 111000
+    },
+    "Data Eng|11-20": {
+     "n": 102,
+     "p25": 59500,
+     "median": 89500,
+     "p75": 136400
+    },
+    "Data Eng|20+": {
+     "n": 74,
+     "p25": 80200,
+     "median": 139600,
+     "p75": 180000
+    },
+    "Data Eng|3-5": {
+     "n": 71,
+     "p25": 39900,
+     "median": 63200,
+     "p75": 87500
+    },
+    "Data Eng|6-10": {
+     "n": 103,
+     "p25": 58200,
+     "median": 88800,
+     "p75": 125500
+    },
+    "Data Sci/ML|0-2": {
+     "n": 75,
+     "p25": 13300,
+     "median": 39400,
+     "p75": 69600
+    },
+    "Data Sci/ML|11-20": {
+     "n": 128,
+     "p25": 75600,
+     "median": 116000,
+     "p75": 171000
+    },
+    "Data Sci/ML|20+": {
+     "n": 81,
+     "p25": 80000,
+     "median": 130000,
+     "p75": 200000
+    },
+    "Data Sci/ML|3-5": {
+     "n": 111,
+     "p25": 36300,
+     "median": 58100,
+     "p75": 91500
+    },
+    "Data Sci/ML|6-10": {
+     "n": 171,
+     "p25": 65500,
+     "median": 95200,
+     "p75": 140100
+    },
+    "Desktop/Enterprise|0-2": {
+     "n": 67,
+     "p25": 24000,
+     "median": 48700,
+     "p75": 75000
+    },
+    "Desktop/Enterprise|11-20": {
+     "n": 201,
+     "p25": 52800,
+     "median": 81200,
+     "p75": 123000
+    },
+    "Desktop/Enterprise|20+": {
+     "n": 284,
+     "p25": 63200,
+     "median": 96800,
+     "p75": 144700
+    },
+    "Desktop/Enterprise|3-5": {
+     "n": 106,
+     "p25": 28100,
+     "median": 48500,
+     "p75": 83400
+    },
+    "Desktop/Enterprise|6-10": {
+     "n": 154,
+     "p25": 54300,
+     "median": 72600,
+     "p75": 103500
+    },
+    "DevOps/Cloud|0-2": {
+     "n": 34,
+     "p25": 37000,
+     "median": 53200,
+     "p75": 91600
+    },
+    "DevOps/Cloud|11-20": {
+     "n": 177,
+     "p25": 81200,
+     "median": 110000,
+     "p75": 170000
+    },
+    "DevOps/Cloud|20+": {
+     "n": 97,
+     "p25": 81200,
+     "median": 120000,
+     "p75": 186000
+    },
+    "DevOps/Cloud|3-5": {
+     "n": 96,
+     "p25": 34900,
+     "median": 61400,
+     "p75": 87400
+    },
+    "DevOps/Cloud|6-10": {
+     "n": 137,
+     "p25": 63800,
+     "median": 87000,
+     "p75": 134000
+    },
+    "Embedded/Systems|0-2": {
+     "n": 57,
+     "p25": 30100,
+     "median": 52900,
+     "p75": 70600
+    },
+    "Embedded/Systems|11-20": {
+     "n": 135,
+     "p25": 64400,
+     "median": 92800,
+     "p75": 137800
+    },
+    "Embedded/Systems|20+": {
+     "n": 135,
+     "p25": 84800,
+     "median": 120300,
+     "p75": 163400
+    },
+    "Embedded/Systems|3-5": {
+     "n": 97,
+     "p25": 36400,
+     "median": 58000,
+     "p75": 90000
+    },
+    "Embedded/Systems|6-10": {
+     "n": 122,
+     "p25": 55900,
+     "median": 80800,
+     "p75": 119200
+    },
+    "Frontend|0-2": {
+     "n": 81,
+     "p25": 6200,
+     "median": 14800,
+     "p75": 42200
+    },
+    "Frontend|11-20": {
+     "n": 237,
+     "p25": 65600,
+     "median": 93600,
+     "p75": 132700
+    },
+    "Frontend|20+": {
+     "n": 82,
+     "p25": 76600,
+     "median": 102100,
+     "p75": 139800
+    },
+    "Frontend|3-5": {
+     "n": 151,
+     "p25": 13800,
+     "median": 39500,
+     "p75": 63300
+    },
+    "Frontend|6-10": {
+     "n": 252,
+     "p25": 42700,
+     "median": 68800,
+     "p75": 96700
+    },
+    "Full-stack|0-2": {
+     "n": 432,
+     "p25": 10300,
+     "median": 30600,
+     "p75": 55100
+    },
+    "Full-stack|11-20": {
+     "n": 1660,
+     "p25": 60800,
+     "median": 90000,
+     "p75": 131000
+    },
+    "Full-stack|20+": {
+     "n": 973,
+     "p25": 69600,
+     "median": 104400,
+     "p75": 148200
+    },
+    "Full-stack|3-5": {
+     "n": 958,
+     "p25": 23200,
+     "median": 47600,
+     "p75": 74300
+    },
+    "Full-stack|6-10": {
+     "n": 1436,
+     "p25": 43900,
+     "median": 73700,
+     "p75": 110000
+    },
+    "Game/Graphics|11-20": {
+     "n": 48,
+     "p25": 62300,
+     "median": 82100,
+     "p75": 119100
+    },
+    "Game/Graphics|6-10": {
+     "n": 35,
+     "p25": 57800,
+     "median": 76400,
+     "p75": 91700
+    },
+    "Mobile|0-2": {
+     "n": 37,
+     "p25": 9300,
+     "median": 36500,
+     "p75": 53500
+    },
+    "Mobile|11-20": {
+     "n": 194,
+     "p25": 69300,
+     "median": 98000,
+     "p75": 139200
+    },
+    "Mobile|20+": {
+     "n": 62,
+     "p25": 102600,
+     "median": 138900,
+     "p75": 189000
+    },
+    "Mobile|3-5": {
+     "n": 103,
+     "p25": 10200,
+     "median": 30000,
+     "p75": 42500
+    },
+    "Mobile|6-10": {
+     "n": 169,
+     "p25": 33200,
+     "median": 68100,
+     "p75": 100000
+    }
+   }
+  }
+ },
+ "roles": {
+  "Developer, mobile": {
+   "test_f1": 0.699,
+   "test_recall": 0.703,
+   "test_support": 185,
+   "low_confidence": false
+  },
+  "Developer, full-stack": {
+   "test_f1": 0.693,
+   "test_recall": 0.788,
+   "test_support": 1820,
+   "low_confidence": false
+  },
+  "Developer, embedded applications or devices": {
+   "test_f1": 0.543,
+   "test_recall": 0.57,
+   "test_support": 193,
+   "low_confidence": false
+  },
+  "Developer, back-end": {
+   "test_f1": 0.517,
+   "test_recall": 0.517,
+   "test_support": 937,
+   "low_confidence": false
+  },
+  "Developer, front-end": {
+   "test_f1": 0.498,
+   "test_recall": 0.436,
+   "test_support": 280,
+   "low_confidence": false
+  },
+  "Data engineer": {
+   "test_f1": 0.39,
+   "test_recall": 0.345,
+   "test_support": 113,
+   "low_confidence": false
+  },
+  "DevOps engineer or professional": {
+   "test_f1": 0.355,
+   "test_recall": 0.304,
+   "test_support": 161,
+   "low_confidence": false
+  },
+  "Data scientist": {
+   "test_f1": 0.335,
+   "test_recall": 0.299,
+   "test_support": 87,
+   "low_confidence": false
+  },
+  "AI/ML engineer": {
+   "test_f1": 0.306,
+   "test_recall": 0.276,
+   "test_support": 87,
+   "low_confidence": false
+  },
+  "Developer, desktop or enterprise applications": {
+   "test_f1": 0.287,
+   "test_recall": 0.246,
+   "test_support": 297,
+   "low_confidence": false
+  },
+  "Applied scientist": {
+   "test_f1": 0.262,
+   "test_recall": 0.244,
+   "test_support": 45,
+   "low_confidence": false
+  },
+  "Developer, game or graphics": {
+   "test_f1": 0.248,
+   "test_recall": 0.197,
+   "test_support": 66,
+   "low_confidence": false
+  },
+  "Data or business analyst": {
+   "test_f1": 0.154,
+   "test_recall": 0.128,
+   "test_support": 47,
+   "low_confidence": false
+  },
+  "Developer, QA or test": {
+   "test_f1": 0.102,
+   "test_recall": 0.06,
+   "test_support": 50,
+   "low_confidence": true
+  },
+  "System administrator": {
+   "test_f1": 0.098,
+   "test_recall": 0.074,
+   "test_support": 68,
+   "low_confidence": true
+  },
+  "Cloud infrastructure engineer": {
+   "test_f1": 0.076,
+   "test_recall": 0.051,
+   "test_support": 59,
+   "low_confidence": true
+  },
+  "Database administrator or engineer": {
+   "test_f1": 0.074,
+   "test_recall": 0.042,
+   "test_support": 24,
+   "low_confidence": true
+  },
+  "Cybersecurity or InfoSec professional": {
+   "test_f1": 0.053,
+   "test_recall": 0.036,
+   "test_support": 55,
+   "low_confidence": true
+  },
+  "Developer, AI apps or physical AI": {
+   "test_f1": 0.0,
+   "test_recall": 0.0,
+   "test_support": 29,
+   "low_confidence": true
+  },
+  "UX, Research Ops or UI design professional": {
+   "test_f1": 0.0,
+   "test_recall": 0.0,
+   "test_support": 12,
+   "low_confidence": true
+  }
+ },
+ "low_confidence_recall": 0.1,
+ "sources": {
+  "ai_rows": 18457,
+  "salary_rows": 15545,
+  "note": "Both tables exclude the 4,615 recommender test respondents."
+ }
+}

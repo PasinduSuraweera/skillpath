@@ -132,7 +132,8 @@ def build_options(train: pd.DataFrame, tech_encoder=None) -> dict:
             {"job_role": k, "label": C.JOB_ROLE_LABEL[k], "family": v,
              "description": C.JOB_ROLE_DESCRIPTION[k]} for k, v in C.ROLE_FAMILY.items()
         ],
-        "limits": {"years_min": 0, "years_max": 50},
+        # the API does not ask for age, so it uses the cleaning ceiling for an unknown age
+        "limits": {"years_min": 0, "years_max": C.MAX_YEARS_FALLBACK},
         "attribution": (
             "Data: Stack Overflow Annual Developer Survey 2025, licensed under the "
             "Open Database License (ODbL) v1.0. https://survey.stackoverflow.co/2025/"
