@@ -12,6 +12,9 @@ __pycache__/
 # CSV exports produced by scripts/show_data.py (regenerate, do not commit)
 data/exports/
 
+# Excel copies written by notebook 06 (about 35 MB, regenerate by running it)
+data/processed/excel/
+
 # Colab upload bundle (regenerate with the snippet in README)
 skillpath_colab.zip
 PR_DESCRIPTION.md
