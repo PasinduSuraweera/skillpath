@@ -80,7 +80,7 @@ export default function Results(props: Props) {
         {...enter(0)}
       >
         <Box sx={{ minWidth: 0 }}>
-          <Typography variant="h4" component="h2" sx={{ fontSize: { xs: '1.6rem', md: '2rem' } }}>
+          <Typography variant="h4" component="h1" sx={{ fontSize: { xs: '1.6rem', md: '2rem' } }}>
             Your top job role matches
           </Typography>
           <Typography color="text.secondary" sx={{ maxWidth: 680, mt: 0.75 }}>

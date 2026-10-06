@@ -1,3 +1,11 @@
+import Check from '@mui/icons-material/Check'
+import CloudQueue from '@mui/icons-material/CloudQueue'
+import Code from '@mui/icons-material/Code'
+import NewReleases from '@mui/icons-material/NewReleases'
+import Psychology from '@mui/icons-material/Psychology'
+import Storage from '@mui/icons-material/Storage'
+import Terminal from '@mui/icons-material/Terminal'
+import Web from '@mui/icons-material/Web'
 import Autocomplete from '@mui/material/Autocomplete'
 import Box from '@mui/material/Box'
 import Checkbox from '@mui/material/Checkbox'
@@ -8,11 +16,22 @@ import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import { alpha } from '@mui/material/styles'
+import { useState } from 'react'
 import type { TechBlock } from '../api/types'
 import type { TechState } from '../form'
 import { DURATION } from '../motion'
 import { HAVE_LABEL, TECH_AREAS, WANT_LABEL } from '../questions'
 import { RADIUS } from '../theme'
+
+const ICONS: Record<TechBlock, typeof Code> = {
+  Language: Code,
+  Database: Storage,
+  Platform: CloudQueue,
+  Webframe: Web,
+  DevEnvs: Terminal,
+  AIModels: Psychology,
+  SOTags: NewReleases,
+}
 
 interface Props {
   block: TechBlock
@@ -25,6 +44,13 @@ interface Props {
 export default function TechArea({ block, value, choices, error, onChange }: Props) {
   const area = TECH_AREAS[block]
   const answered = value.none || value.have.length > 0 || value.want.length > 0
+  const Icon = ICONS[block]
+  // the check settles in when the visitor answers here, not every time the step opens
+  const [touched, setTouched] = useState(false)
+  const change = (v: TechState) => {
+    setTouched(true)
+    onChange(v)
+  }
 
   const picker = (kind: 'have' | 'want', label: string) => (
     <Autocomplete
@@ -35,7 +61,7 @@ export default function TechArea({ block, value, choices, error, onChange }: Pro
       options={choices}
       value={value[kind]}
       disabled={value.none}
-      onChange={(_, list) => onChange({ ...value, [kind]: list })}
+      onChange={(_, list) => change({ ...value, [kind]: list })}
       renderInput={(params) => (
         <TextField
           {...params}
@@ -67,8 +93,25 @@ export default function TechArea({ block, value, choices, error, onChange }: Pro
       })}
     >
       <Stack spacing={1.5}>
-        <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'flex-start', gap: 1 }}>
-          <Box sx={{ minWidth: 0 }}>
+        <Stack direction="row" sx={{ alignItems: 'flex-start', gap: 1.5 }}>
+          {/* area icon: takes on the accent once the area is answered */}
+          <Box
+            aria-hidden="true"
+            sx={(t) => ({
+              flexShrink: 0,
+              width: 34,
+              height: 34,
+              borderRadius: '10px',
+              display: 'grid',
+              placeItems: 'center',
+              color: answered ? 'primary.main' : 'text.secondary',
+              bgcolor: answered ? alpha(t.palette.primary.main, 0.12) : alpha(t.palette.text.primary, 0.05),
+              transition: `background-color ${DURATION.hover}ms ease, color ${DURATION.hover}ms ease`,
+            })}
+          >
+            <Icon sx={{ fontSize: 19 }} />
+          </Box>
+          <Box sx={{ minWidth: 0, flexGrow: 1 }}>
             <Typography variant="subtitle1" component="h3" sx={{ lineHeight: 1.35 }}>
               {area.title}
             </Typography>
@@ -78,6 +121,7 @@ export default function TechArea({ block, value, choices, error, onChange }: Pro
           </Box>
           <Chip
             size="small"
+            icon={answered ? <Check className={touched ? 'sp-pop' : undefined} /> : undefined}
             label={value.none ? 'None' : answered ? `${value.have.length} used · ${value.want.length} wanted` : 'Skipped'}
             sx={(t) => ({
               flexShrink: 0,
@@ -87,6 +131,7 @@ export default function TechArea({ block, value, choices, error, onChange }: Pro
               border: '1px solid',
               borderColor: answered ? 'transparent' : 'divider',
               fontWeight: 600,
+              '& .MuiChip-icon': { color: 'inherit', fontSize: 15, ml: 0.75, mr: -0.25 },
             })}
           />
         </Stack>
@@ -98,7 +143,7 @@ export default function TechArea({ block, value, choices, error, onChange }: Pro
               <Checkbox
                 size="small"
                 checked={value.none}
-                onChange={(e) => onChange(e.target.checked ? { have: [], want: [], none: true } : { ...value, none: false })}
+                onChange={(e) => change(e.target.checked ? { have: [], want: [], none: true } : { ...value, none: false })}
               />
             }
             label={<Typography variant="body2">I don’t use any of these</Typography>}

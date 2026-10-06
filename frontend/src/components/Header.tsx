@@ -49,7 +49,7 @@ export default function Header() {
       >
         <Box component="img" src="/favicon.svg" alt="" sx={{ width: 30, height: 30, flexShrink: 0 }} />
         <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-          <Typography variant="subtitle1" component="h1" sx={{ lineHeight: 1.2, fontWeight: 700, letterSpacing: '-0.01em' }}>
+          <Typography variant="subtitle1" component="p" sx={{ lineHeight: 1.2, fontWeight: 700, letterSpacing: '-0.01em' }}>
             SkillPath
           </Typography>
           <Typography

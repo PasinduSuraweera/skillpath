@@ -16,9 +16,6 @@ import Paper from '@mui/material/Paper'
 import Skeleton from '@mui/material/Skeleton'
 import Snackbar from '@mui/material/Snackbar'
 import Stack from '@mui/material/Stack'
-import Step from '@mui/material/Step'
-import StepButton from '@mui/material/StepButton'
-import Stepper from '@mui/material/Stepper'
 import Typography from '@mui/material/Typography'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { alpha, useColorScheme, useTheme } from '@mui/material/styles'
@@ -29,26 +26,27 @@ import type { Options, Recommendation, SkillSuggestion } from './api/types'
 import AIStep from './components/AIStep'
 import AboutStep from './components/AboutStep'
 import Header from './components/Header'
+import Hero from './components/Hero'
 import Results from './components/Results'
-import SampleBar from './components/SampleBar'
 import TechStep from './components/TechStep'
+import WizardSteps from './components/WizardSteps'
 import {
   describeChanges,
   emptyForm,
   fromProfile,
   serverErrors,
   stepOf,
+  stepProgress,
   toProfile,
   validate,
   withTechnology,
 } from './form'
 import type { Errors, FormState } from './form'
-import { DURATION, prefersReducedMotion, useDelayedFlag } from './motion'
+import { DURATION, EASE, prefersReducedMotion, useDelayedFlag } from './motion'
 import { RADIUS } from './theme'
 import { SAMPLES } from './samples'
 import type { Sample } from './samples'
 
-const STEPS = ['About you', 'Technologies', 'AI usage', 'Results']
 const RESULTS = 3
 
 interface Run {
@@ -82,6 +80,14 @@ export default function App() {
   const showBusy = useDelayedFlag(busy)
   const showSkeleton = useDelayedFlag(!options && !loadError, 150)
   const showRetrying = useDelayedFlag(retrying)
+
+  // the start page's entrance plays once per visit, not again when coming back from the results
+  const [intro, setIntro] = useState(true)
+  useEffect(() => {
+    if (!options) return
+    const t = window.setTimeout(() => setIntro(false), 1200)
+    return () => window.clearTimeout(t)
+  }, [options])
 
   // the form is built from GET /api/options, so nothing can be shown before it arrives
   const fetchOptions = useCallback(
@@ -219,6 +225,9 @@ export default function App() {
     }
   }, [mode, setMode])
 
+  const progress = useMemo(() => stepProgress(form), [form])
+  const answered = progress.reduce((n, p) => n + p.answered, 0)
+  const questions = progress.reduce((n, p) => n + p.total, 0)
   const stepProps = options ? { form, setForm, options, errors } : null
   const errorCount = Object.keys(errors).length
   const stepClass = direction === 'forward' ? 'sp-step-forward' : direction === 'back' ? 'sp-step-back' : undefined
@@ -244,35 +253,19 @@ export default function App() {
         ) : (
           <Stack spacing={3} className="sp-fade">
             {step < RESULTS && (
-              <Box className="no-print">
-                <Typography variant="h4" component="h2" sx={{ fontSize: { xs: '1.75rem', md: '2.25rem' } }}>
-                  Which developer role fits you?
-                </Typography>
-                <Typography color="text.secondary" sx={{ mt: 1, mb: 2.5, maxWidth: 700 }}>
-                  Answer a few questions about your skills and how you use AI. SkillPath compares you with about 18,000
-                  developers from the 2025 Stack Overflow survey and suggests your three closest job roles, with each
-                  role’s AI outlook, typical pay and the skills to grow next.
-                </Typography>
-                <SampleBar onPick={pickSample} disabled={showBusy} activeId={activeSample} />
+              <Box sx={{ pb: { xs: 1, md: 3 } }}>
+                <Hero options={options} intro={intro} onPick={pickSample} disabled={showBusy} activeId={activeSample} />
               </Box>
             )}
 
-            <Stepper
+            <WizardSteps
               ref={stepperRef}
-              nonLinear
-              activeStep={step}
-              alternativeLabel
-              className="no-print"
-              sx={{ scrollMarginTop: 76, '& .MuiStepLabel-label': { fontSize: { xs: '0.8125rem', sm: '0.875rem' } } }}
-            >
-              {STEPS.map((label, i) => (
-                <Step key={label} completed={i < RESULTS && current !== null}>
-                  <StepButton onClick={() => goTo(i)} disabled={showBusy || (i === RESULTS && !current)}>
-                    {label}
-                  </StepButton>
-                </Step>
-              ))}
-            </Stepper>
+              step={step}
+              progress={progress}
+              resultsReady={current !== null}
+              disabled={showBusy}
+              onGo={(i) => goTo(i)}
+            />
 
             {apiError && (
               <Alert severity="error" onClose={() => setApiError(null)} className="no-print sp-rise">
@@ -286,10 +279,30 @@ export default function App() {
             )}
 
             {step < RESULTS && stepProps && (
-              <Paper sx={{ p: { xs: 2, md: 3 } }} className="no-print">
-                <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between', mb: 1.5, minHeight: 32 }}>
-                  <Typography variant="overline" color="text.secondary">
+              <Paper sx={{ p: { xs: 2, md: 3 }, position: 'relative' }} className="no-print">
+                {/* how much of the whole profile is answered: a hairline along the card's top edge */}
+                <Box
+                  aria-hidden="true"
+                  sx={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, overflow: 'hidden', borderTopLeftRadius: 16, borderTopRightRadius: 16 }}
+                >
+                  <Box
+                    className="sp-meter"
+                    sx={{
+                      height: '100%',
+                      bgcolor: 'primary.main',
+                      transformOrigin: 'left',
+                      transform: `scaleX(${answered / questions})`,
+                      transition: `transform ${DURATION.large}ms ${EASE.inOut}`,
+                    }}
+                  />
+                </Box>
+                <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 2, minHeight: 32 }}>
+                  <Typography variant="overline" color="text.secondary" sx={{ lineHeight: 1.4 }}>
                     Step {step + 1} of {RESULTS}
+                    <Box component="span" sx={{ fontVariantNumeric: 'tabular-nums', display: { xs: 'none', sm: 'inline' } }}>
+                      {' '}
+                      · {answered} of {questions} questions answered
+                    </Box>
                   </Typography>
                   <Button size="small" color="inherit" startIcon={<RestartAlt />} disabled={showBusy} onClick={restart}>
                     Clear answers

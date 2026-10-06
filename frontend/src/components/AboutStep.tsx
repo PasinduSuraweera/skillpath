@@ -2,11 +2,11 @@ import Autocomplete from '@mui/material/Autocomplete'
 import Grid from '@mui/material/Grid'
 import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
-import Typography from '@mui/material/Typography'
 import { useMemo } from 'react'
 import type { Dispatch, SetStateAction } from 'react'
 import type { Options } from '../api/types'
 import type { Errors, FormState } from '../form'
+import StepHeading from './StepHeading'
 
 interface Props {
   form: FormState
@@ -27,11 +27,10 @@ export default function AboutStep({ form, setForm, options, errors }: Props) {
   return (
     <Grid container spacing={3}>
       <Grid size={12}>
-        <Typography variant="h6">About you</Typography>
-        <Typography variant="body2" color="text.secondary">
+        <StepHeading title="About you">
           Every question is optional, just like in the survey. Skipped questions are treated as unknown, but the more
           you answer, the more personal the result.
-        </Typography>
+        </StepHeading>
       </Grid>
 
       <Grid size={{ xs: 12, md: 6 }}>

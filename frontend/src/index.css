@@ -145,7 +145,8 @@ button,
   }
   /* expanding panels and changing bars jump to their end state */
   .MuiCollapse-root,
-  .MuiLinearProgress-bar {
+  .MuiLinearProgress-bar,
+  .sp-meter {
     transition-duration: 1ms !important;
   }
   /* the 3% press scale stays: it is feedback under the finger, not movement */
