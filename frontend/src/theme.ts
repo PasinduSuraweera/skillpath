@@ -22,8 +22,9 @@ const slate = (a: number) => `rgba(15, 23, 42, ${a})`
 const white = (a: number) => `rgba(255, 255, 255, ${a})`
 
 /** Accent used for the best match and the analysis state, never for plain controls. */
-export const BRAND_GRADIENT = 'linear-gradient(135deg, #3e63dd 0%, #6e56cf 100%)'
-export const BRAND_GRADIENT_DARK = 'linear-gradient(135deg, #8da4ff 0%, #b49cff 100%)'
+export const BRAND_VIOLET = { light: '#6e56cf', dark: '#b49cff' }
+export const BRAND_GRADIENT = `linear-gradient(135deg, #3e63dd 0%, ${BRAND_VIOLET.light} 100%)`
+export const BRAND_GRADIENT_DARK = `linear-gradient(135deg, #8da4ff 0%, ${BRAND_VIOLET.dark} 100%)`
 
 /** Radius scale: controls, inset panels, cards. */
 export const RADIUS = { control: 10, inset: 12, card: 16 }

@@ -11,7 +11,6 @@ import CircularProgress from '@mui/material/CircularProgress'
 import Container from '@mui/material/Container'
 import Fade from '@mui/material/Fade'
 import IconButton from '@mui/material/IconButton'
-import LinearProgress from '@mui/material/LinearProgress'
 import Paper from '@mui/material/Paper'
 import Skeleton from '@mui/material/Skeleton'
 import Snackbar from '@mui/material/Snackbar'
@@ -24,6 +23,7 @@ import { flushSync } from 'react-dom'
 import { ValidationError, getOptions, predict } from './api/client'
 import type { Options, Recommendation, SkillSuggestion } from './api/types'
 import AIStep from './components/AIStep'
+import Analyzing from './components/Analyzing'
 import AboutStep from './components/AboutStep'
 import Header from './components/Header'
 import Hero from './components/Hero'
@@ -43,7 +43,7 @@ import {
 } from './form'
 import type { Errors, FormState } from './form'
 import { DURATION, EASE, prefersReducedMotion, useDelayedFlag } from './motion'
-import { RADIUS } from './theme'
+import { ELEVATION, RADIUS } from './theme'
 import { SAMPLES } from './samples'
 import type { Sample } from './samples'
 
@@ -80,6 +80,7 @@ export default function App() {
   const showBusy = useDelayedFlag(busy)
   const showSkeleton = useDelayedFlag(!options && !loadError, 150)
   const showRetrying = useDelayedFlag(retrying)
+  const showSlow = useDelayedFlag(busy, 6000)
 
   // the start page's entrance plays once per visit, not again when coming back from the results
   const [intro, setIntro] = useState(true)
@@ -228,21 +229,49 @@ export default function App() {
   const progress = useMemo(() => stepProgress(form), [form])
   const answered = progress.reduce((n, p) => n + p.answered, 0)
   const questions = progress.reduce((n, p) => n + p.total, 0)
+  const technologies = Object.values(form.tech).reduce((n, t) => n + t.have.length + t.want.length, 0)
   const stepProps = options ? { form, setForm, options, errors } : null
   const errorCount = Object.keys(errors).length
   const stepClass = direction === 'forward' ? 'sp-step-forward' : direction === 'back' ? 'sp-step-back' : undefined
 
   return (
     <Box sx={{ minHeight: '100dvh' }}>
-      {/* slim progress line under the header, only when a request is actually slow */}
-      <Fade in={showBusy} unmountOnExit>
-        <LinearProgress
-          aria-label="Working"
-          className="no-print"
-          sx={{ position: 'fixed', top: 0, left: 0, right: 0, height: 3, borderRadius: 0, zIndex: (t) => t.zIndex.appBar + 1 }}
-        />
-      </Fade>
       <Header />
+      {/* a slow what-if re-run: say what is happening, just under the header (the results dim meanwhile) */}
+      <Fade in={showBusy && step === RESULTS} unmountOnExit timeout={{ enter: DURATION.medium, exit: DURATION.small }}>
+        <Box
+          role="status"
+          className="no-print sp-drop"
+          sx={(t) => ({
+            position: 'fixed',
+            top: { xs: 68, sm: 72 },
+            // centred with margins, not a transform: the drop-in animation owns transform
+            left: 0,
+            right: 0,
+            mx: 'auto',
+            width: 'fit-content',
+            zIndex: t.zIndex.appBar + 1,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1.25,
+            maxWidth: 'calc(100vw - 32px)',
+            px: 2,
+            py: 1,
+            borderRadius: 999,
+            fontSize: '0.875rem',
+            fontWeight: 500,
+            bgcolor: 'background.paper',
+            border: 1,
+            borderColor: 'divider',
+            boxShadow: ELEVATION.floating,
+          })}
+        >
+          <CircularProgress size={16} thickness={5} />
+          <Box component="span" sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {pendingTech ? `Re-running with ${pendingTech} added…` : 'Updating your matches…'}
+          </Box>
+        </Box>
+      </Fade>
       <Container maxWidth="lg" sx={{ py: { xs: 2.5, md: 5 } }}>
         {!options ? (
           loadError ? (
@@ -279,7 +308,35 @@ export default function App() {
             )}
 
             {step < RESULTS && stepProps && (
-              <Paper sx={{ p: { xs: 2, md: 3 }, position: 'relative' }} className="no-print">
+              <Paper sx={{ p: { xs: 2, md: 3 }, position: 'relative' }} className="no-print" aria-busy={busy}>
+                {/* a slow prediction: the analysis state covers the form (which stays put underneath) */}
+                {showBusy && (
+                  <Box
+                    className="sp-fade"
+                    sx={(t) => ({
+                      position: 'absolute',
+                      inset: 0,
+                      zIndex: 3,
+                      borderRadius: `${RADIUS.card}px`,
+                      px: 2,
+                      pt: { xs: 4, md: 7 },
+                      bgcolor: alpha(t.palette.background.paper, 0.86),
+                      backdropFilter: 'blur(6px)',
+                      WebkitBackdropFilter: 'blur(6px)',
+                    })}
+                  >
+                    {/* sticky, so it stays in view however far down a long step the visitor is */}
+                    <Box sx={{ position: 'sticky', top: 140, maxWidth: 440, mx: 'auto', mb: 4 }}>
+                      <Analyzing
+                        answered={answered}
+                        questions={questions}
+                        technologies={technologies}
+                        roles={options.job_roles.length}
+                        slow={showSlow}
+                      />
+                    </Box>
+                  </Box>
+                )}
                 {/* how much of the whole profile is answered: a hairline along the card's top edge */}
                 <Box
                   aria-hidden="true"
@@ -309,7 +366,7 @@ export default function App() {
                   </Button>
                 </Stack>
 
-                <Box key={step} className={stepClass}>
+                <Box key={step} className={stepClass} inert={showBusy}>
                   {step === 0 && <AboutStep {...stepProps} />}
                   {step === 1 && <TechStep {...stepProps} />}
                   {step === 2 && <AIStep {...stepProps} />}
@@ -398,6 +455,7 @@ export default function App() {
               >
                 <Results
                   result={current.result}
+                  answers={current.form}
                   comparison={comparison}
                   busy={showBusy}
                   pendingTech={pendingTech}

@@ -17,8 +17,10 @@ import Typography from '@mui/material/Typography'
 import { useState } from 'react'
 import type { CSSProperties } from 'react'
 import type { Recommendation, SkillSuggestion } from '../api/types'
+import type { FormState } from '../form'
 import { pct } from '../format'
 import { DURATION, useFlip } from '../motion'
+import AnalysisSummary from './AnalysisSummary'
 import RoleCard from './RoleCard'
 import WhatIfPanel from './WhatIfPanel'
 
@@ -26,6 +28,8 @@ type Comparison = { before: Recommendation; changes: string[] }
 
 interface Props {
   result: Recommendation
+  /** the answers that produced this result */
+  answers: FormState
   comparison: Comparison | null
   busy: boolean
   /** technology whose what-if re-run is in progress */
@@ -37,8 +41,12 @@ interface Props {
   onClearComparison: () => void
 }
 
-/** Position in the results' entrance: the role cards come in one after another, the rest with the last card. */
-const enter = (i: number) => ({ className: 'sp-rise', style: { '--i': i } as CSSProperties })
+/**
+ * Position in the results reveal (STAGGER_REVEAL apart): the heading, the analysis
+ * summary, then each role card, then the supporting sections together. Mount-only:
+ * a what-if re-run updates the figures in place instead of replaying it.
+ */
+const enter = (i: number) => ({ className: 'sp-reveal', style: { '--i': i } as CSSProperties })
 
 function Bar({ label, value, strong }: { label: string; value: number; strong?: boolean }) {
   return (
@@ -102,6 +110,8 @@ export default function Results(props: Props) {
         </Stack>
       </Stack>
 
+      <AnalysisSummary result={result} answers={props.answers} revealFrom={1} />
+
       {/* height animates so the cards below are pushed down smoothly instead of jumping */}
       <Collapse
         in={!!comparison}
@@ -119,13 +129,13 @@ export default function Results(props: Props) {
 
       <Grid container spacing={2} component="section" aria-label="Top three job roles" ref={cards}>
         {result.roles.map((r, i) => (
-          <Grid key={r.job_role} size={{ xs: 12, md: 4 }} data-flip={r.job_role} {...enter(i + 1)}>
+          <Grid key={r.job_role} size={{ xs: 12, md: 4 }} data-flip={r.job_role} {...enter(3 + i)}>
             <RoleCard role={r} busy={props.busy} pendingTech={props.pendingTech} onTrySkill={props.onTrySkill} />
           </Grid>
         ))}
       </Grid>
 
-      <Grid container spacing={2} {...enter(3)}>
+      <Grid container spacing={2} {...enter(6)}>
         <Grid size={{ xs: 12, md: 5 }}>
           <Paper sx={{ p: { xs: 2, sm: 2.5 }, height: '100%' }} className="avoid-break">
             <Typography variant="h6" component="h3">
@@ -161,7 +171,7 @@ export default function Results(props: Props) {
         </Grid>
       </Grid>
 
-      <Accordion disableGutters className="no-print sp-rise" style={{ '--i': 3 } as CSSProperties}>
+      <Accordion disableGutters className="no-print sp-reveal" style={{ '--i': 6 } as CSSProperties}>
         <AccordionSummary expandIcon={<ExpandMore />}>
           <Typography variant="subtitle1">See all {result.ranking.length} job roles</Typography>
         </AccordionSummary>

@@ -97,6 +97,15 @@ button,
   animation: sp-reveal var(--dur-enter) var(--ease-out) backwards;
   animation-delay: calc(var(--i, 0) * var(--stagger-reveal));
 }
+/* loading ring: only mounted while a request is actually slow */
+@keyframes sp-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+.sp-spin {
+  animation: sp-spin 900ms linear infinite;
+}
 .sp-pop {
   display: inline-flex;
   animation: sp-pop var(--dur-small) var(--ease-out) backwards;
@@ -136,6 +145,10 @@ button,
   .sp-pop {
     animation-name: sp-fade;
     animation-delay: 0ms;
+  }
+  /* a loading ring is feedback, not decoration: it keeps turning, more slowly */
+  .sp-spin {
+    animation-duration: 2s;
   }
   /* count-ups and reorders are skipped in motion.ts (useCountUp, useFlip); change highlights stay (colour only) */
   /* MUI menus and tooltips grow from their anchor; fade them instead */
