@@ -20,6 +20,7 @@ import type { Recommendation, SkillSuggestion } from '../api/types'
 import type { FormState } from '../form'
 import { pct } from '../format'
 import { DURATION, useFlip } from '../motion'
+import { BRAND_GRADIENT, BRAND_GRADIENT_DARK } from '../theme'
 import AnalysisSummary from './AnalysisSummary'
 import RoleCard from './RoleCard'
 import WhatIfPanel from './WhatIfPanel'
@@ -62,7 +63,14 @@ function Bar({ label, value, strong }: { label: string; value: number; strong?: 
       <LinearProgress
         variant="determinate"
         value={value * 100}
-        sx={{ height: 6, mt: 0.75, '& .MuiLinearProgress-bar': { opacity: strong ? 1 : 0.45 } }}
+        aria-hidden="true"
+        sx={(t) => ({
+          height: 6,
+          mt: 0.75,
+          '& .MuiLinearProgress-bar': strong
+            ? { backgroundImage: BRAND_GRADIENT, ...t.applyStyles('dark', { backgroundImage: BRAND_GRADIENT_DARK }) }
+            : { opacity: 0.45 },
+        })}
       />
     </Box>
   )
@@ -72,6 +80,9 @@ export default function Results(props: Props) {
   const { result, comparison } = props
   const top = result.roles[0]
   const m = result.model
+
+  // the three salary bars share one scale, so their pay can be compared by eye
+  const payScale = Math.max(1, ...result.roles.map((r) => (r.salary.available ? (r.salary.p75 ?? 0) : 0)))
 
   // after a what-if, cards that change rank glide to their new place instead of jumping
   const cards = useFlip<HTMLDivElement>(result.roles.map((r) => r.job_role).join('|'))
@@ -130,7 +141,7 @@ export default function Results(props: Props) {
       <Grid container spacing={2} component="section" aria-label="Top three job roles" ref={cards}>
         {result.roles.map((r, i) => (
           <Grid key={r.job_role} size={{ xs: 12, md: 4 }} data-flip={r.job_role} {...enter(3 + i)}>
-            <RoleCard role={r} busy={props.busy} pendingTech={props.pendingTech} onTrySkill={props.onTrySkill} />
+            <RoleCard role={r} busy={props.busy} pendingTech={props.pendingTech} payScale={payScale} onTrySkill={props.onTrySkill} />
           </Grid>
         ))}
       </Grid>

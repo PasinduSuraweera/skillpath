@@ -5,13 +5,14 @@ import LinearProgress from '@mui/material/LinearProgress'
 import Stack from '@mui/material/Stack'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
+import { alpha } from '@mui/material/styles'
 import type { ReactNode } from 'react'
 
 /** Small titled block inside a role card (AI outlook, salary, skills). */
 export function InsightSection(props: { icon: ReactNode; title: string; help: string; children: ReactNode }) {
   return (
     <Box>
-      <Stack direction="row" spacing={1} sx={{ alignItems: 'center', mb: 1 }}>
+      <Stack direction="row" spacing={1} sx={{ alignItems: 'center', mb: 1.25 }}>
         {props.icon}
         <Typography variant="subtitle2">{props.title}</Typography>
         {/* a real button, so the explanation also opens with the keyboard (and on tap) */}
@@ -26,25 +27,54 @@ export function InsightSection(props: { icon: ReactNode; title: string; help: st
   )
 }
 
-/** A 0-100 figure with a bar and a comparison against the all-roles value. */
+/** The marker drawn on metric bars for the all-roles figure; also used in the legend. */
+export function AverageTick({ inline }: { inline?: boolean }) {
+  return (
+    <Box
+      component="span"
+      aria-hidden="true"
+      sx={(t) => ({
+        display: 'inline-block',
+        width: 2,
+        height: inline ? 10 : 11,
+        borderRadius: 1,
+        bgcolor: alpha(t.palette.text.primary, 0.55),
+        verticalAlign: inline ? '-1px' : undefined,
+      })}
+    />
+  )
+}
+
+/**
+ * A 0-100 figure on one line, with a bar that carries a marker at the all-roles
+ * value: the comparison reads from the bar instead of a sentence under every figure.
+ * Screen readers get the comparison in words.
+ */
 export function Metric(props: { label: string; value: number; average: number; unit?: string }) {
   const unit = props.unit ?? ''
   const diff = props.value - props.average
   const compare = Math.abs(diff) < 2 ? 'about average' : diff > 0 ? 'above average' : 'below average'
+  const avg = Math.min(100, Math.max(0, props.average))
   return (
-    <Box sx={{ mb: 1 }}>
-      <Stack direction="row" sx={{ justifyContent: 'space-between' }}>
+    <Box sx={{ '& + &': { mt: 1.25 } }}>
+      <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'baseline', gap: 1 }}>
         <Typography variant="body2">{props.label}</Typography>
-        <Typography variant="body2" sx={{ fontWeight: 600, fontVariantNumeric: 'tabular-nums' }}>
+        <Typography variant="body2" sx={{ fontWeight: 600, fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>
           {Math.round(props.value)}
           {unit}
+          <Typography component="span" variant="caption" color="text.secondary" sx={{ fontWeight: 400, ml: 0.75 }}>
+            avg {Math.round(props.average)}
+            {unit}
+          </Typography>
+          <span className="sp-sr-only">, {compare}</span>
         </Typography>
       </Stack>
-      <LinearProgress variant="determinate" value={Math.min(100, props.value)} sx={{ height: 5, my: 0.75 }} />
-      <Typography variant="caption" color="text.secondary">
-        {compare} (all roles: {Math.round(props.average)}
-        {unit})
-      </Typography>
+      <Box sx={{ position: 'relative', mt: 0.75 }}>
+        <LinearProgress variant="determinate" value={Math.min(100, props.value)} sx={{ height: 5 }} aria-hidden="true" />
+        <Box sx={{ position: 'absolute', top: -3, left: `calc(${avg}% - 1px)`, lineHeight: 0 }}>
+          <AverageTick />
+        </Box>
+      </Box>
     </Box>
   )
 }

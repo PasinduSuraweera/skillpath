@@ -1,4 +1,5 @@
 import AddCircleOutline from '@mui/icons-material/AddCircleOutlineOutlined'
+import AutoAwesome from '@mui/icons-material/AutoAwesome'
 import Payments from '@mui/icons-material/Payments'
 import Public from '@mui/icons-material/Public'
 import SmartToy from '@mui/icons-material/SmartToy'
@@ -19,29 +20,41 @@ import { alpha } from '@mui/material/styles'
 import type { RoleRecommendation, SkillSuggestion } from '../api/types'
 import { money, pct } from '../format'
 import { useCountUp } from '../motion'
+import { BRAND_GRADIENT, BRAND_GRADIENT_DARK, ELEVATION } from '../theme'
 import CountUp from './CountUp'
-import { InsightSection, Metric } from './InsightSection'
+import { AverageTick, InsightSection, Metric } from './InsightSection'
 
 interface Props {
   role: RoleRecommendation
   busy: boolean
   /** technology whose what-if re-run is in progress */
   pendingTech: string | null
+  /** highest pay figure (75th percentile) across the three cards, so their salary bars share one scale */
+  payScale: number
   onTrySkill: (s: SkillSuggestion) => void
 }
 
 const AI_HELP =
   'AI Exposure Index (0-100): the share of 13 everyday development tasks (writing code, testing, documentation …) ' +
   'that people in this role do mostly or partly with AI. “Expected” also counts tasks they plan to use AI for. ' +
-  'From 2025 survey respondents in the training data.'
+  'The marker on each bar is the figure across all roles. From 2025 survey respondents in the training data.'
 
 const SALARY_HELP =
   'Annual pay in US dollars reported by survey respondents with the same role and experience level, as close to ' +
-  'your location as the data allows (at least 30 people). Middle half = 25th to 75th percentile.'
+  'your location as the data allows (at least 30 people). The bar shows the middle half (25th to 75th percentile) ' +
+  'with the median marked, on the same scale for all three roles.'
 
 const SKILL_HELP =
   'Technologies used by many people in this role and noticeably more often than across all roles, from the ' +
-  'training data. Press + to see how your results change if you add one.'
+  'training data. “In role” is the share of people in the role who use it; “vs avg” is how many times more often ' +
+  'than across all roles. Press + to see how your results change if you add one.'
+
+const gradientText = (dark: boolean) => ({
+  backgroundImage: dark ? BRAND_GRADIENT_DARK : BRAND_GRADIENT,
+  backgroundClip: 'text',
+  WebkitBackgroundClip: 'text',
+  color: 'transparent',
+})
 
 /** The match bar fills in step with the percentage counting up (both are driven by useCountUp). */
 function MatchBar({ probability, best }: { probability: number; best: boolean }) {
@@ -52,12 +65,76 @@ function MatchBar({ probability, best }: { probability: number; best: boolean })
       value={value * 100}
       aria-label={`Match ${pct(probability)}`}
       aria-valuenow={Math.round(probability * 100)}
-      sx={{ height: 8, mt: 1.5, '& .MuiLinearProgress-bar': { opacity: best ? 1 : 0.6, transition: 'none' } }}
+      sx={(t) => ({
+        height: best ? 8 : 6,
+        mt: 1.5,
+        '& .MuiLinearProgress-bar': {
+          transition: 'none',
+          ...(best
+            ? { backgroundImage: BRAND_GRADIENT, ...t.applyStyles('dark', { backgroundImage: BRAND_GRADIENT_DARK }) }
+            : { opacity: 0.55 }),
+        },
+      })}
     />
   )
 }
 
-export default function RoleCard({ role, busy, pendingTech, onTrySkill }: Props) {
+/** Middle half of the pay (25th-75th percentile) as a band with the median marked, on a scale shared by the cards. */
+function PayRange({ p25, median, p75, scale }: { p25: number; median: number; p75: number; scale: number }) {
+  const at = (v: number) => Math.min(100, (v / scale) * 100)
+  return (
+    <Box aria-hidden="true" sx={(t) => ({ position: 'relative', height: 6, mt: 1.5, borderRadius: 999, bgcolor: alpha(t.palette.text.primary, 0.07) })}>
+      <Box
+        sx={(t) => ({
+          position: 'absolute',
+          top: 0,
+          bottom: 0,
+          left: `${at(p25)}%`,
+          width: `max(6px, ${at(p75) - at(p25)}%)`,
+          borderRadius: 999,
+          bgcolor: alpha(t.palette.primary.main, 0.35),
+        })}
+      />
+      <Box
+        sx={{ position: 'absolute', top: -3, left: `calc(${at(median)}% - 1.5px)`, width: 3, height: 12, borderRadius: 2, bgcolor: 'primary.main' }}
+      />
+    </Box>
+  )
+}
+
+/** One dot per distinctive technology of the role, filled for the ones the visitor uses. */
+function KeySkillDots({ matched, total }: { matched: number; total: number }) {
+  return (
+    <Stack direction="row" aria-hidden="true" sx={{ gap: '3px', flexWrap: 'wrap', mt: 0.75 }}>
+      {Array.from({ length: total }, (_, i) => (
+        <Box
+          key={i}
+          sx={(t) => ({ width: 8, height: 8, borderRadius: '50%', bgcolor: i < matched ? 'primary.main' : alpha(t.palette.text.primary, 0.1) })}
+        />
+      ))}
+    </Stack>
+  )
+}
+
+/** Small caps column heading for the skills table. */
+function ColumnHead({ children, width }: { children?: string; width?: number }) {
+  return (
+    <Typography
+      variant="overline"
+      sx={{
+        lineHeight: 1.6,
+        fontSize: '0.625rem',
+        letterSpacing: '0.05em',
+        whiteSpace: 'nowrap',
+        ...(width ? { width, flexShrink: 0, textAlign: 'right' } : { flexGrow: 1 }),
+      }}
+    >
+      {children}
+    </Typography>
+  )
+}
+
+export default function RoleCard({ role, busy, pendingTech, payScale, onTrySkill }: Props) {
   const ai = role.ai_outlook
   const s = role.salary
   const gap = role.skill_gap
@@ -67,38 +144,90 @@ export default function RoleCard({ role, busy, pendingTech, onTrySkill }: Props)
     <Paper
       component="article"
       aria-label={`#${role.rank} ${role.label}`}
+      className="avoid-break"
       sx={(t) => ({
+        position: 'relative',
+        overflow: 'hidden',
         p: { xs: 2, sm: 2.5 },
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        gap: 2,
-        // the best match carries a quiet primary tint so the ranking reads at a glance
+        gap: 2.25,
+        // the best match: an accent edge, a quiet tint and a little more lift, so the ranking reads at a glance
         ...(best && {
           borderColor: alpha(t.palette.primary.main, 0.35),
-          backgroundImage: `linear-gradient(180deg, ${alpha(t.palette.primary.main, 0.06)}, transparent 140px)`,
+          backgroundImage: `linear-gradient(180deg, ${alpha(t.palette.primary.main, 0.06)}, transparent 160px)`,
+          boxShadow: ELEVATION.raised,
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            inset: '0 0 auto 0',
+            height: 3,
+            backgroundImage: BRAND_GRADIENT,
+          },
+          ...t.applyStyles('dark', {
+            boxShadow: `inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 12px 32px -14px ${alpha(t.palette.primary.main, 0.4)}`,
+            '&::before': { backgroundImage: BRAND_GRADIENT_DARK },
+          }),
         }),
       })}
-      className="avoid-break"
     >
       <Box>
-        <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'flex-start', gap: 1.5 }}>
-          <Box sx={{ minWidth: 0 }}>
-            <Typography variant="overline" color={best ? 'primary' : 'text.secondary'} sx={{ lineHeight: 1.4, display: 'block' }}>
-              {best ? 'Best match' : `#${role.rank}`} · {role.family}
+        <Stack direction="row" sx={{ alignItems: 'center', gap: 1, minHeight: 24 }}>
+          {best ? (
+            <Box
+              sx={(t) => ({
+                display: 'inline-flex',
+                alignItems: 'center',
+                flexShrink: 0,
+                gap: 0.5,
+                px: 1,
+                py: 0.25,
+                borderRadius: 999,
+                fontSize: '0.6875rem',
+                fontWeight: 700,
+                letterSpacing: '0.06em',
+                textTransform: 'uppercase',
+                color: 'primary.main',
+                bgcolor: alpha(t.palette.primary.main, 0.12),
+              })}
+            >
+              <AutoAwesome sx={{ fontSize: 13 }} />
+              Best match
+            </Box>
+          ) : (
+            <Typography variant="overline" color="text.secondary" sx={{ lineHeight: 1.4, fontVariantNumeric: 'tabular-nums', flexShrink: 0 }}>
+              #{role.rank}
             </Typography>
-            <Typography variant="h6" sx={{ lineHeight: 1.3, mt: 0.25 }}>
-              {role.label}
+          )}
+          <Typography variant="overline" color="text.secondary" noWrap title={role.family} sx={{ lineHeight: 1.4, minWidth: 0 }}>
+            {best ? role.family : `· ${role.family}`}
+          </Typography>
+        </Stack>
+        <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'flex-start', gap: 1.5, mt: 0.75 }}>
+          <Typography variant="h6" sx={{ lineHeight: 1.25, fontSize: best ? '1.25rem' : '1.125rem', minWidth: 0, overflowWrap: 'anywhere' }}>
+            {role.label}
+          </Typography>
+          <Box sx={{ textAlign: 'right', flexShrink: 0 }}>
+            <Typography
+              variant="h4"
+              component="p"
+              sx={(t) => ({
+                whiteSpace: 'nowrap',
+                fontSize: best ? '2.25rem' : '1.5rem',
+                fontVariantNumeric: 'tabular-nums',
+                lineHeight: 1,
+                letterSpacing: '-0.03em',
+                color: 'text.primary',
+                ...(best && { ...gradientText(false), ...t.applyStyles('dark', gradientText(true)) }),
+              })}
+            >
+              <CountUp value={role.probability} format={pct} />
+            </Typography>
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5, lineHeight: 1 }}>
+              match
             </Typography>
           </Box>
-          <Typography
-            variant="h4"
-            component="p"
-            color={best ? 'primary' : 'text.primary'}
-            sx={{ whiteSpace: 'nowrap', fontSize: '1.75rem', fontVariantNumeric: 'tabular-nums', lineHeight: 1.1 }}
-          >
-            <CountUp value={role.probability} format={pct} />
-          </Typography>
         </Stack>
         <MatchBar probability={role.probability} best={best} />
         {role.low_confidence && (
@@ -106,15 +235,7 @@ export default function RoleCard({ role, busy, pendingTech, onTrySkill }: Props)
             arrow
             title="The model correctly identifies fewer than 1 in 10 people who actually hold this role, because the survey has few of them. Treat it as a weaker suggestion."
           >
-            <Chip
-              icon={<WarningAmber />}
-              label="Low confidence"
-              color="warning"
-              size="small"
-              variant="outlined"
-              tabIndex={0}
-              sx={{ mt: 1.5 }}
-            />
+            <Chip icon={<WarningAmber />} label="Low confidence" color="warning" size="small" variant="outlined" tabIndex={0} sx={{ mt: 1.5 }} />
           </Tooltip>
         )}
         <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5 }}>
@@ -127,26 +248,28 @@ export default function RoleCard({ role, busy, pendingTech, onTrySkill }: Props)
         <Metric label="Tasks done with AI today" value={ai.exposure_now} average={ai.all_roles.exposure_now} />
         <Metric label="Expected, with planned AI use" value={ai.exposure_expected} average={ai.all_roles.exposure_expected} />
         <Metric label="Feel AI threatens their job" value={ai.threat_yes_pct} average={ai.all_roles.threat_yes_pct} unit="%" />
-        <Typography variant="caption" color="text.secondary">
-          Based on {ai.n.toLocaleString()} people{ai.level === 'role family' ? ' in this role family' : ''}.
+        <Typography variant="caption" color="text.secondary" component="p" sx={{ mt: 1.25 }}>
+          <AverageTick inline /> all roles · based on {ai.n.toLocaleString()} people
+          {ai.level === 'role family' ? ' in this role family' : ''}
         </Typography>
       </InsightSection>
 
       <Divider />
       <InsightSection icon={<Payments fontSize="small" color="primary" />} title="Typical pay" help={SALARY_HELP}>
-        {s.available ? (
+        {s.available && s.median != null && s.p25 != null && s.p75 != null ? (
           <>
-            <Typography variant="h6" component="p" sx={{ fontVariantNumeric: 'tabular-nums' }}>
+            <Typography variant="h6" component="p" sx={{ fontVariantNumeric: 'tabular-nums', lineHeight: 1.2 }}>
               {money(s.median)}
               <Typography component="span" variant="body2" color="text.secondary">
                 {' '}
                 median / year
               </Typography>
             </Typography>
-            <Typography variant="body2" sx={{ fontVariantNumeric: 'tabular-nums' }}>
+            <PayRange p25={s.p25} median={s.median} p75={s.p75} scale={payScale} />
+            <Typography variant="caption" component="p" sx={{ mt: 1, fontVariantNumeric: 'tabular-nums' }}>
               Middle half earn {money(s.p25)} – {money(s.p75)}
             </Typography>
-            <Typography variant="caption" color="text.secondary" component="p" sx={{ mt: 0.5 }}>
+            <Typography variant="caption" color="text.secondary" component="p" sx={{ mt: 0.25 }}>
               {s.n} {s.peer_group}.
             </Typography>
             {!s.local && (
@@ -168,61 +291,75 @@ export default function RoleCard({ role, busy, pendingTech, onTrySkill }: Props)
 
       <Divider />
       <InsightSection icon={<TrendingUp fontSize="small" color="primary" />} title="Skills to grow" help={SKILL_HELP}>
-        <Typography variant="body2" sx={{ mb: 1 }}>
-          You use {gap.matched.length} of the {gap.typical_count} technologies that set {role.label}s apart.
+        <Typography variant="body2">
+          You use{' '}
+          <Box component="strong" sx={{ fontVariantNumeric: 'tabular-nums' }}>
+            {gap.matched.length} of {gap.typical_count}
+          </Box>{' '}
+          technologies that set {role.label}s apart.
         </Typography>
+        <KeySkillDots matched={gap.matched.length} total={gap.typical_count} />
         {gap.missing.length === 0 ? (
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 1.25 }}>
             You already use all of the most distinctive ones.
           </Typography>
         ) : (
-          <Stack spacing={0.25} component="ul" sx={{ m: 0, p: 0, listStyle: 'none' }}>
-            {gap.missing.map((m) => (
-              <Stack
-                key={m.technology}
-                component="li"
-                direction="row"
-                sx={{ alignItems: 'center', justifyContent: 'space-between', gap: 1, py: 0.5 }}
-              >
-                <Box sx={{ minWidth: 0 }}>
-                  <Typography variant="body2" sx={{ fontWeight: 600 }} noWrap title={m.technology}>
+          <Box sx={{ mt: 1.75 }}>
+            {/* column heads for the compact rows below; each row also reads out in full */}
+            <Stack direction="row" aria-hidden="true" sx={{ alignItems: 'center', gap: 1, pb: 0.25, color: 'text.secondary' }}>
+              <ColumnHead>Next to learn</ColumnHead>
+              <ColumnHead width={46}>In role</ColumnHead>
+              <ColumnHead width={42}>vs avg</ColumnHead>
+              <Box sx={{ width: 30, flexShrink: 0 }} className="no-print" />
+            </Stack>
+            <Box component="ul" sx={{ m: 0, p: 0, listStyle: 'none', borderTop: 1, borderColor: 'divider' }}>
+              {gap.missing.map((m) => (
+                <Stack
+                  key={m.technology}
+                  component="li"
+                  direction="row"
+                  sx={{ alignItems: 'center', gap: 1, minHeight: 40, '& + &': { borderTop: 1, borderColor: 'divider' } }}
+                >
+                  <Typography variant="body2" sx={{ fontWeight: 600, flexGrow: 1, minWidth: 0 }} noWrap title={m.technology}>
                     {m.technology}
                     {m.wanted && (
                       <Tooltip title="Already on your “want to learn” list">
-                        <Star
-                          fontSize="inherit"
-                          color="secondary"
-                          sx={{ ml: 0.5, verticalAlign: 'middle' }}
-                          titleAccess="on your want-to-learn list"
-                        />
+                        <Star fontSize="inherit" color="secondary" sx={{ ml: 0.5, verticalAlign: '-2px' }} titleAccess="on your want-to-learn list" />
                       </Tooltip>
                     )}
+                    <span className="sp-sr-only">
+                      , used by {Math.round(m.share_pct)}% of people in this role, {m.lift.toFixed(1)} times the average
+                    </span>
                   </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    used by {Math.round(m.share_pct)}% in this role · {m.lift.toFixed(1)}× the average
+                  <Typography variant="body2" aria-hidden="true" sx={{ width: 46, flexShrink: 0, textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>
+                    {Math.round(m.share_pct)}%
                   </Typography>
-                </Box>
-                <Tooltip title={`What if I had used ${m.technology}? Re-run with it added.`}>
-                  <span>
-                    <IconButton
-                      size="small"
-                      color="primary"
-                      disabled={busy}
-                      onClick={() => onTrySkill(m)}
-                      className="no-print"
-                      aria-label={`What if I add ${m.technology}`}
-                    >
-                      {busy && pendingTech === m.technology ? (
-                        <CircularProgress size={18} />
-                      ) : (
-                        <AddCircleOutline fontSize="small" />
-                      )}
-                    </IconButton>
-                  </span>
-                </Tooltip>
-              </Stack>
-            ))}
-          </Stack>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    aria-hidden="true"
+                    sx={{ width: 42, flexShrink: 0, textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}
+                  >
+                    {m.lift.toFixed(1)}×
+                  </Typography>
+                  <Tooltip title={`What if I had used ${m.technology}? Re-run with it added.`}>
+                    <Box component="span" className="no-print" sx={{ flexShrink: 0 }}>
+                      <IconButton
+                        size="small"
+                        color="primary"
+                        disabled={busy}
+                        onClick={() => onTrySkill(m)}
+                        aria-label={`What if I add ${m.technology}`}
+                        sx={{ width: 30, height: 30 }}
+                      >
+                        {busy && pendingTech === m.technology ? <CircularProgress size={16} /> : <AddCircleOutline fontSize="small" />}
+                      </IconButton>
+                    </Box>
+                  </Tooltip>
+                </Stack>
+              ))}
+            </Box>
+          </Box>
         )}
       </InsightSection>
     </Paper>
