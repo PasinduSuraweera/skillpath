@@ -1,5 +1,5 @@
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 
 // The SkillPath API (uvicorn app.main:app) runs on port 8000. Vite forwards
 // /api calls to it, so the browser only ever talks to one origin and the
@@ -13,4 +13,6 @@ export default defineConfig({
   preview: { port: 5173, proxy: api },
   // MUI makes one ~600 KB chunk (190 KB gzipped); fine for a local app
   build: { chunkSizeWarningLimit: 800 },
+  // unit tests (npm test); the browser test in e2e/ is run separately (npm run e2e)
+  test: { include: ['src/**/*.test.ts'] },
 })

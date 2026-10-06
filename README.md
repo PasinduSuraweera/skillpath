@@ -8,7 +8,7 @@ sum of its job roles' probabilities (`skillpath.targets`), so one model gives th
 and the top families.
 
 Status: **Stages 3-4 (EDA, preprocessing), Stages 6-7 (modelling, optimisation), Stage 9
-(backend API) and Stage 10 (web app) complete.** Next: testing write-up, report and presentation.
+(backend API), Stage 10 (web app) and Stage 11 (testing) complete.** Next: report and presentation.
 
 ## Result
 
@@ -63,7 +63,8 @@ skillpath/
 │   ├── build_report_pdf.py   rebuilds the technical report PDF from the result files
 │   └── run_notebooks.sh      executes the notebooks and exports HTML copies
 ├── app/                      Stage 9 web API (FastAPI): main.py, schemas.py, service.py
-├── frontend/                 Stage 10 web app (React + TypeScript + Vite + MUI)
+├── frontend/                 Stage 10 web app (React + TypeScript + Vite + MUI);
+│                             unit tests in src/*.test.ts, browser test in e2e/run.mjs
 ├── notebooks/                01 data understanding, 02 EDA, 03 preprocessing,
 │                             04 modelling + optimisation (Stage 6 and 7 in one),
 │                             06 Evaluation 2 walkthrough (Stages 6-8)
@@ -80,6 +81,7 @@ skillpath/
 │   └── insights.json         AI outlook, salary peer groups, role reliability, skill gap (summaries only)
 ├── reports/
 │   ├── modelling_decisions.md       Stages 6-7: results, experiments + viva Q&A  <- start here
+│   ├── testing.md                   Stage 11: test strategy, every test case, results, defects
 │   ├── preprocessing_decisions.md   Stages 3-4: every decision with evidence + viva Q&A
 │   ├── SkillPath_Stage6-8_Report.pdf  20-page technical report (regenerate with the script)
 │   ├── model_experiments.csv        every cross-validation run in the project, timestamped
@@ -87,11 +89,13 @@ skillpath/
 │   ├── stage7_*.csv / .json         each phase, search results, final selection, test results
 │   ├── feature_dictionary.csv       all 479 model features, source and transformation
 │   ├── build_report.json            counts from the last build
-│   ├── figures/                     report-ready PNGs
+│   ├── figures/                     report-ready PNGs (figures/app/: web app screenshots)
 │   └── html/                        notebooks as HTML (open in any browser)
 └── tests/
     ├── test_preprocessing.py     leakage, split, API parity, missing values, targets
-    └── test_modelling.py         probabilities, family aggregation, resampling, selection
+    ├── test_modelling.py         probabilities, family aggregation, resampling, selection
+    ├── test_insights.py          skill gap, salary peer groups, AI outlook, insights.json up to date
+    └── test_api.py               web API over HTTP: responses, validation, training/serving parity
 ```
 
 ## Setup
@@ -109,15 +113,15 @@ in `data/raw/`.
 
 ```bash
 python scripts/build_dataset.py      # all preprocessing outputs (~15 s)
-pytest -q                            # 36 checks
+pytest -q                            # 107 checks (data, model, insights, web API)
 bash scripts/run_notebooks.sh        # re-execute notebooks and refresh HTML + figures
 ```
 
 The processed data and the trained model are committed, so nothing above is needed just to
 use the model.
 
-One of the 36 checks, `test_every_survey_country_maps_to_a_region`, needs the raw survey CSV
-and fails until you download it into `data/raw/`. The other 35 pass from a clean clone.
+One check, `test_every_survey_country_maps_to_a_region`, needs the raw survey CSV and is
+skipped until you download it into `data/raw/`. The other 106 pass from a clean clone.
 
 ## Reproducing the modelling
 
@@ -313,6 +317,27 @@ frontend/src/form.ts     form state <-> API profile, client validation, what-if 
 frontend/src/questions.ts  question wording from the 2025 questionnaire
 frontend/src/components/   wizard steps, role card, what-if panel, results page
 ```
+
+## Testing (Stage 11)
+
+Five levels, 178 automated tests, all passing. The full write-up, with every test case, the
+results, performance figures and the defects found and fixed, is in
+[`reports/testing.md`](reports/testing.md).
+
+| Level | Where | Run | Tests |
+|---|---|---|---:|
+| Data and model (unit) | `tests/test_preprocessing.py`, `tests/test_modelling.py` | `pytest -q` | 36 |
+| Insights (unit) | `tests/test_insights.py` | `pytest -q` | 30 |
+| Web API (integration) | `tests/test_api.py` | `pytest -q` | 41 |
+| Web app (unit) | `frontend/src/*.test.ts` | `cd frontend && npm test` | 56 |
+| Whole app in Chrome (system) | `frontend/e2e/run.mjs` | `cd frontend && npm run e2e` | 15 |
+
+The browser test needs both servers running (`uvicorn app.main:app` and `npm run dev`) and
+Google Chrome (set `CHROME_PATH` if it is not in the usual place). It saves a screenshot of every
+screen to `frontend/e2e/shots/`; the copies used in the report are in `reports/figures/app/`.
+
+`test_committed_insights_json_is_up_to_date` fails when code that feeds `artifacts/insights.json`
+changed without rebuilding it. Run `python scripts/build_app_tables.py` and restart uvicorn.
 
 ## Data licence and attribution
 

@@ -24,3 +24,8 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 skillpath = ["resources/*.csv"]
+
+[tool.pytest.ini_options]
+# "." makes the web API package (app/) importable from tests/test_api.py
+pythonpath = ["."]
+testpaths = ["tests"]

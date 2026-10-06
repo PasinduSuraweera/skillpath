@@ -118,6 +118,7 @@ def test_empty_profile_does_not_crash(prep):
     assert np.isfinite(X).all()
 
 
+@pytest.mark.skipif(not C.RAW_CSV.exists(), reason="needs data/raw/survey_results_public.csv (not in git)")
 def test_every_survey_country_maps_to_a_region():
     raw = load_raw()
     table = country_region_table()
