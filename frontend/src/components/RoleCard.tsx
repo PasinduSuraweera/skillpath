@@ -1,5 +1,6 @@
 import AddCircleOutline from '@mui/icons-material/AddCircleOutlineOutlined'
 import AutoAwesome from '@mui/icons-material/AutoAwesome'
+import ExpandMore from '@mui/icons-material/ExpandMore'
 import Payments from '@mui/icons-material/Payments'
 import Public from '@mui/icons-material/Public'
 import SmartToy from '@mui/icons-material/SmartToy'
@@ -9,17 +10,20 @@ import WarningAmber from '@mui/icons-material/WarningAmber'
 import Box from '@mui/material/Box'
 import Chip from '@mui/material/Chip'
 import CircularProgress from '@mui/material/CircularProgress'
-import Divider from '@mui/material/Divider'
+import Button from '@mui/material/Button'
+import Collapse from '@mui/material/Collapse'
 import IconButton from '@mui/material/IconButton'
 import LinearProgress from '@mui/material/LinearProgress'
 import Paper from '@mui/material/Paper'
 import Stack from '@mui/material/Stack'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
+import useMediaQuery from '@mui/material/useMediaQuery'
 import { alpha, useTheme } from '@mui/material/styles'
 import type { RoleRecommendation, SkillSuggestion } from '../api/types'
 import { money, pct, points } from '../format'
-import { DURATION, useCountUp, useHighlight } from '../motion'
+import { useId, useState } from 'react'
+import { DURATION, EASE, useCountUp, useHighlight } from '../motion'
 import { BRAND_GRADIENT, BRAND_GRADIENT_DARK, ELEVATION } from '../theme'
 import CountUp from './CountUp'
 import { AverageTick, InsightSection, Metric } from './InsightSection'
@@ -156,6 +160,11 @@ export default function RoleCard({ role, busy, pendingTech, payScale, previous, 
   // a brief tint on the figures that a what-if just changed, so the eye finds them
   const scoreRef = useHighlight<HTMLDivElement>(Math.round(role.probability * 1000), alpha(theme.palette.primary.main, 0.16))
   const skillsRef = useHighlight<HTMLParagraphElement>(gap.matched.length, alpha(theme.palette.primary.main, 0.16))
+  // phones: the runners-up start folded, so three long cards do not stack into a very long page
+  const phone = useMediaQuery(theme.breakpoints.down('sm'), { noSsr: true })
+  const collapsible = phone && !best
+  const [open, setOpen] = useState(false)
+  const detailsId = `details-${useId()}`
 
   return (
     <Paper
@@ -169,7 +178,8 @@ export default function RoleCard({ role, busy, pendingTech, payScale, previous, 
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        gap: 2.25,
+        // the sections below lay out by the card's own width, not the window's
+        containerType: 'inline-size',
         // the best match: an accent edge, a quiet tint and a little more lift, so the ranking reads at a glance
         ...(best && {
           borderColor: alpha(t.palette.primary.main, 0.35),
@@ -275,125 +285,156 @@ export default function RoleCard({ role, busy, pendingTech, payScale, previous, 
         </Typography>
       </Box>
 
-      <Divider />
-      <InsightSection icon={<SmartToy fontSize="small" color="primary" />} title="AI outlook for this role" help={AI_HELP}>
-        <Metric label="Tasks done with AI today" value={ai.exposure_now} average={ai.all_roles.exposure_now} />
-        <Metric label="Expected, with planned AI use" value={ai.exposure_expected} average={ai.all_roles.exposure_expected} />
-        <Metric label="Feel AI threatens their job" value={ai.threat_yes_pct} average={ai.all_roles.threat_yes_pct} unit="%" />
-        <Typography variant="caption" color="text.secondary" component="p" sx={{ mt: 1.25 }}>
-          <AverageTick inline /> all roles · based on {ai.n.toLocaleString()} people
-          {ai.level === 'role family' ? ' in this role family' : ''}
-        </Typography>
-      </InsightSection>
+      {collapsible && (
+        <Button
+          size="small"
+          color="inherit"
+          fullWidth
+          onClick={() => setOpen((o) => !o)}
+          aria-expanded={open}
+          aria-controls={detailsId}
+          endIcon={<ExpandMore sx={{ transform: open ? 'rotate(180deg)' : 'none', transition: `transform ${DURATION.medium}ms ${EASE.inOut}` }} />}
+          className="no-print"
+          sx={{ mt: 1.75, justifyContent: 'space-between', color: 'text.secondary', bgcolor: (t) => alpha(t.palette.text.primary, 0.04) }}
+        >
+          {open ? 'Hide details' : 'AI outlook, pay and skills to grow'}
+        </Button>
+      )}
+      {/* on a phone the runners-up fold their details away (always printed); otherwise they are always shown */}
+      <Collapse in={!collapsible || open} id={detailsId} className="sp-details" timeout={collapsible ? undefined : 0}>
+        <Box
+          sx={{
+            display: 'grid',
+            rowGap: 2.25,
+            mt: 2.25,
+            // each section opens with a hairline instead of a separate divider element
+            '& > *': { pt: 2.25, borderTop: 1, borderColor: 'divider', minWidth: 0 },
+            // a wide card (the best match on a tablet) puts AI outlook and pay side by side
+            '@container (min-width: 600px)': {
+              gridTemplateColumns: '1fr 1fr',
+              columnGap: 4,
+              '& > :last-child': { gridColumn: '1 / -1' },
+            },
+          }}
+        >
+          <InsightSection icon={<SmartToy fontSize="small" color="primary" />} title="AI outlook for this role" help={AI_HELP}>
+            <Metric label="Tasks done with AI today" value={ai.exposure_now} average={ai.all_roles.exposure_now} />
+            <Metric label="Expected, with planned AI use" value={ai.exposure_expected} average={ai.all_roles.exposure_expected} />
+            <Metric label="Feel AI threatens their job" value={ai.threat_yes_pct} average={ai.all_roles.threat_yes_pct} unit="%" />
+            <Typography variant="caption" color="text.secondary" component="p" sx={{ mt: 1.25 }}>
+              <AverageTick inline /> all roles · based on {ai.n.toLocaleString()} people
+              {ai.level === 'role family' ? ' in this role family' : ''}
+            </Typography>
+          </InsightSection>
 
-      <Divider />
-      <InsightSection icon={<Payments fontSize="small" color="primary" />} title="Typical pay" help={SALARY_HELP}>
-        {s.available && s.median != null && s.p25 != null && s.p75 != null ? (
-          <>
-            <Typography variant="h6" component="p" sx={{ fontVariantNumeric: 'tabular-nums', lineHeight: 1.2 }}>
-              {money(s.median)}
-              <Typography component="span" variant="body2" color="text.secondary">
-                {' '}
-                median / year
+          <InsightSection icon={<Payments fontSize="small" color="primary" />} title="Typical pay" help={SALARY_HELP}>
+            {s.available && s.median != null && s.p25 != null && s.p75 != null ? (
+              <>
+                <Typography variant="h6" component="p" sx={{ fontVariantNumeric: 'tabular-nums', lineHeight: 1.2 }}>
+                  {money(s.median)}
+                  <Typography component="span" variant="body2" color="text.secondary">
+                    {' '}
+                    median / year
+                  </Typography>
+                </Typography>
+                <PayRange p25={s.p25} median={s.median} p75={s.p75} scale={payScale} />
+                <Typography variant="caption" component="p" sx={{ mt: 1, fontVariantNumeric: 'tabular-nums' }}>
+                  Middle half earn {money(s.p25)} – {money(s.p75)}
+                </Typography>
+                <Typography variant="caption" color="text.secondary" component="p" sx={{ mt: 0.25 }}>
+                  {s.n} {s.peer_group}.
+                </Typography>
+                {!s.local && (
+                  <Chip
+                    icon={<Public />}
+                    size="small"
+                    variant="outlined"
+                    label="Worldwide figure; local pay may differ"
+                    sx={{ mt: 1, maxWidth: '100%', height: 'auto', '& .MuiChip-label': { whiteSpace: 'normal', py: 0.25 } }}
+                  />
+                )}
+              </>
+            ) : (
+              <Typography variant="body2" color="text.secondary">
+                {s.reason}
               </Typography>
-            </Typography>
-            <PayRange p25={s.p25} median={s.median} p75={s.p75} scale={payScale} />
-            <Typography variant="caption" component="p" sx={{ mt: 1, fontVariantNumeric: 'tabular-nums' }}>
-              Middle half earn {money(s.p25)} – {money(s.p75)}
-            </Typography>
-            <Typography variant="caption" color="text.secondary" component="p" sx={{ mt: 0.25 }}>
-              {s.n} {s.peer_group}.
-            </Typography>
-            {!s.local && (
-              <Chip
-                icon={<Public />}
-                size="small"
-                variant="outlined"
-                label="Worldwide figure; local pay may differ"
-                sx={{ mt: 1, maxWidth: '100%', height: 'auto', '& .MuiChip-label': { whiteSpace: 'normal', py: 0.25 } }}
-              />
             )}
-          </>
-        ) : (
-          <Typography variant="body2" color="text.secondary">
-            {s.reason}
-          </Typography>
-        )}
-      </InsightSection>
+          </InsightSection>
 
-      <Divider />
-      <InsightSection icon={<TrendingUp fontSize="small" color="primary" />} title="Skills to grow" help={SKILL_HELP}>
-        <Typography variant="body2" ref={skillsRef} sx={{ borderRadius: '6px', mx: -0.5, px: 0.5 }}>
-          You use{' '}
-          <Box component="strong" sx={{ fontVariantNumeric: 'tabular-nums' }}>
-            {gap.matched.length} of {gap.typical_count}
-          </Box>{' '}
-          technologies that set {role.label}s apart.
-        </Typography>
-        <KeySkillDots matched={gap.matched.length} total={gap.typical_count} />
-        {gap.missing.length === 0 ? (
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 1.25 }}>
-            You already use all of the most distinctive ones.
-          </Typography>
-        ) : (
-          <Box sx={{ mt: 1.75 }}>
-            {/* column heads for the compact rows below; each row also reads out in full */}
-            <Stack direction="row" aria-hidden="true" sx={{ alignItems: 'center', gap: 1, pb: 0.25, color: 'text.secondary' }}>
-              <ColumnHead>Next to learn</ColumnHead>
-              <ColumnHead width={46}>In role</ColumnHead>
-              <ColumnHead width={42}>vs avg</ColumnHead>
-              <Box sx={{ width: 30, flexShrink: 0 }} className="no-print" />
-            </Stack>
-            <Box component="ul" sx={{ m: 0, p: 0, listStyle: 'none', borderTop: 1, borderColor: 'divider' }}>
-              {gap.missing.map((m) => (
-                <Stack
-                  key={m.technology}
-                  component="li"
-                  direction="row"
-                  sx={{ alignItems: 'center', gap: 1, minHeight: 40, '& + &': { borderTop: 1, borderColor: 'divider' } }}
-                >
-                  <Typography variant="body2" sx={{ fontWeight: 600, flexGrow: 1, minWidth: 0 }} noWrap title={m.technology}>
-                    {m.technology}
-                    {m.wanted && (
-                      <Tooltip title="Already on your “want to learn” list">
-                        <Star fontSize="inherit" color="secondary" sx={{ ml: 0.5, verticalAlign: '-2px' }} titleAccess="on your want-to-learn list" />
-                      </Tooltip>
-                    )}
-                    <span className="sp-sr-only">
-                      , used by {Math.round(m.share_pct)}% of people in this role, {m.lift.toFixed(1)} times the average
-                    </span>
-                  </Typography>
-                  <Typography variant="body2" aria-hidden="true" sx={{ width: 46, flexShrink: 0, textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>
-                    {Math.round(m.share_pct)}%
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    aria-hidden="true"
-                    sx={{ width: 42, flexShrink: 0, textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}
-                  >
-                    {m.lift.toFixed(1)}×
-                  </Typography>
-                  <Tooltip title={`What if I had used ${m.technology}? Re-run with it added.`}>
-                    <Box component="span" className="no-print" sx={{ flexShrink: 0 }}>
-                      <IconButton
-                        size="small"
-                        color="primary"
-                        disabled={busy}
-                        onClick={() => onTrySkill(m)}
-                        aria-label={`What if I add ${m.technology}`}
-                        sx={{ width: 30, height: 30 }}
-                      >
-                        {busy && pendingTech === m.technology ? <CircularProgress size={16} /> : <AddCircleOutline fontSize="small" />}
-                      </IconButton>
-                    </Box>
-                  </Tooltip>
+          <InsightSection icon={<TrendingUp fontSize="small" color="primary" />} title="Skills to grow" help={SKILL_HELP}>
+            <Typography variant="body2" ref={skillsRef} sx={{ borderRadius: '6px', mx: -0.5, px: 0.5 }}>
+              You use{' '}
+              <Box component="strong" sx={{ fontVariantNumeric: 'tabular-nums' }}>
+                {gap.matched.length} of {gap.typical_count}
+              </Box>{' '}
+              technologies that set {role.label}s apart.
+            </Typography>
+            <KeySkillDots matched={gap.matched.length} total={gap.typical_count} />
+            {gap.missing.length === 0 ? (
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 1.25 }}>
+                You already use all of the most distinctive ones.
+              </Typography>
+            ) : (
+              <Box sx={{ mt: 1.75 }}>
+                {/* column heads for the compact rows below; each row also reads out in full */}
+                <Stack direction="row" aria-hidden="true" sx={{ alignItems: 'center', gap: 1, pb: 0.25, color: 'text.secondary' }}>
+                  <ColumnHead>Next to learn</ColumnHead>
+                  <ColumnHead width={46}>In role</ColumnHead>
+                  <ColumnHead width={42}>vs avg</ColumnHead>
+                  <Box sx={{ width: 30, flexShrink: 0 }} className="no-print" />
                 </Stack>
-              ))}
-            </Box>
-          </Box>
-        )}
-      </InsightSection>
+                <Box component="ul" sx={{ m: 0, p: 0, listStyle: 'none', borderTop: 1, borderColor: 'divider' }}>
+                  {gap.missing.map((m) => (
+                    <Stack
+                      key={m.technology}
+                      component="li"
+                      direction="row"
+                      sx={{ alignItems: 'center', gap: 1, minHeight: 40, '& + &': { borderTop: 1, borderColor: 'divider' } }}
+                    >
+                      <Typography variant="body2" sx={{ fontWeight: 600, flexGrow: 1, minWidth: 0 }} noWrap title={m.technology}>
+                        {m.technology}
+                        {m.wanted && (
+                          <Tooltip title="Already on your “want to learn” list">
+                            <Star fontSize="inherit" color="secondary" sx={{ ml: 0.5, verticalAlign: '-2px' }} titleAccess="on your want-to-learn list" />
+                          </Tooltip>
+                        )}
+                        <span className="sp-sr-only">
+                          , used by {Math.round(m.share_pct)}% of people in this role, {m.lift.toFixed(1)} times the average
+                        </span>
+                      </Typography>
+                      <Typography variant="body2" aria-hidden="true" sx={{ width: 46, flexShrink: 0, textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>
+                        {Math.round(m.share_pct)}%
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        aria-hidden="true"
+                        sx={{ width: 42, flexShrink: 0, textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}
+                      >
+                        {m.lift.toFixed(1)}×
+                      </Typography>
+                      <Tooltip title={`What if I had used ${m.technology}? Re-run with it added.`}>
+                        <Box component="span" className="no-print" sx={{ flexShrink: 0 }}>
+                          <IconButton
+                            size="small"
+                            color="primary"
+                            disabled={busy}
+                            onClick={() => onTrySkill(m)}
+                            aria-label={`What if I add ${m.technology}`}
+                            sx={{ width: 30, height: 30 }}
+                          >
+                            {busy && pendingTech === m.technology ? <CircularProgress size={16} /> : <AddCircleOutline fontSize="small" />}
+                          </IconButton>
+                        </Box>
+                      </Tooltip>
+                    </Stack>
+                  ))}
+                </Box>
+              </Box>
+            )}
+          </InsightSection>
+        </Box>
+      </Collapse>
     </Paper>
   )
 }

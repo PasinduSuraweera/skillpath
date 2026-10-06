@@ -11,6 +11,9 @@ import type { Ref } from 'react'
 import { DURATION } from '../motion'
 
 const STEPS = ['About you', 'Technologies', 'AI usage', 'Results']
+// on the narrowest phones (under 360 px) the full labels would run into each other
+const SHORT = ['About', 'Tech', 'AI', 'Results']
+const narrow = '@media (max-width: 359.95px)'
 const RESULTS = 3
 
 interface Props {
@@ -104,7 +107,14 @@ export default function WizardSteps({ step, progress, resultsReady, disabled, on
                 )
               }
             >
-              <StepLabel slots={{ stepIcon: StepDot }}>{label}</StepLabel>
+              <StepLabel slots={{ stepIcon: StepDot }}>
+                <Box component="span" sx={{ [narrow]: { display: 'none' } }}>
+                  {label}
+                </Box>
+                <Box component="span" sx={{ display: 'none', [narrow]: { display: 'inline' } }}>
+                  {SHORT[i]}
+                </Box>
+              </StepLabel>
             </StepButton>
           </Step>
         )

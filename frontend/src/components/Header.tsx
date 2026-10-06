@@ -45,6 +45,8 @@ export default function Header() {
         sx={{
           gap: 1.5,
           minHeight: { xs: 56, sm: 60 },
+          // a phone held sideways: every pixel of height counts
+          '@media (max-height: 500px)': { minHeight: '48px !important' },
           pl: 'max(16px, env(safe-area-inset-left))',
           pr: 'max(16px, env(safe-area-inset-right))',
         }}
@@ -59,7 +61,7 @@ export default function Header() {
             color="text.secondary"
             noWrap
             component="p"
-            sx={{ display: { xs: 'none', sm: 'block' } }}
+            sx={{ display: { xs: 'none', sm: 'block' }, '@media (max-height: 500px)': { display: 'none' } }}
           >
             AI-aware developer career paths, learned from 2025 Stack Overflow survey respondents
           </Typography>

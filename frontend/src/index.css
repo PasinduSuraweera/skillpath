@@ -209,6 +209,11 @@ button,
   body {
     background-image: none !important; /* the accent wash is for the screen only */
   }
+  /* role details folded away on a phone are printed anyway */
+  .sp-details {
+    height: auto !important;
+    visibility: visible !important;
+  }
   *,
   *::before,
   *::after {

@@ -400,6 +400,8 @@ export default function App() {
                     px: { xs: 1.5, md: 3 },
                     pt: 1.5,
                     pb: 'max(12px, env(safe-area-inset-bottom))',
+                    // a phone held sideways: a slimmer bar leaves more of the step visible
+                    '@media (max-height: 500px)': { pt: 0.75, pb: 'max(6px, env(safe-area-inset-bottom))' },
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',

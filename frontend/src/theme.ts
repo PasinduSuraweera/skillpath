@@ -41,6 +41,22 @@ const colorTransition = (props: string[]) =>
   props.map((p) => `${p} ${DURATION.hover}ms ${EASE.standard}`).join(', ')
 const press = `transform ${DURATION.press}ms ${EASE.out}`
 const hoverOnly = '@media (hover: hover) and (pointer: fine)'
+const touch = '@media (pointer: coarse)'
+
+/** On touch screens, a hit area of at least 44 × 44 px around a small control, without changing its layout. */
+const touchTarget = {
+  [touch]: {
+    '&::after': {
+      content: '""',
+      position: 'absolute',
+      left: '50%',
+      top: '50%',
+      width: 'max(100%, 44px)',
+      height: 'max(100%, 44px)',
+      transform: 'translate(-50%, -50%)',
+    },
+  },
+}
 
 const focusRing = ({ theme }: { theme: Theme }) => ({
   '&.Mui-focusVisible': {
@@ -152,8 +168,10 @@ export const theme = createTheme({
           paddingInline: 16,
           transition: `${colorTransition(['background-color', 'border-color', 'color', 'box-shadow'])}, ${press}`,
           '&:active': { transform: 'scale(0.97)' },
+          // fingers need taller buttons than a mouse pointer
+          [touch]: { minHeight: 44 },
         },
-        sizeSmall: { minHeight: 32, paddingInline: 10 },
+        sizeSmall: { minHeight: 32, paddingInline: 10, ...touchTarget, [touch]: { ...touchTarget[touch], minHeight: 36 } },
         sizeLarge: { minHeight: 46, paddingInline: 22, fontSize: '0.975rem' },
         contained: ({ theme }) => ({
           // a light top edge and a tinted shadow give the one primary action some depth
@@ -192,6 +210,7 @@ export const theme = createTheme({
         root: {
           transition: `${colorTransition(['background-color', 'color'])}, ${press}`,
           '&:active': { transform: 'scale(0.95)' },
+          ...touchTarget,
         },
       },
     },
@@ -314,6 +333,7 @@ export const theme = createTheme({
     MuiCheckbox: {
       styleOverrides: {
         root: {
+          ...touchTarget,
           borderRadius: 8,
           transition: `${colorTransition(['background-color', 'color'])}, ${press}`,
           '&:active': { transform: 'scale(0.9)' },

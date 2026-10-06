@@ -145,9 +145,10 @@ export default function Results(props: Props) {
         )}
       </Collapse>
 
+      {/* tablet: the best match across the full width (its sections side by side), the runners-up in two columns */}
       <Grid container spacing={2} component="section" aria-label="Top three job roles" ref={cards}>
         {result.roles.map((r, i) => (
-          <Grid key={r.job_role} size={{ xs: 12, md: 4 }} data-flip={r.job_role} {...enter(3 + i)}>
+          <Grid key={r.job_role} size={{ xs: 12, sm: i === 0 ? 12 : 6, md: 4 }} data-flip={r.job_role} {...enter(3 + i)}>
             <RoleCard
               role={r}
               busy={props.busy}
