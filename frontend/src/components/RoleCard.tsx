@@ -24,7 +24,7 @@ import type { RoleRecommendation, SkillSuggestion } from '../api/types'
 import { money, pct, points } from '../format'
 import { useId, useState } from 'react'
 import { DURATION, EASE, useCountUp, useHighlight } from '../motion'
-import { BRAND_GRADIENT, BRAND_GRADIENT_DARK, ELEVATION } from '../theme'
+import { BRAND_GRADIENT, BRAND_GRADIENT_DARK, ELEVATION, tintInk } from '../theme'
 import CountUp from './CountUp'
 import { AverageTick, InsightSection, Metric } from './InsightSection'
 
@@ -215,7 +215,7 @@ export default function RoleCard({ role, busy, pendingTech, payScale, previous, 
                 fontWeight: 700,
                 letterSpacing: '0.06em',
                 textTransform: 'uppercase',
-                color: 'primary.main',
+                ...tintInk(t),
                 bgcolor: alpha(t.palette.primary.main, 0.12),
               })}
             >
@@ -241,7 +241,11 @@ export default function RoleCard({ role, busy, pendingTech, payScale, previous, 
           )}
         </Stack>
         <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'flex-start', gap: 1.5, mt: 0.75 }}>
-          <Typography variant="h6" sx={{ lineHeight: 1.25, fontSize: best ? '1.25rem' : '1.125rem', minWidth: 0, overflowWrap: 'anywhere' }}>
+          <Typography
+            variant="h6"
+            component="h3"
+            sx={{ lineHeight: 1.25, fontSize: best ? '1.25rem' : '1.125rem', minWidth: 0, overflowWrap: 'anywhere' }}
+          >
             {role.label}
           </Typography>
           <Box ref={scoreRef} sx={{ textAlign: 'right', flexShrink: 0, borderRadius: '8px', px: 0.5, mx: -0.5 }}>

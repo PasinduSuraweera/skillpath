@@ -21,7 +21,7 @@ import type { TechBlock } from '../api/types'
 import type { TechState } from '../form'
 import { DURATION } from '../motion'
 import { HAVE_LABEL, TECH_AREAS, WANT_LABEL } from '../questions'
-import { RADIUS } from '../theme'
+import { RADIUS, tintInk } from '../theme'
 
 const ICONS: Record<TechBlock, typeof Code> = {
   Language: Code,
@@ -127,7 +127,7 @@ export default function TechArea({ block, value, choices, error, onChange }: Pro
               flexShrink: 0,
               fontVariantNumeric: 'tabular-nums',
               bgcolor: answered ? alpha(t.palette.primary.main, 0.12) : 'transparent',
-              color: answered ? 'primary.main' : 'text.secondary',
+              ...(answered ? tintInk(t) : { color: 'text.secondary' }),
               border: '1px solid',
               borderColor: answered ? 'transparent' : 'divider',
               fontWeight: 600,

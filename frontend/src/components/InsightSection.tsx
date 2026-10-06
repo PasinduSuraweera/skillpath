@@ -8,13 +8,15 @@ import Typography from '@mui/material/Typography'
 import { alpha } from '@mui/material/styles'
 import type { ReactNode } from 'react'
 
-/** Small titled block inside a role card (AI outlook, salary, skills). */
+/** Small titled block inside a role card (AI outlook, salary, skills); its title is a level-4 heading under the role's. */
 export function InsightSection(props: { icon: ReactNode; title: string; help: string; children: ReactNode }) {
   return (
     <Box>
       <Stack direction="row" spacing={1} sx={{ alignItems: 'center', mb: 1.25 }}>
         {props.icon}
-        <Typography variant="subtitle2">{props.title}</Typography>
+        <Typography variant="subtitle2" component="h4">
+          {props.title}
+        </Typography>
         {/* a real button, so the explanation also opens with the keyboard (and on tap) */}
         <Tooltip title={props.help} arrow describeChild enterTouchDelay={0} leaveTouchDelay={5000}>
           <IconButton size="small" aria-label={`About “${props.title}”`} sx={{ p: 0.25, ml: '2px !important', color: 'text.secondary' }}>

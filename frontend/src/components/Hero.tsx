@@ -8,7 +8,7 @@ import { alpha } from '@mui/material/styles'
 import type { CSSProperties, ReactNode } from 'react'
 import type { Options } from '../api/types'
 import type { Sample } from '../samples'
-import { BRAND_GRADIENT, BRAND_GRADIENT_DARK } from '../theme'
+import { BRAND_GRADIENT, BRAND_GRADIENT_DARK, tintInk } from '../theme'
 import SampleBar from './SampleBar'
 
 interface Props {
@@ -54,7 +54,7 @@ export default function Hero({ options, intro, onPick, disabled, activeId }: Pro
               borderRadius: 999,
               fontSize: '0.75rem',
               fontWeight: 600,
-              color: 'primary.main',
+              ...tintInk(t),
               bgcolor: alpha(t.palette.primary.main, 0.08),
               border: `1px solid ${alpha(t.palette.primary.main, 0.18)}`,
             })}
@@ -71,6 +71,8 @@ export default function Hero({ options, intro, onPick, disabled, activeId }: Pro
         <Typography
           variant="h3"
           component="h1"
+          id="hero-title"
+          tabIndex={-1}
           {...enter(1)}
           sx={{ fontSize: { xs: '2.125rem', sm: '2.75rem', md: '3.25rem' }, maxWidth: 640, textWrap: 'balance' }}
         >

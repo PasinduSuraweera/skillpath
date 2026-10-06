@@ -43,12 +43,17 @@ import {
   withTechnology,
 } from './form'
 import type { Errors, FormState } from './form'
+import { pct } from './format'
 import { DURATION, EASE, prefersReducedMotion, useDelayedFlag } from './motion'
 import { ELEVATION, RADIUS } from './theme'
 import { SAMPLES } from './samples'
 import type { Sample } from './samples'
+import { whatIfHighlights } from './whatif'
 
 const RESULTS = 3
+
+/** Where keyboard focus goes after a move: a heading of what is now shown, or the first invalid answer. */
+type FocusTarget = 'hero-title' | 'step-title' | 'results-title' | 'whatif-title' | 'invalid'
 
 interface Run {
   form: FormState // the answers that produced this result
@@ -72,6 +77,9 @@ export default function App() {
   // one message at a time; a new one replaces it (key restarts the timer). `undo` adds an Undo button.
   const [toast, setToast] = useState<{ message: string; undo?: () => void; key: number } | null>(null)
   const say = (message: string, undo?: () => void) => setToast({ message, undo, key: Date.now() })
+  // read out by screen readers when a prediction arrives (n makes a repeated message count as a change)
+  const [announcement, setAnnouncement] = useState({ text: '', n: 0 })
+  const announce = (text: string) => setAnnouncement((a) => ({ text, n: a.n + 1 }))
   const { mode, setMode } = useColorScheme()
   const busyRef = useRef(false) // guards double submits without visibly disabling anything for a ~15 ms request
   const stepperRef = useRef<HTMLDivElement>(null)
@@ -131,10 +139,40 @@ export default function App() {
     })
   }
 
-  const goTo = (s: number, { smooth = false, onlyIfHidden = false } = {}) => {
+  /**
+   * Moving between steps removes or disables the button that was pressed (Next on the
+   * last step, Get recommendations, Back on the first), which would drop keyboard focus
+   * to the top of the page. Focus moves to the heading of what is now shown instead, so
+   * Tab continues from there and screen readers announce where the visitor is.
+   */
+  const focusNext = useRef<FocusTarget | null>(null)
+  useEffect(() => {
+    const target = focusNext.current
+    if (!target) return
+    focusNext.current = null
+    // after revealWizard's scroll (also queued for the next frame)
+    requestAnimationFrame(() => {
+      if (target === 'invalid') {
+        const field = document.querySelector<HTMLElement>('[aria-invalid="true"]')
+        const input = field?.matches('input, textarea, button') ? field : field?.querySelector<HTMLElement>('input, button')
+        if (input) {
+          input.focus({ preventScroll: true })
+          input.scrollIntoView({ block: 'center' })
+          return
+        }
+      }
+      document.getElementById(target === 'invalid' ? 'step-title' : target)?.focus({ preventScroll: true })
+    })
+  })
+
+  const goTo = (
+    s: number,
+    { smooth = false, onlyIfHidden = false, focus = true }: { smooth?: boolean; onlyIfHidden?: boolean; focus?: boolean | FocusTarget } = {},
+  ) => {
     if (s !== step) setDirection(s > step ? 'forward' : 'back')
     setStep(s)
     revealWizard(smooth, onlyIfHidden)
+    if (focus) focusNext.current = focus === true ? (s === RESULTS ? 'results-title' : 'step-title') : focus
   }
 
   /** Validate, call the API, and keep the previous result for the what-if comparison. */
@@ -145,6 +183,7 @@ export default function App() {
     setApiError(null)
     if (Object.keys(clientErrors).length) {
       goTo(Math.min(...Object.keys(clientErrors).map(stepOf)))
+      focusNext.current = 'invalid'
       return
     }
     busyRef.current = true
@@ -153,21 +192,27 @@ export default function App() {
     setPendingTech(tech ?? null)
     try {
       const result = await predict(toProfile(answers))
-      if (current) {
-        const changes = describeChanges(current.form, answers)
-        // re-running unchanged answers keeps the comparison that is already shown
-        if (changes.length) setComparison({ before: current.result, changes })
-      }
+      const changes = current ? describeChanges(current.form, answers) : []
+      // re-running unchanged answers keeps the comparison that is already shown
+      if (current && changes.length) setComparison({ before: current.result, changes })
       setCurrent({ form: answers, result })
       setForm(answers)
       // a what-if from the results page glides up to the comparison, so it is clear where it went
       goTo(RESULTS, { smooth: step === RESULTS })
+      const top = result.roles[0]
+      if (current && changes.length) {
+        focusNext.current = 'whatif-title'
+        announce(`Results updated. ${whatIfHighlights(current.result, result).map((h) => h.text).join(' ')}`)
+      } else {
+        announce(`Results ready. Your best match is ${top.label} at ${pct(top.probability)}.`)
+      }
     } catch (e) {
       if (e instanceof ValidationError) {
         const mapped = serverErrors(e.fields)
         setErrors(mapped)
         setApiError(e.message)
         goTo(Math.min(...Object.keys(mapped).map(stepOf)))
+        focusNext.current = 'invalid'
       } else {
         setApiError((e as Error).message)
       }
@@ -184,7 +229,7 @@ export default function App() {
     setApiError(null)
     setCurrent(null)
     setComparison(null)
-    goTo(0, { onlyIfHidden: true })
+    goTo(0, { onlyIfHidden: true, focus: false }) // the example just pressed keeps focus
     say(`Loaded “${s.name}”. Review the answers or press Get recommendations.`)
   }
 
@@ -197,7 +242,8 @@ export default function App() {
     setApiError(null)
     setCurrent(null)
     setComparison(null)
-    goTo(0, { onlyIfHidden: true })
+    // Clear answers stays on screen and keeps focus; Start over (on the results) goes back to the top of the page
+    goTo(0, { onlyIfHidden: true, focus: step === RESULTS && 'hero-title' })
     if (!hadAnything) return
     say(snapshot.current ? 'Started over. Your answers and results were cleared.' : 'Answers cleared.', () => {
       setForm(snapshot.form)
@@ -286,7 +332,7 @@ export default function App() {
           </Box>
         </Box>
       </Fade>
-      <Container maxWidth="lg" sx={{ py: { xs: 2.5, md: 5 } }}>
+      <Container component="main" maxWidth="lg" sx={{ py: { xs: 2.5, md: 5 } }}>
         {!options ? (
           loadError ? (
             <LoadError message={loadError} retrying={showRetrying} onRetry={retryOptions} />
@@ -479,7 +525,10 @@ export default function App() {
                   onRestart={restart}
                   onPrint={() => window.print()}
                   onTrySkill={trySkill}
-                  onClearComparison={() => setComparison(null)}
+                  onClearComparison={() => {
+                    setComparison(null)
+                    focusNext.current = 'results-title' // the Hide comparison button goes away with the panel
+                  }}
                 />
               </Box>
             )}
@@ -518,6 +567,12 @@ export default function App() {
         slotProps={{ content: { className: wide ? 'sp-drop' : 'sp-rise' } }}
         sx={wide ? { top: '76px !important' } : { bottom: 'calc(76px + env(safe-area-inset-bottom)) !important' }}
       />
+
+      {/* what a prediction found, for screen readers (the page shows it; this says it) */}
+      <div role="status" className="sp-sr-only">
+        {announcement.text}
+        {announcement.n % 2 ? '\u00a0' : ''}
+      </div>
     </Box>
   )
 }
@@ -525,7 +580,7 @@ export default function App() {
 /** Placeholder in the shape of the start page while GET /api/options is on its way (only if it is slow). */
 function LoadingSkeleton() {
   return (
-    <Stack spacing={3} aria-busy="true" aria-label="Loading" className="sp-fade">
+    <Stack spacing={3} role="status" aria-busy="true" aria-label="Loading" className="sp-fade">
       <Box>
         <Skeleton variant="text" sx={{ fontSize: '2.25rem', width: { xs: '85%', md: '45%' } }} />
         <Skeleton variant="text" sx={{ maxWidth: 700 }} />
@@ -560,7 +615,8 @@ function LoadError({ message, retrying, onRetry }: { message: string; retrying: 
         >
           <CloudOff />
         </Box>
-        <Typography variant="h6" component="h2">
+        {/* the only heading on the page in this state */}
+        <Typography variant="h6" component="h1">
           SkillPath can’t load right now
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ overflowWrap: 'anywhere' }}>

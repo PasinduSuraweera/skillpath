@@ -106,7 +106,14 @@ export default function Results(props: Props) {
         {...enter(0)}
       >
         <Box sx={{ minWidth: 0 }}>
-          <Typography variant="h4" component="h1" sx={{ fontSize: { xs: '1.6rem', md: '2rem' } }}>
+          {/* receives focus when the results arrive, so keyboard and screen reader users start here */}
+          <Typography
+            variant="h4"
+            component="h1"
+            id="results-title"
+            tabIndex={-1}
+            sx={{ fontSize: { xs: '1.6rem', md: '2rem' }, scrollMarginTop: 96 }}
+          >
             Your top job role matches
           </Typography>
           <Typography color="text.secondary" sx={{ maxWidth: 680, mt: 0.75 }}>
@@ -146,7 +153,11 @@ export default function Results(props: Props) {
       </Collapse>
 
       {/* tablet: the best match across the full width (its sections side by side), the runners-up in two columns */}
-      <Grid container spacing={2} component="section" aria-label="Top three job roles" ref={cards}>
+      {/* a heading for screen reader navigation; the cards say what they are visually */}
+      <Grid container spacing={2} component="section" aria-labelledby="top-roles-title" ref={cards}>
+        <h2 id="top-roles-title" className="sp-sr-only">
+          Top three job roles
+        </h2>
         {result.roles.map((r, i) => (
           <Grid key={r.job_role} size={{ xs: 12, sm: i === 0 ? 12 : 6, md: 4 }} data-flip={r.job_role} {...enter(3 + i)}>
             <RoleCard
@@ -164,7 +175,7 @@ export default function Results(props: Props) {
       <Grid container spacing={2} {...enter(6)}>
         <Grid size={{ xs: 12, md: 5 }}>
           <Paper sx={{ p: { xs: 2, sm: 2.5 }, height: '100%' }} className="avoid-break">
-            <Typography variant="h6" component="h3">
+            <Typography variant="h6" component="h2">
               Career families
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, mb: 2.5 }}>
@@ -180,7 +191,7 @@ export default function Results(props: Props) {
         </Grid>
         <Grid size={{ xs: 12, md: 7 }}>
           <Paper sx={{ p: { xs: 2, sm: 2.5 }, height: '100%' }} className="avoid-break">
-            <Typography variant="h6" component="h3" sx={{ mb: 1.5 }}>
+            <Typography variant="h6" component="h2" sx={{ mb: 1.5 }}>
               Please keep in mind
             </Typography>
             <Stack component="ul" spacing={1.5} sx={{ m: 0, p: 0, listStyle: 'none' }}>
@@ -197,9 +208,16 @@ export default function Results(props: Props) {
         </Grid>
       </Grid>
 
-      <Accordion disableGutters className="no-print sp-reveal" style={{ '--i': 6 } as CSSProperties}>
+      <Accordion
+        disableGutters
+        className="no-print sp-reveal"
+        style={{ '--i': 6 } as CSSProperties}
+        slotProps={{ heading: { component: 'h2' } }}
+      >
         <AccordionSummary expandIcon={<ExpandMore />}>
-          <Typography variant="subtitle1">See all {result.ranking.length} job roles</Typography>
+          <Typography variant="subtitle1" component="span">
+            See all {result.ranking.length} job roles
+          </Typography>
         </AccordionSummary>
         <AccordionDetails sx={{ px: 2.5, pb: 2.5 }}>
           <Grid container columnSpacing={4} rowSpacing={1.75}>

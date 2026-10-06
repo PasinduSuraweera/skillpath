@@ -27,6 +27,12 @@ export const BRAND_VIOLET = { light: '#6e56cf', dark: '#b49cff' }
 export const BRAND_GRADIENT = `linear-gradient(135deg, #3e63dd 0%, ${BRAND_VIOLET.light} 100%)`
 export const BRAND_GRADIENT_DARK = `linear-gradient(135deg, #8da4ff 0%, ${BRAND_VIOLET.dark} 100%)`
 
+/**
+ * Accent-coloured text on a tint of the accent (pills, status chips). In light mode the
+ * deeper indigo keeps it over 4.5:1, which the main indigo misses on a 12% tint.
+ */
+export const tintInk = (t: Theme) => ({ color: t.palette.primary.dark, ...t.applyStyles('dark', { color: t.palette.primary.main }) })
+
 /** Radius scale: controls, inset panels, cards. */
 export const RADIUS = { control: 10, inset: 12, card: 16 }
 
@@ -86,9 +92,10 @@ export const theme = createTheme({
       palette: {
         primary: { main: '#3e63dd', dark: '#3051c4', light: '#6f8ef0' },
         secondary: { main: '#d97706' },
-        success: { main: '#16825d' },
-        error: { main: '#d93a2b' },
-        warning: { main: '#c26a00' },
+        // deep enough to stay over 4.5:1 as text on the page grey and on the light tints they sit on
+        success: { main: '#127452' },
+        error: { main: '#c8321f' },
+        warning: { main: '#a35a00' },
         background: { default: '#f7f8fa', paper: '#ffffff' },
         text: { primary: ink, secondary: '#525c6b' },
         divider: slate(0.09),

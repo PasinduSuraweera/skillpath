@@ -152,7 +152,8 @@ export default function ChoiceCards({ question, number, value, choices, error, o
                   borderRadius: '50%',
                   display: 'grid',
                   placeItems: 'center',
-                  border: checked ? 'none' : `1.5px solid ${alpha(t.palette.text.primary, 0.28)}`,
+                  // over 3:1 against the card, so the empty choice still reads as a control
+                  border: checked ? 'none' : `1.5px solid ${alpha(t.palette.text.primary, 0.45)}`,
                   color: 'primary.main',
                 })}
               >

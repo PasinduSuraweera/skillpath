@@ -84,7 +84,10 @@ export default function AnalysisSummary({ result, answers, revealFrom }: Props) 
   const m = result.model
 
   return (
-    <Paper component="section" aria-label="How SkillPath reached this result" sx={{ overflow: 'hidden' }}>
+    <Paper component="section" aria-labelledby="analysis-title" sx={{ overflow: 'hidden' }}>
+      <h2 id="analysis-title" className="sp-sr-only">
+        How SkillPath reached this result
+      </h2>
       <Box
         component="ol"
         sx={{

@@ -153,7 +153,7 @@ export default function WhatIfPanel({ before, after, changes, onClear }: Props) 
       <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'flex-start', gap: 1, mb: 2 }}>
         <Stack direction="row" spacing={1} sx={{ alignItems: 'center', minWidth: 0 }}>
           <CompareArrows color="primary" />
-          <Typography variant="h6" component="h2">
+          <Typography variant="h6" component="h2" id="whatif-title" tabIndex={-1} sx={{ scrollMarginTop: 96 }}>
             What if…? Before and after
           </Typography>
         </Stack>
@@ -177,7 +177,7 @@ export default function WhatIfPanel({ before, after, changes, onClear }: Props) 
         })}
       >
         <End label="Before">
-          <Typography variant="subtitle2" noWrap title={topBefore.label}>
+          <Typography variant="subtitle2" component="p" noWrap title={topBefore.label}>
             {topBefore.label}
           </Typography>
           <Typography variant="h6" component="p" color="text.secondary" sx={{ fontVariantNumeric: 'tabular-nums', lineHeight: 1.2 }}>
@@ -204,7 +204,7 @@ export default function WhatIfPanel({ before, after, changes, onClear }: Props) 
         </Box>
         <Then />
         <End label="After">
-          <Typography variant="subtitle2" noWrap title={topAfter.label}>
+          <Typography variant="subtitle2" component="p" noWrap title={topAfter.label}>
             {topAfter.label}
           </Typography>
           <Typography variant="h6" component="p" color="primary" sx={{ fontVariantNumeric: 'tabular-nums', lineHeight: 1.2 }}>
@@ -219,8 +219,8 @@ export default function WhatIfPanel({ before, after, changes, onClear }: Props) 
         </End>
       </Box>
 
-      {/* what that did, in words */}
-      <Stack component="ul" spacing={0.75} sx={{ listStyle: 'none', m: 0, p: 0, mb: 2 }} aria-live="polite">
+      {/* what that did, in words (App announces the same sentences to screen readers) */}
+      <Stack component="ul" spacing={0.75} sx={{ listStyle: 'none', m: 0, p: 0, mb: 2 }}>
         {highlights.map((h, i) => {
           const Icon = HIGHLIGHT_ICON[h.tone]
           return (
@@ -286,7 +286,10 @@ export default function WhatIfPanel({ before, after, changes, onClear }: Props) 
                         lineHeight: '18px',
                         whiteSpace: 'nowrap',
                         verticalAlign: '1px',
-                        color: m.entered ? 'success.main' : 'text.secondary',
+                        // on the green tint the light theme needs the deeper green to stay over 4.5:1
+                        ...(m.entered
+                          ? { color: t.palette.success.dark, ...t.applyStyles('dark', { color: t.palette.success.main }) }
+                          : { color: t.palette.text.secondary }),
                         bgcolor: m.entered ? alpha(t.palette.success.main, 0.12) : alpha(t.palette.text.primary, 0.06),
                       })}
                     >

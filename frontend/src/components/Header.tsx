@@ -68,7 +68,7 @@ export default function Header() {
         </Box>
         {mode && (
           <Tooltip title={dark ? 'Switch to light mode' : 'Switch to dark mode'}>
-            <IconButton onClick={toggle} className="no-print" aria-label="Toggle dark mode">
+            <IconButton onClick={toggle} className="no-print" aria-label="Toggle dark mode" aria-pressed={dark}>
               <Box component="span" key={String(dark)} className={toggled ? 'sp-icon-in' : undefined} sx={{ display: 'inline-flex' }}>
                 {dark ? <LightMode /> : <DarkMode />}
               </Box>

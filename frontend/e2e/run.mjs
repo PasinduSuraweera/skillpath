@@ -121,8 +121,8 @@ const roleCards = () =>
   page.evaluate(() =>
     [...document.querySelectorAll('[aria-label^="Match "]')].map((bar) => {
       let el = bar
-      while (el && !el.querySelector('h6')) el = el.parentElement
-      return el?.querySelector('h6')?.textContent ?? '?'
+      while (el && !el.querySelector('h3')) el = el.parentElement
+      return el?.querySelector('h3')?.textContent ?? '?'
     }),
   )
 
