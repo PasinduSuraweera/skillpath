@@ -11,9 +11,10 @@ import type { Ref } from 'react'
 import { DURATION } from '../motion'
 
 const STEPS = ['About you', 'Technologies', 'AI usage', 'Results']
-// on the narrowest phones (under 360 px) the full labels would run into each other
+// when the stepper is narrow (phones under 360 px, or larger text) the full labels would run into each other.
+// A container query in rem, so it follows the text size as well as the screen width.
 const SHORT = ['About', 'Tech', 'AI', 'Results']
-const narrow = '@media (max-width: 359.95px)'
+const narrow = '@container (max-width: 21rem)'
 const RESULTS = 3
 
 interface Props {
@@ -77,6 +78,7 @@ export default function WizardSteps({ step, progress, resultsReady, disabled, on
       alternativeLabel
       className="no-print"
       sx={{
+        containerType: 'inline-size',
         scrollMarginTop: 76,
         '& .MuiStepConnector-root': { top: 15, left: 'calc(-50% + 22px)', right: 'calc(50% + 22px)' },
         '& .MuiStepLabel-label': { fontSize: { xs: '0.8125rem', sm: '0.875rem' }, mt: '8px !important' },

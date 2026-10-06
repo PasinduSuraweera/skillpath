@@ -89,8 +89,12 @@ export default function ChoiceCards({ question, number, value, choices, error, o
         sx={{
           display: 'grid',
           gap: 1,
-          // on phones: short scale words two to a row, sentences one per row
-          gridTemplateColumns: { xs: minWidth <= 160 ? '1fr 1fr' : '1fr', sm: `repeat(auto-fit, minmax(${minWidth}px, 1fr))` },
+          // on phones: short scale words two to a row when two fit, sentences one per row. Sizes are in rem,
+          // so with larger text (browser setting) the cards also drop to fewer columns instead of overflowing.
+          gridTemplateColumns: {
+            xs: minWidth <= 160 ? 'repeat(auto-fit, minmax(min(100%, 8.5rem), 1fr))' : '1fr',
+            sm: `repeat(auto-fit, minmax(min(100%, ${minWidth / 16}rem), 1fr))`,
+          },
         }}
       >
         {choices.map((c) => {

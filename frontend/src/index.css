@@ -22,9 +22,13 @@ h2[tabindex='-1']:focus {
   outline: none;
 }
 
-/* read by screen readers, not drawn (e.g. the final value of a number that is counting up) */
+/* read by screen readers, not drawn (e.g. the final value of a number that is counting up).
+   Pinned to the corner of its positioned ancestor: left where it falls in the line, the end of
+   a long line would place it past a card's edge and make the card scrollable sideways. */
 .sp-sr-only {
   position: absolute !important;
+  top: 0;
+  left: 0;
   width: 1px;
   height: 1px;
   padding: 0;

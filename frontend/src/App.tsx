@@ -480,7 +480,8 @@ export default function App() {
                       <ArrowBack />
                     </IconButton>
                   </Box>
-                  <Stack direction="row" spacing={1} sx={{ ml: 'auto' }}>
+                  {/* wraps (right-aligned) when the buttons do not fit side by side, e.g. with large text */}
+                  <Stack direction="row" useFlexGap sx={{ ml: 'auto', gap: 1, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                     {step < 2 && (
                       <Button
                         variant="outlined"

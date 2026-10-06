@@ -230,7 +230,8 @@ export default function Results(props: Props) {
         </AccordionDetails>
       </Accordion>
 
-      <Typography variant="caption" color="text.secondary" component="p" sx={{ maxWidth: 900 }}>
+      {/* the attribution carries a long URL: let it break rather than run off a narrow screen */}
+      <Typography variant="caption" color="text.secondary" component="p" sx={{ maxWidth: 900, overflowWrap: 'anywhere' }}>
         Model: {m.name}, tested on {m.test_rows.toLocaleString()} survey respondents it never saw during training. The
         true role was in its top 3 for {pct(m.test_top3_accuracy)} of them (top 3 career families:{' '}
         {pct(m.test_family_top3_accuracy)}). {result.attribution}

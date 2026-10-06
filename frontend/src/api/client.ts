@@ -14,7 +14,13 @@ const UNREACHABLE =
   'Cannot reach the SkillPath API. Start it in another terminal with ' +
   '"uvicorn app.main:app --reload" (from the project root, with the venv active) and try again.'
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
+// a 200 that is not the SkillPath API's JSON, e.g. an HTML page from a misconfigured proxy
+const UNEXPECTED =
+  'The SkillPath API sent a response this page cannot read. Check that /api points at the SkillPath API ' +
+  '(SKILLPATH_API for the dev server) and try again.'
+
+/** `valid` checks the parts of a successful body the page relies on, so a wrong one is an error, not a crash. */
+async function request<T>(path: string, valid: (body: Partial<T> | null) => boolean, init?: RequestInit): Promise<T> {
   let res: Response
   try {
     res = await fetch(path, init)
@@ -26,15 +32,18 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const body = await res.json().catch(() => null)
   if (res.status === 422 && body?.fields) throw new ValidationError(body.message, body.fields)
   if (!res.ok) throw new Error(body?.detail ?? `The API returned an error (HTTP ${res.status}).`)
+  if (!valid(body)) throw new Error(UNEXPECTED)
   return body as T
 }
 
 export function getOptions(): Promise<Options> {
-  return request<Options>('/api/options')
+  return request<Options>('/api/options', (o) => Array.isArray(o?.countries) && Array.isArray(o?.job_roles) && !!o?.tech && !!o?.limits)
 }
 
 export function predict(profile: Profile): Promise<Recommendation> {
-  return request<Recommendation>('/api/predict', {
+  const valid = (r: Partial<Recommendation> | null) =>
+    Array.isArray(r?.roles) && r.roles.length > 0 && Array.isArray(r?.ranking) && Array.isArray(r?.families) && !!r?.model
+  return request<Recommendation>('/api/predict', valid, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(profile),

@@ -395,17 +395,20 @@ export default function RoleCard({ role, busy, pendingTech, payScale, previous, 
                       direction="row"
                       sx={{ alignItems: 'center', gap: 1, minHeight: 40, '& + &': { borderTop: 1, borderColor: 'divider' } }}
                     >
-                      <Typography variant="body2" sx={{ fontWeight: 600, flexGrow: 1, minWidth: 0 }} noWrap title={m.technology}>
-                        {m.technology}
+                      {/* the star sits outside the name, so a long name that is cut short does not cut it off too */}
+                      <Stack direction="row" sx={{ alignItems: 'center', gap: 0.5, flexGrow: 1, minWidth: 0 }}>
+                        <Typography variant="body2" sx={{ fontWeight: 600, minWidth: 0 }} noWrap title={m.technology}>
+                          {m.technology}
+                          <span className="sp-sr-only">
+                            , used by {Math.round(m.share_pct)}% of people in this role, {m.lift.toFixed(1)} times the average
+                          </span>
+                        </Typography>
                         {m.wanted && (
                           <Tooltip title="Already on your “want to learn” list">
-                            <Star fontSize="inherit" color="secondary" sx={{ ml: 0.5, verticalAlign: '-2px' }} titleAccess="on your want-to-learn list" />
+                            <Star color="secondary" sx={{ fontSize: '0.875rem', flexShrink: 0 }} titleAccess="on your want-to-learn list" />
                           </Tooltip>
                         )}
-                        <span className="sp-sr-only">
-                          , used by {Math.round(m.share_pct)}% of people in this role, {m.lift.toFixed(1)} times the average
-                        </span>
-                      </Typography>
+                      </Stack>
                       <Typography variant="body2" aria-hidden="true" sx={{ width: 46, flexShrink: 0, textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>
                         {Math.round(m.share_pct)}%
                       </Typography>
