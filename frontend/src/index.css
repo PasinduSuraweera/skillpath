@@ -15,6 +15,19 @@ button,
   user-select: none;
 }
 
+/* read by screen readers, not drawn (e.g. the final value of a number that is counting up) */
+.sp-sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* --- entrances ----------------------------------------------------------- */
 /* Content that replaces other content (a wizard step, the results, an alert)
    arrives with a short rise instead of teleporting. Mount-only: nothing here
@@ -59,11 +72,34 @@ button,
     transform: translateY(-12px);
   }
 }
+/* a mark that confirms a selection (checkmark): settles from slightly small; never from scale(0) */
+@keyframes sp-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+/* the results reveal: a little more travel than sp-rise, as it is the page's main moment */
+@keyframes sp-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
 
 .sp-rise {
   animation: sp-rise var(--dur-large) var(--ease-out) backwards;
   /* --i: position in a group entrance */
   animation-delay: calc(var(--i, 0) * var(--stagger));
+}
+/* results: summary, then each role card, then the supporting sections, one after another */
+.sp-reveal {
+  animation: sp-reveal var(--dur-enter) var(--ease-out) backwards;
+  animation-delay: calc(var(--i, 0) * var(--stagger-reveal));
+}
+.sp-pop {
+  display: inline-flex;
+  animation: sp-pop var(--dur-small) var(--ease-out) backwards;
 }
 .sp-fade {
   animation: sp-fade var(--dur-medium) var(--ease-out) backwards;
@@ -92,13 +128,16 @@ button,
 /* --- reduced motion: keep the fades that explain a change, drop movement -- */
 @media (prefers-reduced-motion: reduce) {
   .sp-rise,
+  .sp-reveal,
   .sp-step-forward,
   .sp-step-back,
   .sp-drop,
-  .sp-icon-in {
+  .sp-icon-in,
+  .sp-pop {
     animation-name: sp-fade;
     animation-delay: 0ms;
   }
+  /* count-ups and reorders are skipped in motion.ts (useCountUp, useFlip); change highlights stay (colour only) */
   /* MUI menus and tooltips grow from their anchor; fade them instead */
   .MuiPopover-paper,
   .MuiTooltip-tooltip {

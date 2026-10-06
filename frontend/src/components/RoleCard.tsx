@@ -18,6 +18,8 @@ import Typography from '@mui/material/Typography'
 import { alpha } from '@mui/material/styles'
 import type { RoleRecommendation, SkillSuggestion } from '../api/types'
 import { money, pct } from '../format'
+import { useCountUp } from '../motion'
+import CountUp from './CountUp'
 import { InsightSection, Metric } from './InsightSection'
 
 interface Props {
@@ -40,6 +42,20 @@ const SALARY_HELP =
 const SKILL_HELP =
   'Technologies used by many people in this role and noticeably more often than across all roles, from the ' +
   'training data. Press + to see how your results change if you add one.'
+
+/** The match bar fills in step with the percentage counting up (both are driven by useCountUp). */
+function MatchBar({ probability, best }: { probability: number; best: boolean }) {
+  const { value } = useCountUp(probability)
+  return (
+    <LinearProgress
+      variant="determinate"
+      value={value * 100}
+      aria-label={`Match ${pct(probability)}`}
+      aria-valuenow={Math.round(probability * 100)}
+      sx={{ height: 8, mt: 1.5, '& .MuiLinearProgress-bar': { opacity: best ? 1 : 0.6, transition: 'none' } }}
+    />
+  )
+}
 
 export default function RoleCard({ role, busy, pendingTech, onTrySkill }: Props) {
   const ai = role.ai_outlook
@@ -81,15 +97,10 @@ export default function RoleCard({ role, busy, pendingTech, onTrySkill }: Props)
             color={best ? 'primary' : 'text.primary'}
             sx={{ whiteSpace: 'nowrap', fontSize: '1.75rem', fontVariantNumeric: 'tabular-nums', lineHeight: 1.1 }}
           >
-            {pct(role.probability)}
+            <CountUp value={role.probability} format={pct} />
           </Typography>
         </Stack>
-        <LinearProgress
-          variant="determinate"
-          value={role.probability * 100}
-          sx={{ height: 8, mt: 1.5, '& .MuiLinearProgress-bar': { opacity: best ? 1 : 0.6 } }}
-          aria-label={`Match ${pct(role.probability)}`}
-        />
+        <MatchBar probability={role.probability} best={best} />
         {role.low_confidence && (
           <Tooltip
             arrow

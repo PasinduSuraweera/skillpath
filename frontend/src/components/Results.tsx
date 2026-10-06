@@ -18,7 +18,7 @@ import { useState } from 'react'
 import type { CSSProperties } from 'react'
 import type { Recommendation, SkillSuggestion } from '../api/types'
 import { pct } from '../format'
-import { DURATION } from '../motion'
+import { DURATION, useFlip } from '../motion'
 import RoleCard from './RoleCard'
 import WhatIfPanel from './WhatIfPanel'
 
@@ -64,6 +64,9 @@ export default function Results(props: Props) {
   const { result, comparison } = props
   const top = result.roles[0]
   const m = result.model
+
+  // after a what-if, cards that change rank glide to their new place instead of jumping
+  const cards = useFlip<HTMLDivElement>(result.roles.map((r) => r.job_role).join('|'))
 
   // keep the last comparison on screen while its panel collapses away
   const [shown, setShown] = useState<Comparison | null>(comparison)
@@ -114,9 +117,9 @@ export default function Results(props: Props) {
         )}
       </Collapse>
 
-      <Grid container spacing={2} component="section" aria-label="Top three job roles">
+      <Grid container spacing={2} component="section" aria-label="Top three job roles" ref={cards}>
         {result.roles.map((r, i) => (
-          <Grid key={r.job_role} size={{ xs: 12, md: 4 }} {...enter(i + 1)}>
+          <Grid key={r.job_role} size={{ xs: 12, md: 4 }} data-flip={r.job_role} {...enter(i + 1)}>
             <RoleCard role={r} busy={props.busy} pendingTech={props.pendingTech} onTrySkill={props.onTrySkill} />
           </Grid>
         ))}
