@@ -1,3 +1,4 @@
+import Fade from '@mui/material/Fade'
 import { alpha, createTheme } from '@mui/material/styles'
 import type { Theme } from '@mui/material/styles'
 import { DURATION, EASE, motionCssVars } from './motion'
@@ -227,9 +228,17 @@ export const theme = createTheme({
         outlined: cardSurface,
       },
     },
-    MuiPopover: { styleOverrides: { paper: floatingSurface } },
+    // Menus and select lists: MUI's Grow starts at a squashed scale(0.75, 0.56). Instead they fade
+    // while settling from 97% towards their anchor (MUI sets transform-origin at the anchor), and
+    // leave with a plain, quicker fade.
+    MuiPopover: {
+      defaultProps: { slots: { transition: Fade } },
+      styleOverrides: {
+        paper: (props: { theme: Theme }) => ({ ...floatingSurface(props), animation: `sp-settle ${DURATION.small}ms ${EASE.out}` }),
+      },
+    },
     MuiMenu: {
-      defaultProps: { transitionDuration: { enter: DURATION.medium, exit: DURATION.small } },
+      defaultProps: { transitionDuration: { enter: DURATION.small, exit: 120 } },
       styleOverrides: { list: { paddingBlock: 6 } },
     },
     MuiAutocomplete: {
@@ -249,10 +258,18 @@ export const theme = createTheme({
         tag: { maxWidth: 'calc(100% - 8px)', borderRadius: 8 },
       },
     },
+    // Tooltips: a short fade with a slight settle from the trigger side (MUI sets the origin per
+    // placement), instead of Grow's squash; moving between tooltips skips the delay.
     MuiTooltip: {
-      defaultProps: { enterDelay: 250, enterNextDelay: 0 },
+      defaultProps: {
+        enterDelay: 250,
+        enterNextDelay: 0,
+        slots: { transition: Fade },
+        slotProps: { transition: { timeout: { enter: 150, exit: 100 } } },
+      },
       styleOverrides: {
         tooltip: ({ theme }) => ({
+          animation: `sp-settle 150ms ${EASE.out}`,
           fontSize: '0.75rem',
           lineHeight: 1.45,
           padding: '6px 10px',
@@ -295,7 +312,13 @@ export const theme = createTheme({
       defaultProps: { MenuProps: { slotProps: { paper: { sx: { mt: 0.75 } } } } },
     },
     MuiCheckbox: {
-      styleOverrides: { root: { borderRadius: 8 } },
+      styleOverrides: {
+        root: {
+          borderRadius: 8,
+          transition: `${colorTransition(['background-color', 'color'])}, ${press}`,
+          '&:active': { transform: 'scale(0.9)' },
+        },
+      },
     },
     MuiLinearProgress: {
       styleOverrides: {
@@ -329,6 +352,8 @@ export const theme = createTheme({
           [hoverOnly]: { '&:hover': { backgroundColor: theme.palette.action.hover } },
           '&.Mui-focusVisible': { outlineOffset: -2, backgroundColor: 'transparent' },
         }),
+        // the chevron turns over on screen: ease-in-out, a touch slower than a colour change
+        expandIconWrapper: { transition: `transform ${DURATION.medium}ms ${EASE.inOut}` },
       },
     },
     MuiCollapse: { defaultProps: { timeout: DURATION.large } },

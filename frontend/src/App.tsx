@@ -1,6 +1,7 @@
 import ArrowBack from '@mui/icons-material/ArrowBack'
 import ArrowForward from '@mui/icons-material/ArrowForward'
 import AutoAwesome from '@mui/icons-material/AutoAwesome'
+import Close from '@mui/icons-material/Close'
 import CloudOff from '@mui/icons-material/CloudOff'
 import Refresh from '@mui/icons-material/Refresh'
 import RestartAlt from '@mui/icons-material/RestartAlt'
@@ -68,7 +69,9 @@ export default function App() {
   const [pendingTech, setPendingTech] = useState<string | null>(null)
   const [current, setCurrent] = useState<Run | null>(null)
   const [comparison, setComparison] = useState<{ before: Recommendation; changes: string[] } | null>(null)
-  const [toast, setToast] = useState<string | null>(null)
+  // one message at a time; a new one replaces it (key restarts the timer). `undo` adds an Undo button.
+  const [toast, setToast] = useState<{ message: string; undo?: () => void; key: number } | null>(null)
+  const say = (message: string, undo?: () => void) => setToast({ message, undo, key: Date.now() })
   const { mode, setMode } = useColorScheme()
   const busyRef = useRef(false) // guards double submits without visibly disabling anything for a ~15 ms request
   const stepperRef = useRef<HTMLDivElement>(null)
@@ -182,16 +185,27 @@ export default function App() {
     setCurrent(null)
     setComparison(null)
     goTo(0, { onlyIfHidden: true })
-    setToast(`Loaded “${s.name}”. Review the answers or press Get recommendations.`)
+    say(`Loaded “${s.name}”. Review the answers or press Get recommendations.`)
   }
 
+  /** Empty the form (and the results). Nothing is lost for good: the toast offers to undo it. */
   function restart() {
+    const snapshot = { form, current, comparison, step }
+    const hadAnything = current !== null || JSON.stringify(form) !== JSON.stringify(emptyForm())
     setForm(emptyForm())
     setErrors({})
     setApiError(null)
     setCurrent(null)
     setComparison(null)
     goTo(0, { onlyIfHidden: true })
+    if (!hadAnything) return
+    say(snapshot.current ? 'Started over. Your answers and results were cleared.' : 'Answers cleared.', () => {
+      setForm(snapshot.form)
+      setCurrent(snapshot.current)
+      setComparison(snapshot.comparison)
+      setToast(null)
+      goTo(snapshot.step, { onlyIfHidden: true })
+    })
   }
 
   function trySkill(s: SkillSuggestion) {
@@ -472,10 +486,29 @@ export default function App() {
       </Container>
 
       <Snackbar
+        key={toast?.key}
         open={!!toast}
-        autoHideDuration={4500}
+        // an undo stays a little longer, so there is time to reach it
+        autoHideDuration={toast?.undo ? 7000 : 4500}
         onClose={(_, reason) => reason !== 'clickaway' && setToast(null)}
-        message={toast}
+        message={toast?.message}
+        action={
+          <>
+            {toast?.undo && (
+              <Button
+                size="small"
+                onClick={toast.undo}
+                // the toast is ink in light mode and near-white in dark mode: a light and a deep indigo, both over 4.5:1
+                sx={(t) => ({ color: '#a8b9ff', fontWeight: 700, ...t.applyStyles('dark', { color: '#3051c4' }) })}
+              >
+                Undo
+              </Button>
+            )}
+            <IconButton size="small" color="inherit" aria-label="Dismiss" onClick={() => setToast(null)} sx={{ opacity: 0.7 }}>
+              <Close fontSize="small" />
+            </IconButton>
+          </>
+        }
         anchorOrigin={wide ? { vertical: 'top', horizontal: 'right' } : { vertical: 'bottom', horizontal: 'center' }}
         slots={{ transition: Fade }}
         transitionDuration={{ enter: DURATION.medium, exit: DURATION.small }}

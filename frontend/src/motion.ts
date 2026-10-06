@@ -38,6 +38,8 @@ export const DURATION = {
   update: 420,
   /** tint that marks a value which just changed, fading out so the eye can find it */
   highlight: 1100,
+  /** the light/dark switch spreading from its button: rare and deliberate, so allowed to be seen */
+  theme: 420,
 }
 
 /** Delay between items of a small group entrance (alerts, panels). */
@@ -80,11 +82,33 @@ export function useDelayedFlag(on: boolean, delay = BUSY_DELAY): boolean {
   return on && shown
 }
 
-/** Run a DOM-changing update as a View Transition (a short crossfade) where the browser supports it. */
-export function withViewTransition(update: () => void) {
-  const doc = document as Document & { startViewTransition?: (cb: () => void) => unknown }
-  if (!doc.startViewTransition) update()
-  else doc.startViewTransition(update)
+type ViewTransition = { ready: Promise<void>; finished: Promise<void> }
+
+/**
+ * Run a DOM-changing update as a View Transition where the browser supports it.
+ * Given a point (the theme button's centre), the new page is revealed in a circle
+ * growing from it; otherwise, and with reduced motion, it is a short crossfade
+ * (index.css). Without View Transitions the update simply happens.
+ */
+export function withViewTransition(update: () => void, from?: { x: number; y: number }) {
+  const doc = document as Document & { startViewTransition?: (cb: () => void) => ViewTransition }
+  if (!doc.startViewTransition) return update()
+  const reveal = !!from && !prefersReducedMotion()
+  const root = document.documentElement
+  if (reveal) root.classList.add('sp-theme-reveal') // turns off the default crossfade
+  const transition = doc.startViewTransition(update)
+  if (!reveal || !from) return
+  transition.ready
+    .then(() => {
+      // radius that reaches the farthest corner of the window
+      const r = Math.hypot(Math.max(from.x, innerWidth - from.x), Math.max(from.y, innerHeight - from.y))
+      root.animate(
+        { clipPath: [`circle(0px at ${from.x}px ${from.y}px)`, `circle(${r}px at ${from.x}px ${from.y}px)`] },
+        { duration: DURATION.theme, easing: EASE.out, pseudoElement: '::view-transition-new(root)' },
+      )
+    })
+    .catch(() => {})
+  transition.finished.finally(() => root.classList.remove('sp-theme-reveal')).catch(() => {})
 }
 
 // ---------------------------------------------------------------------------

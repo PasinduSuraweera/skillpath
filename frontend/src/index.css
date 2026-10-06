@@ -97,6 +97,13 @@ button,
   animation: sp-reveal var(--dur-enter) var(--ease-out) backwards;
   animation-delay: calc(var(--i, 0) * var(--stagger-reveal));
 }
+/* menus and tooltips settle from just under full size towards their anchor (opacity comes from MUI's Fade) */
+@keyframes sp-settle {
+  from {
+    transform: scale(0.97);
+  }
+}
+
 /* a what-if change bar grows out of its centre line when its row appears (later values move by transition) */
 @keyframes sp-grow-x {
   from {
@@ -137,11 +144,17 @@ button,
   animation: sp-drop var(--dur-medium) var(--ease-out) backwards;
 }
 
-/* theme switch: a short crossfade of the whole page (View Transitions API) */
+/* theme switch: a short crossfade of the whole page (View Transitions API) ... */
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation-duration: var(--dur-large);
   animation-timing-function: ease;
+}
+/* ... or, from the header button, the new theme revealed in a growing circle (motion.ts) */
+:root.sp-theme-reveal::view-transition-old(root),
+:root.sp-theme-reveal::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
 }
 
 /* --- reduced motion: keep the fades that explain a change, drop movement -- */

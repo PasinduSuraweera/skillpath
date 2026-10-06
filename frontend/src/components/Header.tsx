@@ -8,6 +8,7 @@ import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 import { alpha, useColorScheme } from '@mui/material/styles'
 import { useState } from 'react'
+import type { MouseEvent } from 'react'
 import { flushSync } from 'react-dom'
 import { withViewTransition } from '../motion'
 
@@ -17,10 +18,11 @@ export default function Header() {
   // the icon only animates after a click, not on page load
   const [toggled, setToggled] = useState(false)
 
-  const toggle = () => {
+  const toggle = (e: MouseEvent<HTMLButtonElement>) => {
     setToggled(true)
-    // crossfade the whole page instead of flashing from light to dark
-    withViewTransition(() => flushSync(() => setMode(dark ? 'light' : 'dark')))
+    // the new theme spreads out from the button instead of the page flashing from light to dark
+    const r = e.currentTarget.getBoundingClientRect()
+    withViewTransition(() => flushSync(() => setMode(dark ? 'light' : 'dark')), { x: r.left + r.width / 2, y: r.top + r.height / 2 })
   }
 
   return (
