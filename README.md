@@ -1,14 +1,6 @@
 # SkillPath
 
 **An AI-aware developer job role and career path recommendation system.**
-IT3051 Fundamentals of Data Mining, Mini Project 2026, group KND_12, SLIIT Kandy Uni.
-
-| Member | Registration number |
-|---|---|
-| S S P S Bandara | IT23602250 |
-| Yoosuf A.A | IT23645202 |
-| M G S D Wijesinghe | IT23564640 |
-| K M H S Bandara | IT23792418 |
 
 **Prediction target:** the specific job role (20 classes, e.g. Data Engineer, DevOps Engineer,
 AI / ML Engineer). Each job role belongs to one of 12 role families; a family's probability is the
