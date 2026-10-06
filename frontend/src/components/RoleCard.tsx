@@ -16,10 +16,10 @@ import Paper from '@mui/material/Paper'
 import Stack from '@mui/material/Stack'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
-import { alpha } from '@mui/material/styles'
+import { alpha, useTheme } from '@mui/material/styles'
 import type { RoleRecommendation, SkillSuggestion } from '../api/types'
-import { money, pct } from '../format'
-import { useCountUp } from '../motion'
+import { money, pct, points } from '../format'
+import { DURATION, useCountUp, useHighlight } from '../motion'
 import { BRAND_GRADIENT, BRAND_GRADIENT_DARK, ELEVATION } from '../theme'
 import CountUp from './CountUp'
 import { AverageTick, InsightSection, Metric } from './InsightSection'
@@ -31,6 +31,8 @@ interface Props {
   pendingTech: string | null
   /** highest pay figure (75th percentile) across the three cards, so their salary bars share one scale */
   payScale: number
+  /** this role's place in the previous result, while a what-if comparison is shown */
+  previous: { rank: number; probability: number } | null
   onTrySkill: (s: SkillSuggestion) => void
 }
 
@@ -109,7 +111,14 @@ function KeySkillDots({ matched, total }: { matched: number; total: number }) {
       {Array.from({ length: total }, (_, i) => (
         <Box
           key={i}
-          sx={(t) => ({ width: 8, height: 8, borderRadius: '50%', bgcolor: i < matched ? 'primary.main' : alpha(t.palette.text.primary, 0.1) })}
+          sx={(t) => ({
+            width: 8,
+            height: 8,
+            borderRadius: '50%',
+            bgcolor: i < matched ? 'primary.main' : alpha(t.palette.text.primary, 0.1),
+            // a dot filled by a what-if (the skill just added) fills in rather than switching
+            transition: `background-color ${DURATION.update}ms ease`,
+          })}
         />
       ))}
     </Stack>
@@ -134,11 +143,19 @@ function ColumnHead({ children, width }: { children?: string; width?: number }) 
   )
 }
 
-export default function RoleCard({ role, busy, pendingTech, payScale, onTrySkill }: Props) {
+export default function RoleCard({ role, busy, pendingTech, payScale, previous, onTrySkill }: Props) {
+  const theme = useTheme()
   const ai = role.ai_outlook
   const s = role.salary
   const gap = role.skill_gap
   const best = role.rank === 1
+  // what the last what-if did to this role
+  const delta = previous ? role.probability - previous.probability : 0
+  const climb = previous ? previous.rank - role.rank : 0
+  const changed = Math.abs(delta) >= 0.0005
+  // a brief tint on the figures that a what-if just changed, so the eye finds them
+  const scoreRef = useHighlight<HTMLDivElement>(Math.round(role.probability * 1000), alpha(theme.palette.primary.main, 0.16))
+  const skillsRef = useHighlight<HTMLParagraphElement>(gap.matched.length, alpha(theme.palette.primary.main, 0.16))
 
   return (
     <Paper
@@ -203,12 +220,21 @@ export default function RoleCard({ role, busy, pendingTech, payScale, onTrySkill
           <Typography variant="overline" color="text.secondary" noWrap title={role.family} sx={{ lineHeight: 1.4, minWidth: 0 }}>
             {best ? role.family : `· ${role.family}`}
           </Typography>
+          {climb !== 0 && previous && (
+            <Typography
+              variant="caption"
+              className="sp-fade"
+              sx={{ ml: 'auto', flexShrink: 0, fontWeight: 600, whiteSpace: 'nowrap', color: climb > 0 ? 'success.main' : 'error.main' }}
+            >
+              {climb > 0 ? '↑' : '↓'} from #{previous.rank > 20 ? '20+' : previous.rank}
+            </Typography>
+          )}
         </Stack>
         <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'flex-start', gap: 1.5, mt: 0.75 }}>
           <Typography variant="h6" sx={{ lineHeight: 1.25, fontSize: best ? '1.25rem' : '1.125rem', minWidth: 0, overflowWrap: 'anywhere' }}>
             {role.label}
           </Typography>
-          <Box sx={{ textAlign: 'right', flexShrink: 0 }}>
+          <Box ref={scoreRef} sx={{ textAlign: 'right', flexShrink: 0, borderRadius: '8px', px: 0.5, mx: -0.5 }}>
             <Typography
               variant="h4"
               component="p"
@@ -224,8 +250,14 @@ export default function RoleCard({ role, busy, pendingTech, payScale, onTrySkill
             >
               <CountUp value={role.probability} format={pct} />
             </Typography>
-            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5, lineHeight: 1 }}>
-              match
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5, lineHeight: 1, whiteSpace: 'nowrap' }}>
+              {previous && changed ? (
+                <Box component="span" className="sp-fade" sx={{ color: delta > 0 ? 'success.main' : 'error.main', fontWeight: 600, fontVariantNumeric: 'tabular-nums' }}>
+                  {points(delta)}
+                </Box>
+              ) : (
+                'match'
+              )}
             </Typography>
           </Box>
         </Stack>
@@ -291,7 +323,7 @@ export default function RoleCard({ role, busy, pendingTech, payScale, onTrySkill
 
       <Divider />
       <InsightSection icon={<TrendingUp fontSize="small" color="primary" />} title="Skills to grow" help={SKILL_HELP}>
-        <Typography variant="body2">
+        <Typography variant="body2" ref={skillsRef} sx={{ borderRadius: '6px', mx: -0.5, px: 0.5 }}>
           You use{' '}
           <Box component="strong" sx={{ fontVariantNumeric: 'tabular-nums' }}>
             {gap.matched.length} of {gap.typical_count}

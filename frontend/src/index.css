@@ -97,6 +97,16 @@ button,
   animation: sp-reveal var(--dur-enter) var(--ease-out) backwards;
   animation-delay: calc(var(--i, 0) * var(--stagger-reveal));
 }
+/* a what-if change bar grows out of its centre line when its row appears (later values move by transition) */
+@keyframes sp-grow-x {
+  from {
+    transform: scaleX(0);
+  }
+}
+.sp-grow-x {
+  animation: sp-grow-x var(--dur-enter) var(--ease-out) 120ms backwards;
+}
+
 /* loading ring: only mounted while a request is actually slow */
 @keyframes sp-spin {
   to {
@@ -142,7 +152,8 @@ button,
   .sp-step-back,
   .sp-drop,
   .sp-icon-in,
-  .sp-pop {
+  .sp-pop,
+  .sp-grow-x {
     animation-name: sp-fade;
     animation-delay: 0ms;
   }

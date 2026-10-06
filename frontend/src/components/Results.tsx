@@ -84,6 +84,13 @@ export default function Results(props: Props) {
   // the three salary bars share one scale, so their pay can be compared by eye
   const payScale = Math.max(1, ...result.roles.map((r) => (r.salary.available ? (r.salary.p75 ?? 0) : 0)))
 
+  // while a comparison is shown, each card also says how its role moved
+  const previous = (job: string) => {
+    if (!comparison) return null
+    const i = comparison.before.ranking.findIndex((x) => x.job_role === job)
+    return i < 0 ? null : { rank: i + 1, probability: comparison.before.ranking[i].probability }
+  }
+
   // after a what-if, cards that change rank glide to their new place instead of jumping
   const cards = useFlip<HTMLDivElement>(result.roles.map((r) => r.job_role).join('|'))
 
@@ -141,7 +148,14 @@ export default function Results(props: Props) {
       <Grid container spacing={2} component="section" aria-label="Top three job roles" ref={cards}>
         {result.roles.map((r, i) => (
           <Grid key={r.job_role} size={{ xs: 12, md: 4 }} data-flip={r.job_role} {...enter(3 + i)}>
-            <RoleCard role={r} busy={props.busy} pendingTech={props.pendingTech} payScale={payScale} onTrySkill={props.onTrySkill} />
+            <RoleCard
+              role={r}
+              busy={props.busy}
+              pendingTech={props.pendingTech}
+              payScale={payScale}
+              previous={previous(r.job_role)}
+              onTrySkill={props.onTrySkill}
+            />
           </Grid>
         ))}
       </Grid>

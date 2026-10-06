@@ -5,12 +5,13 @@ import VerifiedOutlined from '@mui/icons-material/VerifiedOutlined'
 import Box from '@mui/material/Box'
 import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
-import { alpha } from '@mui/material/styles'
+import { alpha, useTheme } from '@mui/material/styles'
 import type { CSSProperties, ReactNode } from 'react'
 import type { Recommendation } from '../api/types'
 import { stepProgress } from '../form'
 import type { FormState } from '../form'
 import { matchShape, pct } from '../format'
+import { useHighlight } from '../motion'
 
 interface Props {
   result: Recommendation
@@ -20,7 +21,10 @@ interface Props {
   revealFrom: number
 }
 
-function Item(props: { icon: ReactNode; label: string; value: ReactNode; detail: ReactNode; i: number }) {
+function Item(props: { icon: ReactNode; label: string; value: string; detail: ReactNode; i: number }) {
+  const theme = useTheme()
+  // a what-if that changes this figure tints it briefly
+  const valueRef = useHighlight<HTMLParagraphElement>(props.value, alpha(theme.palette.primary.main, 0.16))
   return (
     <Box
       component="li"
@@ -48,7 +52,12 @@ function Item(props: { icon: ReactNode; label: string; value: ReactNode; detail:
         <Typography variant="overline" color="text.secondary" component="p" sx={{ lineHeight: 1.5 }}>
           {props.label}
         </Typography>
-        <Typography variant="subtitle1" component="p" sx={{ lineHeight: 1.3, fontVariantNumeric: 'tabular-nums' }}>
+        <Typography
+          variant="subtitle1"
+          component="p"
+          ref={valueRef}
+          sx={{ lineHeight: 1.3, fontVariantNumeric: 'tabular-nums', borderRadius: '6px', mx: -0.5, px: 0.5, width: 'fit-content' }}
+        >
           {props.value}
         </Typography>
         <Typography variant="caption" color="text.secondary" component="p" sx={{ mt: 0.25 }}>

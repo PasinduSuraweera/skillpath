@@ -144,15 +144,16 @@ export const tween = (from: number, to: number, progress: number, ease: (t: numb
 /**
  * A number that counts to `target`: from 0 the first time (the result being
  * revealed), then from wherever it is to each new target (a what-if moving it).
- * Returns the value to draw and whether it is still moving. With reduced motion
- * it is always the target.
+ * With `from`, the first count starts there instead and moves like an update
+ * (a what-if "after" figure leaving its "before" value). Returns the value to
+ * draw and whether it is still moving. With reduced motion it is always the target.
  */
-export function useCountUp(target: number): { value: number; moving: boolean } {
+export function useCountUp(target: number, from?: number): { value: number; moving: boolean } {
   const reduce = prefersReducedMotion()
-  const [value, setValue] = useState(() => (reduce ? target : 0))
+  const [value, setValue] = useState(() => (reduce ? target : (from ?? 0)))
   const shown = useRef(value)
   // false until the first count has finished: an interrupted first count is still the reveal
-  const settled = useRef(false)
+  const settled = useRef(from !== undefined)
 
   useEffect(() => {
     const from = shown.current
