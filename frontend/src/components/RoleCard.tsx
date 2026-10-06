@@ -7,6 +7,7 @@ import TrendingUp from '@mui/icons-material/TrendingUp'
 import WarningAmber from '@mui/icons-material/WarningAmber'
 import Box from '@mui/material/Box'
 import Chip from '@mui/material/Chip'
+import CircularProgress from '@mui/material/CircularProgress'
 import Divider from '@mui/material/Divider'
 import IconButton from '@mui/material/IconButton'
 import LinearProgress from '@mui/material/LinearProgress'
@@ -14,6 +15,7 @@ import Paper from '@mui/material/Paper'
 import Stack from '@mui/material/Stack'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
+import { alpha } from '@mui/material/styles'
 import type { RoleRecommendation, SkillSuggestion } from '../api/types'
 import { money, pct } from '../format'
 import { InsightSection, Metric } from './InsightSection'
@@ -21,6 +23,8 @@ import { InsightSection, Metric } from './InsightSection'
 interface Props {
   role: RoleRecommendation
   busy: boolean
+  /** technology whose what-if re-run is in progress */
+  pendingTech: string | null
   onTrySkill: (s: SkillSuggestion) => void
 }
 
@@ -37,31 +41,53 @@ const SKILL_HELP =
   'Technologies used by many people in this role and noticeably more often than across all roles, from the ' +
   'training data. Press + to see how your results change if you add one.'
 
-export default function RoleCard({ role, busy, onTrySkill }: Props) {
+export default function RoleCard({ role, busy, pendingTech, onTrySkill }: Props) {
   const ai = role.ai_outlook
   const s = role.salary
   const gap = role.skill_gap
+  const best = role.rank === 1
 
   return (
-    <Paper sx={{ p: 2.5, height: '100%', display: 'flex', flexDirection: 'column', gap: 2 }} className="avoid-break">
+    <Paper
+      component="article"
+      aria-label={`#${role.rank} ${role.label}`}
+      sx={(t) => ({
+        p: { xs: 2, sm: 2.5 },
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 2,
+        // the best match carries a quiet primary tint so the ranking reads at a glance
+        ...(best && {
+          borderColor: alpha(t.palette.primary.main, 0.35),
+          backgroundImage: `linear-gradient(180deg, ${alpha(t.palette.primary.main, 0.06)}, transparent 140px)`,
+        }),
+      })}
+      className="avoid-break"
+    >
       <Box>
-        <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'flex-start', gap: 1 }}>
-          <Box>
-            <Typography variant="overline" color="text.secondary" sx={{ lineHeight: 1.4 }}>
-              #{role.rank} · {role.family}
+        <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'flex-start', gap: 1.5 }}>
+          <Box sx={{ minWidth: 0 }}>
+            <Typography variant="overline" color={best ? 'primary' : 'text.secondary'} sx={{ lineHeight: 1.4, display: 'block' }}>
+              {best ? 'Best match' : `#${role.rank}`} · {role.family}
             </Typography>
-            <Typography variant="h6" sx={{ lineHeight: 1.3 }}>
+            <Typography variant="h6" sx={{ lineHeight: 1.3, mt: 0.25 }}>
               {role.label}
             </Typography>
           </Box>
-          <Typography variant="h5" color="primary" sx={{ whiteSpace: 'nowrap' }}>
+          <Typography
+            variant="h4"
+            component="p"
+            color={best ? 'primary' : 'text.primary'}
+            sx={{ whiteSpace: 'nowrap', fontSize: '1.75rem', fontVariantNumeric: 'tabular-nums', lineHeight: 1.1 }}
+          >
             {pct(role.probability)}
           </Typography>
         </Stack>
         <LinearProgress
           variant="determinate"
           value={role.probability * 100}
-          sx={{ height: 8, borderRadius: 4, mt: 1 }}
+          sx={{ height: 8, mt: 1.5, '& .MuiLinearProgress-bar': { opacity: best ? 1 : 0.6 } }}
           aria-label={`Match ${pct(role.probability)}`}
         />
         {role.low_confidence && (
@@ -75,6 +101,7 @@ export default function RoleCard({ role, busy, onTrySkill }: Props) {
               color="warning"
               size="small"
               variant="outlined"
+              tabIndex={0}
               sx={{ mt: 1.5 }}
             />
           </Tooltip>
@@ -98,14 +125,14 @@ export default function RoleCard({ role, busy, onTrySkill }: Props) {
       <InsightSection icon={<Payments fontSize="small" color="primary" />} title="Typical pay" help={SALARY_HELP}>
         {s.available ? (
           <>
-            <Typography variant="h6" component="p">
+            <Typography variant="h6" component="p" sx={{ fontVariantNumeric: 'tabular-nums' }}>
               {money(s.median)}
               <Typography component="span" variant="body2" color="text.secondary">
                 {' '}
                 median / year
               </Typography>
             </Typography>
-            <Typography variant="body2">
+            <Typography variant="body2" sx={{ fontVariantNumeric: 'tabular-nums' }}>
               Middle half earn {money(s.p25)} – {money(s.p75)}
             </Typography>
             <Typography variant="caption" color="text.secondary" component="p" sx={{ mt: 0.5 }}>
@@ -117,7 +144,7 @@ export default function RoleCard({ role, busy, onTrySkill }: Props) {
                 size="small"
                 variant="outlined"
                 label="Worldwide figure; local pay may differ"
-                sx={{ mt: 1, maxWidth: '100%' }}
+                sx={{ mt: 1, maxWidth: '100%', height: 'auto', '& .MuiChip-label': { whiteSpace: 'normal', py: 0.25 } }}
               />
             )}
           </>
@@ -138,15 +165,25 @@ export default function RoleCard({ role, busy, onTrySkill }: Props) {
             You already use all of the most distinctive ones.
           </Typography>
         ) : (
-          <Stack spacing={0.5}>
+          <Stack spacing={0.25} component="ul" sx={{ m: 0, p: 0, listStyle: 'none' }}>
             {gap.missing.map((m) => (
-              <Stack key={m.technology} direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
+              <Stack
+                key={m.technology}
+                component="li"
+                direction="row"
+                sx={{ alignItems: 'center', justifyContent: 'space-between', gap: 1, py: 0.5 }}
+              >
                 <Box sx={{ minWidth: 0 }}>
                   <Typography variant="body2" sx={{ fontWeight: 600 }} noWrap title={m.technology}>
                     {m.technology}
                     {m.wanted && (
                       <Tooltip title="Already on your “want to learn” list">
-                        <Star fontSize="inherit" color="secondary" sx={{ ml: 0.5, verticalAlign: 'middle' }} />
+                        <Star
+                          fontSize="inherit"
+                          color="secondary"
+                          sx={{ ml: 0.5, verticalAlign: 'middle' }}
+                          titleAccess="on your want-to-learn list"
+                        />
                       </Tooltip>
                     )}
                   </Typography>
@@ -164,7 +201,11 @@ export default function RoleCard({ role, busy, onTrySkill }: Props) {
                       className="no-print"
                       aria-label={`What if I add ${m.technology}`}
                     >
-                      <AddCircleOutline fontSize="small" />
+                      {busy && pendingTech === m.technology ? (
+                        <CircularProgress size={18} />
+                      ) : (
+                        <AddCircleOutline fontSize="small" />
+                      )}
                     </IconButton>
                   </span>
                 </Tooltip>

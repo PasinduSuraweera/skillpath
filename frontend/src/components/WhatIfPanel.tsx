@@ -11,6 +11,7 @@ import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
+import { alpha } from '@mui/material/styles'
 import type { Recommendation } from '../api/types'
 import { pct, points } from '../format'
 
@@ -21,6 +22,15 @@ interface Props {
   onClear: () => void
 }
 
+/** Rank beside a percentage; on phones it moves under it so the table fits. */
+function Rank({ n }: { n: number }) {
+  return (
+    <Typography component="span" variant="caption" color="text.secondary" sx={{ display: { xs: 'block', sm: 'inline' } }}>
+      #{n}
+    </Typography>
+  )
+}
+
 /** Side-by-side of the previous and the current result after answers changed. */
 export default function WhatIfPanel({ before, after, changes, onClear }: Props) {
   const prob = (r: Recommendation, job: string) => r.ranking.find((x) => x.job_role === job)?.probability ?? 0
@@ -29,22 +39,40 @@ export default function WhatIfPanel({ before, after, changes, onClear }: Props) 
   const jobs = [...new Set([...after.roles.map((r) => r.job_role), ...before.roles.map((r) => r.job_role)])]
 
   return (
-    <Paper sx={{ p: 2.5, borderColor: 'primary.main' }} className="avoid-break">
-      <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-        <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+    <Paper
+      sx={(t) => ({
+        p: { xs: 2, sm: 2.5 },
+        borderColor: alpha(t.palette.primary.main, 0.4),
+        bgcolor: alpha(t.palette.primary.main, 0.025),
+      })}
+      className="avoid-break"
+      component="section"
+      aria-label="What if comparison"
+    >
+      <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'flex-start', gap: 1, mb: 1.5 }}>
+        <Stack direction="row" spacing={1} sx={{ alignItems: 'center', minWidth: 0 }}>
           <CompareArrows color="primary" />
-          <Typography variant="h6">What if…? Before and after</Typography>
+          <Typography variant="h6" component="h3">
+            What if…? Before and after
+          </Typography>
         </Stack>
-        <Button size="small" onClick={onClear} className="no-print">
+        <Button size="small" onClick={onClear} className="no-print" sx={{ flexShrink: 0 }}>
           Hide comparison
         </Button>
       </Stack>
       <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 1, mb: 2 }}>
         {changes.map((c) => (
-          <Chip key={c} label={c} size="small" variant="outlined" />
+          <Chip
+            key={c}
+            label={c}
+            size="small"
+            variant="outlined"
+            // long answers ("Cloud and dev platforms used: − npm, Pip") wrap instead of running off a phone screen
+            sx={{ maxWidth: '100%', height: 'auto', bgcolor: 'background.paper', '& .MuiChip-label': { whiteSpace: 'normal', py: 0.375 } }}
+          />
         ))}
       </Stack>
-      <Table size="small" aria-label="Before and after comparison">
+      <Table size="small" aria-label="Before and after comparison" sx={{ '& td, & th': { px: { xs: 1, sm: 2 } } }}>
         <TableHead>
           <TableRow>
             <TableCell>Job role</TableCell>
@@ -63,11 +91,11 @@ export default function WhatIfPanel({ before, after, changes, onClear }: Props) 
             return (
               <TableRow key={job}>
                 <TableCell>{label}</TableCell>
-                <TableCell align="right">
-                  {pct(b)} <Typography component="span" variant="caption" color="text.secondary">#{rank(before, job)}</Typography>
+                <TableCell align="right" sx={{ whiteSpace: 'nowrap' }}>
+                  {pct(b)} <Rank n={rank(before, job)} />
                 </TableCell>
-                <TableCell align="right">
-                  {pct(a)} <Typography component="span" variant="caption" color="text.secondary">#{rank(after, job)}</Typography>
+                <TableCell align="right" sx={{ whiteSpace: 'nowrap' }}>
+                  {pct(a)} <Rank n={rank(after, job)} />
                 </TableCell>
                 <TableCell
                   align="right"

@@ -1,22 +1,28 @@
 import ArrowBack from '@mui/icons-material/ArrowBack'
 import ArrowForward from '@mui/icons-material/ArrowForward'
 import AutoAwesome from '@mui/icons-material/AutoAwesome'
+import CloudOff from '@mui/icons-material/CloudOff'
+import Refresh from '@mui/icons-material/Refresh'
 import RestartAlt from '@mui/icons-material/RestartAlt'
 import Alert from '@mui/material/Alert'
-import Backdrop from '@mui/material/Backdrop'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import CircularProgress from '@mui/material/CircularProgress'
 import Container from '@mui/material/Container'
+import Fade from '@mui/material/Fade'
+import IconButton from '@mui/material/IconButton'
+import LinearProgress from '@mui/material/LinearProgress'
 import Paper from '@mui/material/Paper'
+import Skeleton from '@mui/material/Skeleton'
 import Snackbar from '@mui/material/Snackbar'
 import Stack from '@mui/material/Stack'
 import Step from '@mui/material/Step'
 import StepButton from '@mui/material/StepButton'
 import Stepper from '@mui/material/Stepper'
 import Typography from '@mui/material/Typography'
-import { useColorScheme } from '@mui/material/styles'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import { alpha, useColorScheme, useTheme } from '@mui/material/styles'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { ValidationError, getOptions, predict } from './api/client'
 import type { Options, Recommendation, SkillSuggestion } from './api/types'
@@ -37,6 +43,8 @@ import {
   withTechnology,
 } from './form'
 import type { Errors, FormState } from './form'
+import { DURATION, prefersReducedMotion, useDelayedFlag } from './motion'
+import { SAMPLES } from './samples'
 import type { Sample } from './samples'
 
 const STEPS = ['About you', 'Technologies', 'AI usage', 'Results']
@@ -50,40 +58,77 @@ interface Run {
 export default function App() {
   const [options, setOptions] = useState<Options | null>(null)
   const [loadError, setLoadError] = useState<string | null>(null)
+  const [retrying, setRetrying] = useState(false)
   const [form, setForm] = useState<FormState>(emptyForm)
   const [step, setStep] = useState(0)
+  // direction of the last step change; null until the visitor first moves, so nothing slides on page load
+  const [direction, setDirection] = useState<'forward' | 'back' | null>(null)
   const [errors, setErrors] = useState<Errors>({})
   const [apiError, setApiError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+  const [pendingTech, setPendingTech] = useState<string | null>(null)
   const [current, setCurrent] = useState<Run | null>(null)
   const [comparison, setComparison] = useState<{ before: Recommendation; changes: string[] } | null>(null)
   const [toast, setToast] = useState<string | null>(null)
   const { mode, setMode } = useColorScheme()
+  const busyRef = useRef(false) // guards double submits without visibly disabling anything for a ~15 ms request
+  const stepperRef = useRef<HTMLDivElement>(null)
+  // toast: top-right on wide screens; on phones at the bottom, just above the sticky action bar
+  const wide = useMediaQuery(useTheme().breakpoints.up('sm'))
+
+  // The API usually answers in ~15 ms: spinners, dimming and disabled buttons only
+  // appear when it is actually slow, so a normal request never flickers.
+  const showBusy = useDelayedFlag(busy)
+  const showSkeleton = useDelayedFlag(!options && !loadError, 150)
+  const showRetrying = useDelayedFlag(retrying)
 
   // the form is built from GET /api/options, so nothing can be shown before it arrives
   const fetchOptions = useCallback(
     () =>
       getOptions()
-        .then(setOptions)
-        .catch((e: Error) => setLoadError(e.message)),
+        .then((o) => {
+          setOptions(o)
+          setLoadError(null)
+        })
+        .catch((e: Error) => setLoadError(e.message))
+        .finally(() => setRetrying(false)),
     [],
   )
   useEffect(() => {
     void fetchOptions()
   }, [fetchOptions])
   const retryOptions = () => {
-    setLoadError(null)
+    setRetrying(true) // the error card stays up, with a spinner on its button
     void fetchOptions()
   }
 
-  const goTo = (s: number) => {
+  /**
+   * Bring the stepper to the top of the window when it has scrolled away, or (for step
+   * changes) when the step starts so low that the new content would open below the fold,
+   * as on a phone. Instant, except for a what-if on the results page, which glides up so
+   * it is clear where the comparison went.
+   */
+  const revealWizard = (smooth: boolean, onlyIfHidden: boolean) => {
+    requestAnimationFrame(() => {
+      const el = stepperRef.current
+      if (!el) return window.scrollTo({ top: 0 })
+      const { top, bottom } = el.getBoundingClientRect()
+      const hidden = top < 56 // under the sticky header or above it
+      const low = bottom > window.innerHeight * 0.6
+      if (!hidden && (onlyIfHidden || !low)) return
+      el.scrollIntoView({ block: 'start', behavior: smooth && !prefersReducedMotion() ? 'smooth' : 'auto' })
+    })
+  }
+
+  const goTo = (s: number, { smooth = false, onlyIfHidden = false } = {}) => {
+    if (s !== step) setDirection(s > step ? 'forward' : 'back')
     setStep(s)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    revealWizard(smooth, onlyIfHidden)
   }
 
   /** Validate, call the API, and keep the previous result for the what-if comparison. */
-  async function run(answers: FormState) {
-    if (!options) return
+  async function run(answers: FormState, tech?: string) {
+    if (!options || busyRef.current) return
     const clientErrors = validate(answers, options)
     setErrors(clientErrors)
     setApiError(null)
@@ -91,7 +136,10 @@ export default function App() {
       goTo(Math.min(...Object.keys(clientErrors).map(stepOf)))
       return
     }
+    busyRef.current = true
+    setToast(null) // the "example loaded" hint has done its job
     setBusy(true)
+    setPendingTech(tech ?? null)
     try {
       const result = await predict(toProfile(answers))
       if (current) {
@@ -101,7 +149,8 @@ export default function App() {
       }
       setCurrent({ form: answers, result })
       setForm(answers)
-      goTo(RESULTS)
+      // a what-if from the results page glides up to the comparison, so it is clear where it went
+      goTo(RESULTS, { smooth: step === RESULTS })
     } catch (e) {
       if (e instanceof ValidationError) {
         const mapped = serverErrors(e.fields)
@@ -112,7 +161,9 @@ export default function App() {
         setApiError((e as Error).message)
       }
     } finally {
+      busyRef.current = false
       setBusy(false)
+      setPendingTech(null)
     }
   }
 
@@ -122,7 +173,7 @@ export default function App() {
     setApiError(null)
     setCurrent(null)
     setComparison(null)
-    goTo(0)
+    goTo(0, { onlyIfHidden: true })
     setToast(`Loaded “${s.name}”. Review the answers or press Get recommendations.`)
   }
 
@@ -132,13 +183,19 @@ export default function App() {
     setApiError(null)
     setCurrent(null)
     setComparison(null)
-    goTo(0)
+    goTo(0, { onlyIfHidden: true })
   }
 
   function trySkill(s: SkillSuggestion) {
     if (!current) return
-    void run(withTechnology(current.form, s.area, s.technology))
+    void run(withTechnology(current.form, s.area, s.technology), s.technology)
   }
+
+  // the example whose answers are still loaded unchanged, shown as selected in the example bar
+  const activeSample = useMemo(() => {
+    const answers = JSON.stringify(form)
+    return SAMPLES.find((s) => JSON.stringify(fromProfile(s.profile)) === answers)?.id ?? null
+  }, [form])
 
   // Always print in light colours: browsers drop dark backgrounds, which would
   // leave white text on white paper. beforeprint also covers Ctrl/Cmd+P.
@@ -163,46 +220,53 @@ export default function App() {
 
   const stepProps = options ? { form, setForm, options, errors } : null
   const errorCount = Object.keys(errors).length
+  const stepClass = direction === 'forward' ? 'sp-step-forward' : direction === 'back' ? 'sp-step-back' : undefined
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+    <Box sx={{ minHeight: '100dvh', bgcolor: 'background.default' }}>
+      {/* slim progress line under the header, only when a request is actually slow */}
+      <Fade in={showBusy} unmountOnExit>
+        <LinearProgress
+          aria-label="Working"
+          className="no-print"
+          sx={{ position: 'fixed', top: 0, left: 0, right: 0, height: 3, borderRadius: 0, zIndex: (t) => t.zIndex.appBar + 1 }}
+        />
+      </Fade>
       <Header />
-      <Container maxWidth="lg" sx={{ py: { xs: 2, md: 4 } }}>
+      <Container maxWidth="lg" sx={{ py: { xs: 2.5, md: 5 } }}>
         {!options ? (
-          <Paper sx={{ p: 4, textAlign: 'center' }}>
-            {loadError ? (
-              <Stack spacing={2} sx={{ alignItems: 'center' }}>
-                <Alert severity="error" sx={{ textAlign: 'left' }}>
-                  {loadError}
-                </Alert>
-                <Button variant="contained" onClick={retryOptions}>
-                  Try again
-                </Button>
-              </Stack>
-            ) : (
-              <CircularProgress aria-label="Loading" />
-            )}
-          </Paper>
+          loadError ? (
+            <LoadError message={loadError} retrying={showRetrying} onRetry={retryOptions} />
+          ) : (
+            showSkeleton && <LoadingSkeleton />
+          )
         ) : (
-          <Stack spacing={3}>
+          <Stack spacing={3} className="sp-fade">
             {step < RESULTS && (
               <Box className="no-print">
-                <Typography variant="h4" component="h2" sx={{ fontSize: { xs: '1.6rem', md: '2.1rem' } }}>
+                <Typography variant="h4" component="h2" sx={{ fontSize: { xs: '1.75rem', md: '2.25rem' } }}>
                   Which developer role fits you?
                 </Typography>
-                <Typography color="text.secondary" sx={{ mt: 0.5, mb: 2, maxWidth: 820 }}>
+                <Typography color="text.secondary" sx={{ mt: 1, mb: 2.5, maxWidth: 700 }}>
                   Answer a few questions about your skills and how you use AI. SkillPath compares you with about 18,000
                   developers from the 2025 Stack Overflow survey and suggests your three closest job roles, with each
                   role’s AI outlook, typical pay and the skills to grow next.
                 </Typography>
-                <SampleBar onPick={pickSample} disabled={busy} />
+                <SampleBar onPick={pickSample} disabled={showBusy} activeId={activeSample} />
               </Box>
             )}
 
-            <Stepper nonLinear activeStep={step} alternativeLabel className="no-print">
+            <Stepper
+              ref={stepperRef}
+              nonLinear
+              activeStep={step}
+              alternativeLabel
+              className="no-print"
+              sx={{ scrollMarginTop: 76, '& .MuiStepLabel-label': { fontSize: { xs: '0.8125rem', sm: '0.875rem' } } }}
+            >
               {STEPS.map((label, i) => (
                 <Step key={label} completed={i < RESULTS && current !== null}>
-                  <StepButton onClick={() => goTo(i)} disabled={busy || (i === RESULTS && !current)}>
+                  <StepButton onClick={() => goTo(i)} disabled={showBusy || (i === RESULTS && !current)}>
                     {label}
                   </StepButton>
                 </Step>
@@ -210,76 +274,200 @@ export default function App() {
             </Stepper>
 
             {apiError && (
-              <Alert severity="error" onClose={() => setApiError(null)} className="no-print">
+              <Alert severity="error" onClose={() => setApiError(null)} className="no-print sp-rise">
                 {apiError}
               </Alert>
             )}
             {!apiError && errorCount > 0 && step < RESULTS && (
-              <Alert severity="warning" className="no-print">
+              <Alert severity="warning" className="no-print sp-rise">
                 Please fix the highlighted {errorCount === 1 ? 'answer' : `${errorCount} answers`}.
               </Alert>
             )}
 
             {step < RESULTS && stepProps && (
               <Paper sx={{ p: { xs: 2, md: 3 } }} className="no-print">
-                {step === 0 && <AboutStep {...stepProps} />}
-                {step === 1 && <TechStep {...stepProps} />}
-                {step === 2 && <AIStep {...stepProps} />}
+                <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between', mb: 1.5, minHeight: 32 }}>
+                  <Typography variant="overline" color="text.secondary">
+                    Step {step + 1} of {RESULTS}
+                  </Typography>
+                  <Button size="small" color="inherit" startIcon={<RestartAlt />} disabled={showBusy} onClick={restart}>
+                    Clear answers
+                  </Button>
+                </Stack>
 
-                <Stack direction="row" sx={{ justifyContent: 'space-between', mt: 4, gap: 1, flexWrap: 'wrap' }}>
-                  <Stack direction="row" spacing={1}>
-                    <Button startIcon={<ArrowBack />} disabled={step === 0 || busy} onClick={() => goTo(step - 1)}>
+                <Box key={step} className={stepClass}>
+                  {step === 0 && <AboutStep {...stepProps} />}
+                  {step === 1 && <TechStep {...stepProps} />}
+                  {step === 2 && <AIStep {...stepProps} />}
+                </Box>
+
+                {/* sticks to the bottom of the screen while the step is taller than the window */}
+                <Box
+                  className="sp-material"
+                  sx={(t) => ({
+                    '--sp-solid': t.palette.background.paper,
+                    position: 'sticky',
+                    bottom: 0,
+                    zIndex: 2,
+                    mt: 4,
+                    mx: { xs: -2, md: -3 },
+                    mb: { xs: -2, md: -3 },
+                    px: { xs: 1.5, md: 3 },
+                    pt: 1.5,
+                    pb: 'max(12px, env(safe-area-inset-bottom))',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: 1,
+                    borderTop: 1,
+                    borderColor: 'divider',
+                    borderBottomLeftRadius: 14,
+                    borderBottomRightRadius: 14,
+                    bgcolor: alpha(t.palette.background.paper, 0.82),
+                    backdropFilter: 'saturate(180%) blur(12px)',
+                    WebkitBackdropFilter: 'saturate(180%) blur(12px)',
+                  })}
+                >
+                  <Box>
+                    <Button
+                      startIcon={<ArrowBack />}
+                      disabled={step === 0 || showBusy}
+                      onClick={() => goTo(step - 1)}
+                      sx={{ display: { xs: 'none', sm: 'inline-flex' } }}
+                    >
                       Back
                     </Button>
-                    <Button color="inherit" startIcon={<RestartAlt />} disabled={busy} onClick={restart}>
-                      Clear answers
-                    </Button>
-                  </Stack>
-                  <Stack direction="row" spacing={1}>
+                    <IconButton
+                      aria-label="Back"
+                      disabled={step === 0 || showBusy}
+                      onClick={() => goTo(step - 1)}
+                      sx={{ display: { xs: 'inline-flex', sm: 'none' } }}
+                    >
+                      <ArrowBack />
+                    </IconButton>
+                  </Box>
+                  <Stack direction="row" spacing={1} sx={{ ml: 'auto' }}>
                     {step < 2 && (
-                      <Button variant="outlined" endIcon={<ArrowForward />} disabled={busy} onClick={() => goTo(step + 1)}>
+                      <Button
+                        variant="outlined"
+                        endIcon={<ArrowForward />}
+                        disabled={showBusy}
+                        onClick={() => goTo(step + 1)}
+                        sx={{ '& .MuiButton-endIcon': { display: { xs: 'none', sm: 'inherit' } } }}
+                      >
                         Next
                       </Button>
                     )}
                     <Button
                       variant="contained"
-                      startIcon={busy ? <CircularProgress size={18} color="inherit" /> : <AutoAwesome />}
-                      disabled={busy}
+                      startIcon={showBusy ? <CircularProgress size={18} color="inherit" /> : <AutoAwesome />}
+                      disabled={showBusy}
                       onClick={() => void run(form)}
+                      sx={{ '& .MuiButton-startIcon': { display: { xs: 'none', sm: 'inherit' } } }}
                     >
                       Get recommendations
                     </Button>
                   </Stack>
-                </Stack>
+                </Box>
               </Paper>
             )}
 
             {step === RESULTS && current && (
-              <Results
-                result={current.result}
-                comparison={comparison}
-                busy={busy}
-                onEdit={() => goTo(0)}
-                onRestart={restart}
-                onPrint={() => window.print()}
-                onTrySkill={trySkill}
-                onClearComparison={() => setComparison(null)}
-              />
+              <Box
+                aria-busy={busy}
+                sx={{
+                  opacity: showBusy ? 0.5 : 1,
+                  transition: `opacity ${DURATION.medium}ms ease`,
+                  pointerEvents: showBusy ? 'none' : undefined,
+                }}
+              >
+                <Results
+                  result={current.result}
+                  comparison={comparison}
+                  busy={showBusy}
+                  pendingTech={pendingTech}
+                  onEdit={() => goTo(0)}
+                  onRestart={restart}
+                  onPrint={() => window.print()}
+                  onTrySkill={trySkill}
+                  onClearComparison={() => setComparison(null)}
+                />
+              </Box>
             )}
           </Stack>
         )}
       </Container>
 
-      <Backdrop open={busy && step === RESULTS} sx={{ zIndex: (t) => t.zIndex.drawer + 1, color: '#fff' }}>
-        <CircularProgress color="inherit" />
-      </Backdrop>
       <Snackbar
         open={!!toast}
-        autoHideDuration={5000}
-        onClose={() => setToast(null)}
+        autoHideDuration={4500}
+        onClose={(_, reason) => reason !== 'clickaway' && setToast(null)}
         message={toast}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        anchorOrigin={wide ? { vertical: 'top', horizontal: 'right' } : { vertical: 'bottom', horizontal: 'center' }}
+        slots={{ transition: Fade }}
+        transitionDuration={{ enter: DURATION.medium, exit: DURATION.small }}
+        // arrives from the edge it is anchored to, leaves with a fade
+        slotProps={{ content: { className: wide ? 'sp-drop' : 'sp-rise' } }}
+        sx={wide ? { top: '76px !important' } : { bottom: 'calc(76px + env(safe-area-inset-bottom)) !important' }}
       />
     </Box>
+  )
+}
+
+/** Placeholder in the shape of the start page while GET /api/options is on its way (only if it is slow). */
+function LoadingSkeleton() {
+  return (
+    <Stack spacing={3} aria-busy="true" aria-label="Loading" className="sp-fade">
+      <Box>
+        <Skeleton variant="text" sx={{ fontSize: '2.25rem', width: { xs: '85%', md: '45%' } }} />
+        <Skeleton variant="text" sx={{ maxWidth: 700 }} />
+        <Skeleton variant="text" sx={{ maxWidth: 520 }} />
+        <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
+          {[150, 170, 130, 120].map((w) => (
+            <Skeleton key={w} variant="rounded" width={w} height={32} sx={{ borderRadius: 999 }} />
+          ))}
+        </Stack>
+      </Box>
+      <Skeleton variant="rounded" height={64} sx={{ borderRadius: '14px' }} />
+      <Skeleton variant="rounded" height={340} sx={{ borderRadius: '14px' }} />
+    </Stack>
+  )
+}
+
+/** Empty state when the API cannot be reached; the card stays put while retrying. */
+function LoadError({ message, retrying, onRetry }: { message: string; retrying: boolean; onRetry: () => void }) {
+  return (
+    <Paper sx={{ p: { xs: 3, md: 5 }, textAlign: 'center' }} className="sp-rise" role="alert">
+      <Stack spacing={2} sx={{ alignItems: 'center', maxWidth: 520, mx: 'auto' }}>
+        <Box
+          sx={(t) => ({
+            width: 52,
+            height: 52,
+            borderRadius: '50%',
+            display: 'grid',
+            placeItems: 'center',
+            color: 'error.main',
+            bgcolor: alpha(t.palette.error.main, 0.1),
+          })}
+        >
+          <CloudOff />
+        </Box>
+        <Typography variant="h6" component="h2">
+          SkillPath can’t load right now
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ overflowWrap: 'anywhere' }}>
+          {message}
+        </Typography>
+        <Button
+          variant="contained"
+          onClick={onRetry}
+          disabled={retrying}
+          startIcon={retrying ? <CircularProgress size={18} color="inherit" /> : <Refresh />}
+        >
+          Try again
+        </Button>
+      </Stack>
+    </Paper>
   )
 }

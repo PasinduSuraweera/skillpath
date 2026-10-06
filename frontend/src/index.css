@@ -1,10 +1,143 @@
-/* Print / save as PDF: only the results are printed, without buttons. */
+/* Global styles. Motion tokens (--ease-out, --dur-*, --stagger) come from
+   src/motion.ts through the theme (MuiCssBaseline), so they match MUI's own
+   transitions. Only transform and opacity are animated here. */
+
+/* --- mobile baseline ------------------------------------------------------ */
+html {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+}
+button,
+[role='button'],
+.MuiChip-clickable {
+  touch-action: manipulation; /* no double-tap zoom delay */
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* --- entrances ----------------------------------------------------------- */
+/* Content that replaces other content (a wizard step, the results, an alert)
+   arrives with a short rise instead of teleporting. Mount-only: nothing here
+   re-runs when data inside the element changes. Fill mode "backwards" holds
+   the start frame during a stagger delay and leaves no transform behind. */
+@keyframes sp-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+/* wizard steps slide in the direction of travel */
+@keyframes sp-from-right {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+}
+@keyframes sp-from-left {
+  from {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+}
+@keyframes sp-fade {
+  from {
+    opacity: 0;
+  }
+}
+/* icon swap (theme toggle): settles from slightly smaller and blurred */
+@keyframes sp-icon-in {
+  from {
+    opacity: 0;
+    transform: scale(0.8) rotate(-30deg);
+    filter: blur(2px);
+  }
+}
+/* toast: drops in from the edge it is anchored to (top) */
+@keyframes sp-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+}
+
+.sp-rise {
+  animation: sp-rise var(--dur-large) var(--ease-out) backwards;
+  /* --i: position in a group entrance */
+  animation-delay: calc(var(--i, 0) * var(--stagger));
+}
+.sp-fade {
+  animation: sp-fade var(--dur-medium) var(--ease-out) backwards;
+}
+.sp-step-forward {
+  animation: sp-from-right var(--dur-medium) var(--ease-out) backwards;
+}
+.sp-step-back {
+  animation: sp-from-left var(--dur-medium) var(--ease-out) backwards;
+}
+.sp-icon-in {
+  display: inline-flex;
+  animation: sp-icon-in var(--dur-medium) var(--ease-out) backwards;
+}
+.sp-drop {
+  animation: sp-drop var(--dur-medium) var(--ease-out) backwards;
+}
+
+/* theme switch: a short crossfade of the whole page (View Transitions API) */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--dur-large);
+  animation-timing-function: ease;
+}
+
+/* --- reduced motion: keep the fades that explain a change, drop movement -- */
+@media (prefers-reduced-motion: reduce) {
+  .sp-rise,
+  .sp-step-forward,
+  .sp-step-back,
+  .sp-drop,
+  .sp-icon-in {
+    animation-name: sp-fade;
+    animation-delay: 0ms;
+  }
+  /* MUI menus and tooltips grow from their anchor; fade them instead */
+  .MuiPopover-paper,
+  .MuiTooltip-tooltip {
+    transform: none !important;
+  }
+  /* expanding panels and changing bars jump to their end state */
+  .MuiCollapse-root,
+  .MuiLinearProgress-bar {
+    transition-duration: 1ms !important;
+  }
+  /* the 3% press scale stays: it is feedback under the finger, not movement */
+}
+
+/* translucent header: solid when the visitor asks for less transparency */
+@media (prefers-reduced-transparency: reduce) {
+  .sp-material {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background-color: var(--sp-solid) !important;
+  }
+}
+
+/* --- print / save as PDF: only the results, without buttons ------------- */
 @media print {
   .no-print {
     display: none !important;
   }
   .avoid-break {
     break-inside: avoid;
+  }
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .sp-material {
+    position: static !important;
+    backdrop-filter: none !important;
   }
   @page {
     margin: 12mm;

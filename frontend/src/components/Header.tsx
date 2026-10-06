@@ -6,28 +6,68 @@ import IconButton from '@mui/material/IconButton'
 import Toolbar from '@mui/material/Toolbar'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
-import { useColorScheme } from '@mui/material/styles'
+import { alpha, useColorScheme } from '@mui/material/styles'
+import { useState } from 'react'
+import { flushSync } from 'react-dom'
+import { withViewTransition } from '../motion'
 
 export default function Header() {
   const { mode, systemMode, setMode } = useColorScheme()
   const dark = (mode === 'system' ? systemMode : mode) === 'dark'
+  // the icon only animates after a click, not on page load
+  const [toggled, setToggled] = useState(false)
+
+  const toggle = () => {
+    setToggled(true)
+    // crossfade the whole page instead of flashing from light to dark
+    withViewTransition(() => flushSync(() => setMode(dark ? 'light' : 'dark')))
+  }
 
   return (
-    <AppBar position="static" color="inherit" elevation={0} sx={{ borderBottom: 1, borderColor: 'divider' }}>
-      <Toolbar sx={{ gap: 1.5 }}>
-        <Box component="img" src="/favicon.svg" alt="" sx={{ width: 32, height: 32 }} />
+    <AppBar
+      position="sticky"
+      color="inherit"
+      elevation={0}
+      className="sp-material"
+      sx={(t) => ({
+        '--sp-solid': t.palette.background.default,
+        bgcolor: alpha(t.palette.background.default, 0.78),
+        backdropFilter: 'saturate(180%) blur(14px)',
+        WebkitBackdropFilter: 'saturate(180%) blur(14px)',
+        borderBottom: 1,
+        borderColor: 'divider',
+        backgroundImage: 'none',
+      })}
+    >
+      <Toolbar
+        sx={{
+          gap: 1.5,
+          minHeight: { xs: 56, sm: 60 },
+          pl: 'max(16px, env(safe-area-inset-left))',
+          pr: 'max(16px, env(safe-area-inset-right))',
+        }}
+      >
+        <Box component="img" src="/favicon.svg" alt="" sx={{ width: 30, height: 30, flexShrink: 0 }} />
         <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-          <Typography variant="h6" component="h1" sx={{ lineHeight: 1.2 }}>
+          <Typography variant="subtitle1" component="h1" sx={{ lineHeight: 1.2, fontWeight: 700, letterSpacing: '-0.01em' }}>
             SkillPath
           </Typography>
-          <Typography variant="caption" color="text.secondary" noWrap component="p">
+          <Typography
+            variant="caption"
+            color="text.secondary"
+            noWrap
+            component="p"
+            sx={{ display: { xs: 'none', sm: 'block' } }}
+          >
             AI-aware developer career paths, learned from 2025 Stack Overflow survey respondents
           </Typography>
         </Box>
         {mode && (
           <Tooltip title={dark ? 'Switch to light mode' : 'Switch to dark mode'}>
-            <IconButton onClick={() => setMode(dark ? 'light' : 'dark')} className="no-print" aria-label="Toggle dark mode">
-              {dark ? <LightMode /> : <DarkMode />}
+            <IconButton onClick={toggle} className="no-print" aria-label="Toggle dark mode">
+              <Box component="span" key={String(dark)} className={toggled ? 'sp-icon-in' : undefined} sx={{ display: 'inline-flex' }}>
+                {dark ? <LightMode /> : <DarkMode />}
+              </Box>
             </IconButton>
           </Tooltip>
         )}

@@ -27,7 +27,9 @@ export default function TechStep({ form, setForm, options, errors }: Props) {
       </Grid>
       {errors.tech && (
         <Grid size={12}>
-          <Alert severity="error">{errors.tech}</Alert>
+          <Alert severity="error" className="sp-rise">
+            {errors.tech}
+          </Alert>
         </Grid>
       )}
       {TECH_BLOCKS.map((block) => (
