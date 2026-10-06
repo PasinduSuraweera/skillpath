@@ -129,6 +129,9 @@ button,
   .avoid-break {
     break-inside: avoid;
   }
+  body {
+    background-image: none !important; /* the accent wash is for the screen only */
+  }
   *,
   *::before,
   *::after {

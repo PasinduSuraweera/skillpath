@@ -12,6 +12,7 @@ import type { TechBlock } from '../api/types'
 import type { TechState } from '../form'
 import { DURATION } from '../motion'
 import { HAVE_LABEL, TECH_AREAS, WANT_LABEL } from '../questions'
+import { RADIUS } from '../theme'
 
 interface Props {
   block: TechBlock
@@ -41,7 +42,6 @@ export default function TechArea({ block, value, choices, error, onChange }: Pro
           label={label}
           placeholder={value[kind].length ? '' : 'Type to search'}
           error={!!error && kind === 'have'}
-          sx={{ '& .MuiOutlinedInput-root': { bgcolor: 'background.paper' } }}
         />
       )}
     />
@@ -56,7 +56,7 @@ export default function TechArea({ block, value, choices, error, onChange }: Pro
       sx={(t) => ({
         p: 2,
         height: '100%',
-        borderRadius: '12px',
+        borderRadius: `${RADIUS.inset}px`,
         border: '1px solid',
         borderColor: error ? t.palette.error.main : answered ? alpha(t.palette.primary.main, 0.32) : t.palette.divider,
         bgcolor: answered ? alpha(t.palette.primary.main, 0.035) : 'rgba(15, 23, 42, 0.018)',

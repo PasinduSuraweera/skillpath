@@ -44,6 +44,7 @@ import {
 } from './form'
 import type { Errors, FormState } from './form'
 import { DURATION, prefersReducedMotion, useDelayedFlag } from './motion'
+import { RADIUS } from './theme'
 import { SAMPLES } from './samples'
 import type { Sample } from './samples'
 
@@ -223,7 +224,7 @@ export default function App() {
   const stepClass = direction === 'forward' ? 'sp-step-forward' : direction === 'back' ? 'sp-step-back' : undefined
 
   return (
-    <Box sx={{ minHeight: '100dvh', bgcolor: 'background.default' }}>
+    <Box sx={{ minHeight: '100dvh' }}>
       {/* slim progress line under the header, only when a request is actually slow */}
       <Fade in={showBusy} unmountOnExit>
         <LinearProgress
@@ -429,8 +430,8 @@ function LoadingSkeleton() {
           ))}
         </Stack>
       </Box>
-      <Skeleton variant="rounded" height={64} sx={{ borderRadius: '14px' }} />
-      <Skeleton variant="rounded" height={340} sx={{ borderRadius: '14px' }} />
+      <Skeleton variant="rounded" height={64} sx={{ borderRadius: `${RADIUS.card}px` }} />
+      <Skeleton variant="rounded" height={340} sx={{ borderRadius: `${RADIUS.card}px` }} />
     </Stack>
   )
 }
