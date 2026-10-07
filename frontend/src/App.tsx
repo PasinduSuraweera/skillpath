@@ -18,6 +18,7 @@ import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { alpha, useColorScheme, useTheme } from '@mui/material/styles'
+import { AnimatePresence } from 'motion/react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { ValidationError, getOptions, predict } from './api/client'
@@ -28,6 +29,8 @@ import AboutStep from './components/AboutStep'
 import Header from './components/Header'
 import Hero from './components/Hero'
 import PopTransition from './components/PopTransition'
+import StepPane from './components/StepPane'
+import type { Direction } from './components/StepPane'
 import Results from './components/Results'
 import TechStep from './components/TechStep'
 import WizardSteps from './components/WizardSteps'
@@ -44,8 +47,8 @@ import {
 } from './form'
 import type { Errors, FormState } from './form'
 import { pct } from './format'
-import { DURATION, EASE, prefersReducedMotion, useDelayedFlag } from './motion'
-import { ELEVATION, RADIUS, glass } from './theme'
+import { DURATION, EASE, isLeaving, prefersReducedMotion, useDelayedFlag } from './motion'
+import { BRAND_GRADIENT, BRAND_GRADIENT_DARK, ELEVATION, RADIUS, glass } from './theme'
 import { SAMPLES } from './samples'
 import type { Sample } from './samples'
 import { whatIfHighlights } from './whatif'
@@ -67,7 +70,7 @@ export default function App() {
   const [form, setForm] = useState<FormState>(emptyForm)
   const [step, setStep] = useState(0)
   // direction of the last step change; null until the visitor first moves, so nothing slides on page load
-  const [direction, setDirection] = useState<'forward' | 'back' | null>(null)
+  const [direction, setDirection] = useState<Direction>(null)
   const [errors, setErrors] = useState<Errors>({})
   const [apiError, setApiError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
@@ -150,10 +153,12 @@ export default function App() {
     const target = focusNext.current
     if (!target) return
     focusNext.current = null
-    // after revealWizard's scroll (also queued for the next frame)
+    // after revealWizard's scroll (also queued for the next frame). The step on its way out
+    // is still on the page, with the same ids: only the one that is staying counts.
+    const find = (selector: string) => [...document.querySelectorAll<HTMLElement>(selector)].find((el) => !isLeaving(el))
     requestAnimationFrame(() => {
       if (target === 'invalid') {
-        const field = document.querySelector<HTMLElement>('[aria-invalid="true"]')
+        const field = find('[aria-invalid="true"]')
         const input = field?.matches('input, textarea, button') ? field : field?.querySelector<HTMLElement>('input, button')
         if (input) {
           input.focus({ preventScroll: true })
@@ -161,7 +166,7 @@ export default function App() {
           return
         }
       }
-      document.getElementById(target === 'invalid' ? 'step-title' : target)?.focus({ preventScroll: true })
+      find(`#${target === 'invalid' ? 'step-title' : target}`)?.focus({ preventScroll: true })
     })
   })
 
@@ -292,7 +297,6 @@ export default function App() {
   const technologies = Object.values(form.tech).reduce((n, t) => n + t.have.length + t.want.length, 0)
   const stepProps = options ? { form, setForm, options, errors } : null
   const errorCount = Object.keys(errors).length
-  const stepClass = direction === 'forward' ? 'sp-step-forward' : direction === 'back' ? 'sp-step-back' : undefined
 
   return (
     <Box sx={{ minHeight: '100dvh' }}>
@@ -374,21 +378,19 @@ export default function App() {
             )}
 
             {step < RESULTS && stepProps && (
-              <Paper sx={{ p: { xs: 2, md: 3 }, position: 'relative' }} className="no-print" aria-busy={busy}>
+              <Paper sx={{ p: { xs: 2, md: 3 }, position: 'relative', borderRadius: `${RADIUS.panel}px` }} className="no-print" aria-busy={busy}>
                 {/* a slow prediction: the analysis state covers the form (which stays put underneath) */}
                 {showBusy && (
                   <Box
                     className="sp-fade"
                     sx={(t) => ({
+                      ...glass(t, 'overlay'),
                       position: 'absolute',
                       inset: 0,
                       zIndex: 3,
-                      borderRadius: `${RADIUS.card}px`,
+                      borderRadius: `${RADIUS.panel}px`,
                       px: 2,
                       pt: { xs: 4, md: 7 },
-                      bgcolor: alpha(t.palette.background.paper, 0.86),
-                      backdropFilter: 'blur(6px)',
-                      WebkitBackdropFilter: 'blur(6px)',
                     })}
                   >
                     {/* sticky, so it stays in view however far down a long step the visitor is */}
@@ -403,20 +405,30 @@ export default function App() {
                     </Box>
                   </Box>
                 )}
-                {/* how much of the whole profile is answered: a hairline along the card's top edge */}
+                {/* how much of the whole profile is answered: a hairline in the brand gradient along the card's top edge */}
                 <Box
                   aria-hidden="true"
-                  sx={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, overflow: 'hidden', borderTopLeftRadius: 16, borderTopRightRadius: 16 }}
+                  sx={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: 3,
+                    overflow: 'hidden',
+                    borderTopLeftRadius: RADIUS.panel,
+                    borderTopRightRadius: RADIUS.panel,
+                  }}
                 >
                   <Box
                     className="sp-meter"
-                    sx={{
+                    sx={(t) => ({
                       height: '100%',
-                      bgcolor: 'primary.main',
+                      backgroundImage: BRAND_GRADIENT,
+                      ...t.applyStyles('dark', { backgroundImage: BRAND_GRADIENT_DARK }),
                       transformOrigin: 'left',
                       transform: `scaleX(${answered / questions})`,
                       transition: `transform ${DURATION.large}ms ${EASE.inOut}`,
-                    }}
+                    })}
                   />
                 </Box>
                 <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 2, minHeight: 32 }}>
@@ -432,17 +444,19 @@ export default function App() {
                   </Button>
                 </Stack>
 
-                <Box key={step} className={stepClass} inert={showBusy}>
-                  {step === 0 && <AboutStep {...stepProps} />}
-                  {step === 1 && <TechStep {...stepProps} />}
-                  {step === 2 && <AIStep {...stepProps} />}
-                </Box>
+                {/* the new step arrives while the previous one leaves (no animation when the page opens) */}
+                <AnimatePresence mode="popLayout" initial={false} custom={direction}>
+                  <StepPane key={step} direction={direction} inert={showBusy}>
+                    {step === 0 && <AboutStep {...stepProps} />}
+                    {step === 1 && <TechStep {...stepProps} />}
+                    {step === 2 && <AIStep {...stepProps} />}
+                  </StepPane>
+                </AnimatePresence>
 
-                {/* sticks to the bottom of the screen while the step is taller than the window */}
+                {/* chrome glass: sticks to the bottom of the screen while the step is taller than the window */}
                 <Box
-                  className="sp-material"
                   sx={(t) => ({
-                    '--sp-solid': t.palette.background.paper,
+                    ...glass(t, 'chrome'),
                     position: 'sticky',
                     bottom: 0,
                     zIndex: 2,
@@ -461,11 +475,9 @@ export default function App() {
                     gap: 1,
                     borderTop: 1,
                     borderColor: 'divider',
-                    borderBottomLeftRadius: 14,
-                    borderBottomRightRadius: 14,
-                    bgcolor: alpha(t.palette.background.paper, 0.82),
-                    backdropFilter: 'saturate(180%) blur(12px)',
-                    WebkitBackdropFilter: 'saturate(180%) blur(12px)',
+                    // inside the card's 1px border
+                    borderBottomLeftRadius: RADIUS.panel - 1,
+                    borderBottomRightRadius: RADIUS.panel - 1,
                   })}
                 >
                   <Box>

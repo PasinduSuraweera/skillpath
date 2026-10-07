@@ -7,8 +7,9 @@ import Stepper from '@mui/material/Stepper'
 import Typography from '@mui/material/Typography'
 import { alpha } from '@mui/material/styles'
 import type { StepIconProps } from '@mui/material/StepIcon'
+import { m } from 'motion/react'
 import type { Ref } from 'react'
-import { DURATION } from '../motion'
+import { DURATION, TRANSITION } from '../motion'
 import { surfaceFill } from '../theme'
 
 const STEPS = ['About you', 'Technologies', 'AI usage', 'Results']
@@ -28,12 +29,17 @@ interface Props {
   ref?: Ref<HTMLDivElement>
 }
 
-/** Step marker: solid when current, a check once the step has answers, a quiet ring otherwise. */
+/**
+ * Step marker: solid when current, a check once the step has answers, a quiet ring otherwise.
+ * The solid "you are here" disc is one element that slides along the line to the new step.
+ */
 function StepDot({ active, completed, icon }: StepIconProps) {
   return (
     <Box
       aria-hidden="true"
       sx={(t) => ({
+        position: 'relative',
+        isolation: 'isolate', // the disc sits between the marker's fill and its number
         width: 30,
         height: 30,
         borderRadius: '50%',
@@ -50,17 +56,27 @@ function StepDot({ active, completed, icon }: StepIconProps) {
           `box-shadow ${DURATION.medium}ms ease`,
         ].join(', '),
         ...(active
-          ? {
-              color: t.palette.primary.contrastText,
-              bgcolor: t.palette.primary.main,
-              borderColor: t.palette.primary.main,
-              boxShadow: `0 0 0 4px ${alpha(t.palette.primary.main, 0.16)}`,
-            }
+          ? { color: t.palette.primary.contrastText, borderColor: 'transparent' }
           : completed
             ? { color: t.palette.primary.main, bgcolor: alpha(t.palette.primary.main, 0.12), borderColor: 'transparent' }
             : { color: t.palette.text.secondary, ...surfaceFill(t, 'control'), borderColor: t.palette.divider }),
       })}
     >
+      {active && (
+        <Box
+          component={m.span}
+          layoutId="step-current"
+          transition={{ layout: TRANSITION.move }}
+          sx={(t) => ({
+            position: 'absolute',
+            inset: '-1.5px',
+            zIndex: -1,
+            borderRadius: '50%',
+            bgcolor: t.palette.primary.main,
+            boxShadow: `0 0 0 4px ${alpha(t.palette.primary.main, 0.16)}`,
+          })}
+        />
+      )}
       {completed && !active ? <Check className="sp-pop" sx={{ fontSize: 17 }} /> : icon}
     </Box>
   )
@@ -72,8 +88,12 @@ function StepDot({ active, completed, icon }: StepIconProps) {
  */
 export default function WizardSteps({ step, progress, resultsReady, disabled, onGo, ref }: Props) {
   return (
+    // layoutRoot: the current-step disc moves relative to the stepper, so it slides along the line
+    // even when the stepper itself moves (the start page closing above it on the way to the results)
     <Stepper
       ref={ref}
+      component={m.div}
+      layoutRoot
       nonLinear
       activeStep={step}
       alternativeLabel

@@ -5,8 +5,9 @@ import FormHelperText from '@mui/material/FormHelperText'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import { alpha } from '@mui/material/styles'
+import { m } from 'motion/react'
 import { useId, useState } from 'react'
-import { DURATION, EASE } from '../motion'
+import { DURATION, EASE, TRANSITION } from '../motion'
 import { RADIUS, surfaceFill } from '../theme'
 
 interface Props {
@@ -81,7 +82,11 @@ export default function ChoiceCards({ question, number, value, choices, error, o
         </Box>
       </Stack>
 
+      {/* layoutRoot: the highlight moves relative to this grid, so it never trails behind when
+          content above the question changes height */}
       <Box
+        component={m.div}
+        layoutRoot
         role="radiogroup"
         aria-labelledby={legendId}
         aria-describedby={error ? `${name}-error` : undefined}
@@ -106,6 +111,7 @@ export default function ChoiceCards({ question, number, value, choices, error, o
               data-checked={checked || undefined}
               sx={(t) => ({
                 position: 'relative',
+                isolation: 'isolate', // the highlight sits between the card's fill and its content
                 display: 'flex',
                 alignItems: 'center',
                 gap: 1.25,
@@ -118,9 +124,8 @@ export default function ChoiceCards({ question, number, value, choices, error, o
                 touchAction: 'manipulation',
                 borderRadius: `${RADIUS.inset}px`,
                 border: '1px solid',
-                borderColor: checked ? 'primary.main' : 'divider',
-                ...(checked ? { backgroundColor: alpha(t.palette.primary.main, 0.07) } : surfaceFill(t, 'control')),
-                boxShadow: checked ? `0 0 0 1px ${t.palette.primary.main}` : 'none',
+                borderColor: 'divider',
+                ...surfaceFill(t, 'control'),
                 transition: [
                   `border-color ${DURATION.hover}ms ease`,
                   `background-color ${DURATION.hover}ms ease`,
@@ -129,7 +134,7 @@ export default function ChoiceCards({ question, number, value, choices, error, o
                 ].join(', '),
                 '&:active': { transform: 'scale(0.985)' },
                 '@media (hover: hover) and (pointer: fine)': {
-                  '&:hover': { borderColor: checked ? 'primary.main' : alpha(t.palette.text.primary, 0.24) },
+                  '&:hover': { borderColor: alpha(t.palette.text.primary, 0.24) },
                 },
                 // keyboard focus lands on the hidden radio: ring the card around it
                 '&:has(input:focus-visible)': {
@@ -146,6 +151,24 @@ export default function ChoiceCards({ question, number, value, choices, error, o
                 onChange={() => choose(c)}
                 className="sp-sr-only"
               />
+              {/* the selection: a ring and tint that slide from the previous answer to the new one */}
+              {checked && (
+                <Box
+                  component={m.span}
+                  layoutId={`${name}-selected`}
+                  transition={{ layout: TRANSITION.move }}
+                  aria-hidden="true"
+                  sx={(t) => ({
+                    position: 'absolute',
+                    inset: '-1px',
+                    zIndex: -1,
+                    borderRadius: `${RADIUS.inset}px`,
+                    border: `2px solid ${t.palette.primary.main}`,
+                    bgcolor: alpha(t.palette.primary.main, 0.07),
+                    pointerEvents: 'none',
+                  })}
+                />
+              )}
               {/* indicator: an empty ring, filled by a check that settles in when chosen */}
               <Box
                 aria-hidden="true"

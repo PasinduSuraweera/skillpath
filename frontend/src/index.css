@@ -40,27 +40,15 @@ h2[tabindex='-1']:focus {
 }
 
 /* --- entrances ----------------------------------------------------------- */
-/* Content that replaces other content (a wizard step, the results, an alert)
-   arrives with a short rise instead of teleporting. Mount-only: nothing here
+/* Content that replaces other content (the results, an alert) arrives with a
+   short rise instead of teleporting; wizard steps are Motion (StepPane), as they
+   also animate on the way out. Mount-only: nothing here
    re-runs when data inside the element changes. Fill mode "backwards" holds
    the start frame during a stagger delay and leaves no transform behind. */
 @keyframes sp-rise {
   from {
     opacity: 0;
     transform: translateY(8px);
-  }
-}
-/* wizard steps slide in the direction of travel */
-@keyframes sp-from-right {
-  from {
-    opacity: 0;
-    transform: translateX(16px);
-  }
-}
-@keyframes sp-from-left {
-  from {
-    opacity: 0;
-    transform: translateX(-16px);
   }
 }
 @keyframes sp-fade {
@@ -119,12 +107,6 @@ h2[tabindex='-1']:focus {
 .sp-fade {
   animation: sp-fade var(--dur-medium) var(--ease-out) backwards;
 }
-.sp-step-forward {
-  animation: sp-from-right var(--dur-medium) var(--ease-out) backwards;
-}
-.sp-step-back {
-  animation: sp-from-left var(--dur-medium) var(--ease-out) backwards;
-}
 
 /* theme switch: a short crossfade of the whole page (View Transitions API) ... */
 ::view-transition-old(root),
@@ -149,8 +131,6 @@ h2[tabindex='-1']:focus {
 @media (prefers-reduced-motion: reduce) {
   .sp-rise,
   .sp-reveal,
-  .sp-step-forward,
-  .sp-step-back,
   .sp-pop,
   .sp-grow-x {
     animation-name: sp-fade;
@@ -173,14 +153,6 @@ h2[tabindex='-1']:focus {
   /* the 3% press scale stays: it is feedback under the finger, not movement */
 }
 
-/* the questionnaire's sticky action bar: solid when the visitor asks for less transparency */
-@media (prefers-reduced-transparency: reduce) {
-  .sp-material {
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-    background-color: var(--sp-solid) !important;
-  }
-}
 
 /* --- print / save as PDF: only the results, without buttons ------------- */
 @media print {
@@ -200,10 +172,6 @@ h2[tabindex='-1']:focus {
   *::after {
     animation: none !important;
     transition: none !important;
-  }
-  .sp-material {
-    position: static !important;
-    backdrop-filter: none !important;
   }
   @page {
     margin: 12mm;

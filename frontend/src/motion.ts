@@ -9,11 +9,14 @@
 // Each explanatory animation plays once per new result. Nothing loops except the loading ring
 // while a request is actually slow, and nothing animates on a keyboard shortcut or while typing.
 //
-// Tools: Motion (motion/react) for elements that animate as React adds and
-// removes them (AnimatePresence), with its timings taken from TRANSITION below;
-// CSS keyframes for fixed entrances (index.css); CSS transitions for anything
-// that can be re-triggered; and the Web Animations API for the two dynamic
-// cases (layout moves and change highlights).
+// Tools, all timed from the tokens below:
+//   - Motion (motion/react): elements that animate as React adds and removes them
+//     (AnimatePresence: wizard steps, the theme icon; PopTransition for popups),
+//     selection highlights that slide between choices (layoutId), and cards that
+//     both lift and press (whileHover / whileTap)
+//   - CSS keyframes for fixed entrances (index.css), and CSS transitions for
+//     anything re-triggered, including the press on buttons
+//   - the Web Animations API for results that reorder and figures that change
 import { createContext, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 export const EASE = {
@@ -77,6 +80,9 @@ export const prefersReducedMotion = () =>
  */
 export const RevealContext = createContext(true)
 export const useReveal = () => useContext(RevealContext)
+
+/** True for an element inside content on its way out (a wizard step leaving: StepPane marks it data-leaving). */
+export const isLeaving = (el: Element) => !!el.closest('[data-leaving]')
 
 /** True once `on` has stayed true for `delay` ms; false again as soon as it turns off. */
 export function useDelayedFlag(on: boolean, delay = BUSY_DELAY): boolean {
