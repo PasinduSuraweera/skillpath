@@ -5,7 +5,8 @@ import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import { alpha } from '@mui/material/styles'
 import type { ReactNode } from 'react'
-import { BRAND_VIOLET } from '../theme'
+import { panel } from '../design/surfaces'
+import { AURORA, FORCED_COLORS } from '../design/tokens'
 
 type State = 'done' | 'active' | 'pending'
 
@@ -22,8 +23,8 @@ function Row({ state, children, detail }: { state: State; children: ReactNode; d
           borderRadius: '50%',
           display: 'grid',
           placeItems: 'center',
-          color: 'primary.main',
-          bgcolor: state === 'done' ? alpha(t.palette.primary.main, 0.14) : 'transparent',
+          color: state === 'done' ? t.palette.success.main : 'primary.main',
+          bgcolor: state === 'done' ? alpha(t.palette.success.main, 0.14) : 'transparent',
           border: state === 'pending' ? `1.5px dashed ${t.palette.divider}` : 'none',
         })}
       >
@@ -44,6 +45,41 @@ function Row({ state, children, detail }: { state: State; children: ReactNode; d
   )
 }
 
+/**
+ * The analysis "orb": a ring in the aurora colours turning around a softly breathing core.
+ * It only exists while a request is actually slow, so its loop never runs for nothing; with
+ * reduced motion the core is still and the ring turns slowly (index.css).
+ */
+function Orb() {
+  return (
+    <Box aria-hidden="true" sx={{ position: 'relative', width: 52, height: 52, flexShrink: 0 }}>
+      <Box
+        className="sp-breathe"
+        sx={{
+          position: 'absolute',
+          inset: 8,
+          borderRadius: '50%',
+          backgroundImage: `radial-gradient(circle at 35% 30%, #fff 0%, ${AURORA[3]} 22%, ${AURORA[1]} 60%, ${AURORA[2]} 100%)`,
+          boxShadow: `0 0 24px ${alpha(AURORA[1], 0.6)}`,
+          [FORCED_COLORS]: { border: '2px solid CanvasText' },
+        }}
+      />
+      <Box
+        className="sp-spin"
+        sx={{
+          position: 'absolute',
+          inset: 0,
+          borderRadius: '50%',
+          // a ring with a fading tail, so its turning reads at a glance: a conic gradient masked to a band
+          background: `conic-gradient(from 0deg, transparent 0 15%, ${AURORA[0]} 50%, ${AURORA[2]} 80%, ${AURORA[3]})`,
+          mask: 'radial-gradient(farthest-side, transparent calc(100% - 3.5px), #000 calc(100% - 3px))',
+          WebkitMask: 'radial-gradient(farthest-side, transparent calc(100% - 3.5px), #000 calc(100% - 3px))',
+        }}
+      />
+    </Box>
+  )
+}
+
 interface Props {
   answered: number
   questions: number
@@ -54,7 +90,7 @@ interface Props {
 }
 
 /**
- * Shown over the form only when a prediction is actually slow (a cold API, a slow
+ * Shown over the questions only when a prediction is actually slow (a cold API, a slow
  * network); a normal one returns in milliseconds and goes straight to the results.
  * It describes the real request: the profile is ready (counted from the answers),
  * the model is scoring the roles (the request in flight), and the per-role insights
@@ -62,28 +98,11 @@ interface Props {
  */
 export default function Analyzing({ answered, questions, technologies, roles, slow }: Props) {
   return (
-    <Box role="status" aria-live="polite" sx={{ textAlign: 'left' }}>
-      <Stack direction="row" spacing={1.75} sx={{ alignItems: 'center', mb: 2.5 }}>
-        <Box
-          aria-hidden="true"
-          className="sp-spin"
-          sx={(t) => ({
-            width: 36,
-            height: 36,
-            flexShrink: 0,
-            borderRadius: '50%',
-            // a ring in the brand colours with a fading tail, so its turning reads at a glance;
-            // a conic gradient masked to a 3px band
-            background: `conic-gradient(from 0deg, transparent 0 12%, ${BRAND_VIOLET.light} 55%, ${t.palette.primary.main})`,
-            mask: 'radial-gradient(farthest-side, transparent calc(100% - 3.5px), #000 calc(100% - 3px))',
-            WebkitMask: 'radial-gradient(farthest-side, transparent calc(100% - 3.5px), #000 calc(100% - 3px))',
-            ...t.applyStyles('dark', {
-              background: `conic-gradient(from 0deg, transparent 0 12%, ${BRAND_VIOLET.dark} 55%, ${t.palette.primary.main})`,
-            }),
-          })}
-        />
+    <Box role="status" aria-live="polite" sx={(t) => ({ ...panel(t, { elevation: 'high' }), p: { xs: 2.5, sm: 3 }, textAlign: 'left' })}>
+      <Stack direction="row" spacing={2} sx={{ alignItems: 'center', mb: 2.5 }}>
+        <Orb />
         <Box>
-          <Typography variant="h6" component="p" sx={{ lineHeight: 1.25 }}>
+          <Typography variant="h4" component="p">
             Analysing your profile
           </Typography>
           <Typography variant="body2" color="text.secondary">

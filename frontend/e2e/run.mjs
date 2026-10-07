@@ -153,11 +153,8 @@ await testCase('E2E-01', 'Start page loads the form options and the example prof
   for (const s of ['Sri Lankan CS undergrad', 'Data / ML-leaning graduate', 'Mobile developer', 'Career switcher']) {
     assert(await hasText(s), `example "${s}" missing`)
   }
-  const resultsStep = await page.evaluate(
-    // the step button's text includes its number ("4Results")
-    () => [...document.querySelectorAll('.MuiStepButton-root')].find((b) => b.textContent.endsWith('Results'))?.disabled,
-  )
-  assert(resultsStep === true, 'Results step should be disabled before a prediction')
+  const resultsNav = await page.evaluate(() => document.querySelector('nav [data-nav="results"]')?.disabled)
+  assert(resultsNav === true, 'Results should be disabled in the nav before a prediction')
   await shot('01-start', false)
 })
 

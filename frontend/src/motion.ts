@@ -11,11 +11,13 @@
 //
 // Tools, all timed from the tokens below:
 //   - Motion (motion/react): elements that animate as React adds and removes them
-//     (AnimatePresence: wizard steps, the what-if comparison, the theme icon;
-//     PopTransition for popups), the results reveal (revealMotion), things that
-//     move to a new place (layout: role cards and table rows reordering, content
-//     making room for the comparison), selection highlights that slide between
-//     choices (layoutId), and cards that both lift and press (whileHover / whileTap)
+//     (AnimatePresence: wizard steps, the what-if comparison, the role insights, the
+//     theme icon; PopTransition for popups), the results reveal (revealMotion) and the
+//     sections further down that rise as they scroll into view (inViewMotion), things
+//     that move to a new place (layout: table rows reordering, content making room for
+//     the comparison), selection indicators that slide between choices (layoutId on a
+//     spring: nav, steps, role switcher, answers), bars and rings filling in, and cards
+//     that both lift and press (whileHover / whileTap)
 //   - CSS keyframes for small fixed entrances (index.css), and CSS transitions for
 //     anything re-triggered, including the press on buttons
 //   - the Web Animations API for the tint on figures that a what-if changed
@@ -196,7 +198,30 @@ export const TRANSITION = {
   move: motionTween(DURATION.large, EASE.inOut),
   /** a figure or bar settling on a new value after a what-if */
   update: motionTween(DURATION.update, EASE.inOut),
+  /** a bar or ring filling in with a new result, in step with its figure counting up */
+  reveal: motionTween(DURATION.reveal),
+  /**
+   * A selection indicator sliding between choices (nav, steps, role switcher, answers):
+   * a critically damped spring with a hint of life, so it arrives rather than stops.
+   */
+  spring: { type: 'spring' as const, bounce: 0.14, duration: 0.42 },
 }
+
+/**
+ * A section further down the page that rises into place as it scrolls into view, once.
+ * Returned to (RevealContext false) it is simply there. Marked data-reveal, so print
+ * (which never scrolls) shows it in full (index.css).
+ */
+export const inViewMotion = (reveal: boolean, i = 0) =>
+  reveal
+    ? {
+        'data-reveal': '',
+        initial: { opacity: 0, y: 18 },
+        whileInView: { opacity: 1, y: 0 },
+        viewport: { once: true, margin: '0px 0px -6% 0px' },
+        transition: { ...TRANSITION.enter, delay: (i * STAGGER_REVEAL) / 1000 },
+      }
+    : {}
 
 /**
  * Something that opens in the page: the what-if comparison, an alert. Nothing animates its

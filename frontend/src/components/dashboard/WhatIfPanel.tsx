@@ -7,8 +7,6 @@ import TrendingDown from '@mui/icons-material/TrendingDown'
 import TrendingUp from '@mui/icons-material/TrendingUp'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import Chip from '@mui/material/Chip'
-import Paper from '@mui/material/Paper'
 import Stack from '@mui/material/Stack'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
@@ -20,19 +18,24 @@ import { alpha } from '@mui/material/styles'
 import { m as motion } from 'motion/react'
 import { useState } from 'react'
 import type { ReactNode } from 'react'
-import type { Recommendation } from '../api/types'
-import { pct, points } from '../format'
-import { STAGGER, TRANSITION, useReveal } from '../motion'
-import { RADIUS, surfaceFill } from '../theme'
-import { compareRuns, whatIfHighlights } from '../whatif'
-import type { Highlight, Movement } from '../whatif'
-import CountUp from './CountUp'
+import type { Recommendation } from '../../api/types'
+import { Eyebrow, IconTile, Pill } from '../../design/primitives'
+import { spotlight } from '../../design/surfaces'
+import type { SurfaceMotion } from '../../design/primitives'
+import { RADIUS, gradientText, ink, insetFill, white } from '../../design/tokens'
+import { pct, points } from '../../format'
+import { STAGGER, TRANSITION, useReveal } from '../../motion'
+import { compareRuns, whatIfHighlights } from '../../whatif'
+import type { Highlight, Movement } from '../../whatif'
+import CountUp from '../CountUp'
 
 interface Props {
   before: Recommendation
   after: Recommendation
   changes: string[]
   onClear: () => void
+  /** how it opens and closes, on the glass itself (see SurfaceMotion) */
+  motion?: SurfaceMotion
 }
 
 const NOISE = 0.0005
@@ -42,9 +45,7 @@ const tone = (d: number) => (d >= NOISE ? 'success.main' : d <= -NOISE ? 'error.
 function End({ label, children }: { label: string; children: ReactNode }) {
   return (
     <Box sx={{ minWidth: 0 }}>
-      <Typography variant="overline" color="text.secondary" component="p" sx={{ lineHeight: 1.5 }}>
-        {label}
-      </Typography>
+      <Eyebrow>{label}</Eyebrow>
       {children}
     </Box>
   )
@@ -53,8 +54,8 @@ function End({ label, children }: { label: string; children: ReactNode }) {
 /** The arrow between the parts of the strip; points down when they stack on a phone. */
 function Then() {
   return (
-    <Box aria-hidden="true" sx={{ display: 'grid', placeItems: 'center', color: 'text.secondary' }}>
-      <ArrowForward sx={{ fontSize: 18, transform: { xs: 'rotate(90deg)', md: 'none' } }} />
+    <Box aria-hidden="true" sx={(t) => ({ display: 'grid', placeItems: 'center', width: 32, height: 32, mx: 'auto', borderRadius: '50%', color: 'text.secondary', bgcolor: ink(0.05), ...t.applyStyles('dark', { bgcolor: white(0.06) }) })}>
+      <ArrowForward sx={{ fontSize: 17, transform: { xs: 'rotate(90deg)', md: 'none' } }} />
     </Box>
   )
 }
@@ -70,11 +71,7 @@ function RankMove({ m }: { m: Movement }) {
   }
   const Arrow = m.climb > 0 ? ArrowUpward : ArrowDownward
   return (
-    <Typography
-      component="span"
-      variant="caption"
-      sx={{ display: { xs: 'block', sm: 'inline' }, color: m.climb > 0 ? 'success.main' : 'error.main', fontWeight: 600, whiteSpace: 'nowrap' }}
-    >
+    <Typography component="span" variant="caption" sx={{ display: { xs: 'block', sm: 'inline' }, color: m.climb > 0 ? 'success.main' : 'error.main', fontWeight: 650, whiteSpace: 'nowrap' }}>
       <Arrow sx={{ fontSize: 12, verticalAlign: '-1px' }} />#{m.after.rank}
       <span className="sp-sr-only"> (was #{m.before.rank})</span>
     </Typography>
@@ -96,16 +93,7 @@ function DeltaBar({ delta, scale }: { delta: number; scale: number }) {
     <Box
       aria-hidden="true"
       className="sp-track"
-      sx={(t) => ({
-        position: 'relative',
-        display: { xs: 'none', sm: 'inline-block' },
-        verticalAlign: 'middle',
-        width: 56,
-        height: 6,
-        mr: 1,
-        borderRadius: 999,
-        bgcolor: alpha(t.palette.text.primary, 0.06),
-      })}
+      sx={(t) => ({ position: 'relative', display: { xs: 'none', sm: 'inline-block' }, verticalAlign: 'middle', width: 64, height: 6, mr: 1, borderRadius: 999, bgcolor: ink(0.06), ...t.applyStyles('dark', { bgcolor: white(0.08) }) })}
     >
       <Box
         component={motion.div}
@@ -141,7 +129,7 @@ const HIGHLIGHT_COLOR = { up: 'success.main', down: 'error.main', same: 'text.se
  * count from their old value and rows glide to their new order (layout), so the
  * change is seen happening rather than just swapped in.
  */
-export default function WhatIfPanel({ before, after, changes, onClear }: Props) {
+export default function WhatIfPanel({ before, after, changes, onClear, motion: surfaceMotion }: Props) {
   const rows = compareRuns(before, after)
   const highlights: Highlight[] = whatIfHighlights(before, after)
   const scale = Math.max(0.02, ...rows.map((r) => Math.abs(r.delta)))
@@ -150,26 +138,20 @@ export default function WhatIfPanel({ before, after, changes, onClear }: Props) 
   const reveal = useReveal()
 
   return (
-    <Paper
-      variant="raised"
-      sx={(t) => ({
-        p: { xs: 2, sm: 2.5 },
-        // a raised panel with an accent edge and a faint accent wash at the top: the model's answer to "what if"
-        borderColor: alpha(t.palette.primary.main, 0.4),
-        backgroundImage: `linear-gradient(180deg, ${alpha(t.palette.primary.main, 0.06)}, transparent 200px)`,
-      })}
-      className="avoid-break"
-      component="section"
-      aria-label="What if comparison"
-    >
-      <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'flex-start', gap: 1, mb: 2 }}>
-        <Stack direction="row" spacing={1} sx={{ alignItems: 'center', minWidth: 0 }}>
-          <CompareArrows color="primary" />
-          <Typography variant="h6" component="h2" id="whatif-title" tabIndex={-1} sx={{ scrollMarginTop: 96 }}>
-            What if…? Before and after
-          </Typography>
+    <Box component={motion.section} {...surfaceMotion} aria-labelledby="whatif-title" className="avoid-break" sx={(t) => ({ ...spotlight(t), p: { xs: 2, sm: 3 } })}>
+      <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center', gap: 1, mb: 2.5 }}>
+        <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center', minWidth: 0 }}>
+          <IconTile tone="violet" glow>
+            <CompareArrows />
+          </IconTile>
+          <Box sx={{ minWidth: 0 }}>
+            <Eyebrow tone="violet">What-if result</Eyebrow>
+            <Typography variant="h4" component="h2" id="whatif-title" tabIndex={-1} sx={{ scrollMarginTop: 100 }}>
+              What if…? Before and after
+            </Typography>
+          </Box>
         </Stack>
-        <Button size="small" onClick={onClear} className="no-print" sx={{ flexShrink: 0 }}>
+        <Button size="small" variant="outlined" onClick={onClear} className="no-print" sx={{ flexShrink: 0 }}>
           Hide comparison
         </Button>
       </Stack>
@@ -178,13 +160,13 @@ export default function WhatIfPanel({ before, after, changes, onClear }: Props) 
       <Box
         sx={(t) => ({
           display: 'grid',
-          gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1fr) auto minmax(0, 1.4fr) auto minmax(0, 1fr)' },
-          gap: { xs: 1, md: 2 },
+          gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1fr) auto minmax(0, 1.5fr) auto minmax(0, 1fr)' },
+          gap: { xs: 1.25, md: 2.5 },
           alignItems: 'center',
-          p: { xs: 1.5, sm: 2 },
-          mb: 2,
+          p: { xs: 1.75, sm: 2.25 },
+          mb: 2.5,
           borderRadius: `${RADIUS.inset}px`,
-          ...surfaceFill(t, 'control'),
+          ...insetFill(t, 'raised'),
           border: `1px solid ${t.palette.divider}`,
         })}
       >
@@ -192,25 +174,19 @@ export default function WhatIfPanel({ before, after, changes, onClear }: Props) 
           <Typography variant="subtitle2" component="p" noWrap title={topBefore.label}>
             {topBefore.label}
           </Typography>
-          <Typography variant="h6" component="p" color="text.secondary" sx={{ fontVariantNumeric: 'tabular-nums', lineHeight: 1.2 }}>
+          <Typography component="p" color="text.secondary" sx={{ fontWeight: 650, fontSize: '1.5rem', letterSpacing: '-0.035em', fontVariantNumeric: 'tabular-nums', lineHeight: 1.15 }}>
             {pct(topBefore.probability)}
           </Typography>
         </End>
         <Then />
         <Box sx={{ minWidth: 0 }}>
-          <Typography variant="overline" color="text.secondary" component="p" sx={{ lineHeight: 1.5 }}>
-            You changed
-          </Typography>
-          <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 0.75, mt: 0.25 }}>
+          <Eyebrow>You changed</Eyebrow>
+          <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 0.75, mt: 0.5 }}>
+            {/* long answers ("Cloud and dev platforms used: − npm, Pip") wrap instead of running off a phone screen */}
             {changes.map((c) => (
-              <Chip
-                key={c}
-                label={c}
-                size="small"
-                variant="outlined"
-                // long answers ("Cloud and dev platforms used: − npm, Pip") wrap instead of running off a phone screen
-                sx={{ maxWidth: '100%', height: 'auto', '& .MuiChip-label': { whiteSpace: 'normal', py: 0.375 } }}
-              />
+              <Pill key={c} tone="indigo" sx={{ whiteSpace: 'normal', fontWeight: 600, py: 0.375 }}>
+                {c}
+              </Pill>
             ))}
           </Stack>
         </Box>
@@ -219,20 +195,15 @@ export default function WhatIfPanel({ before, after, changes, onClear }: Props) 
           <Typography variant="subtitle2" component="p" noWrap title={topAfter.label}>
             {topAfter.label}
           </Typography>
-          <Typography variant="h6" component="p" color="primary" sx={{ fontVariantNumeric: 'tabular-nums', lineHeight: 1.2 }}>
+          <Typography component="p" sx={(t) => ({ fontWeight: 720, fontSize: '1.5rem', letterSpacing: '-0.035em', fontVariantNumeric: 'tabular-nums', lineHeight: 1.15, ...gradientText(t) })}>
             {/* counts from this role's own previous figure, also when it has just taken over the top spot */}
-            <CountUp
-              key={topAfter.job_role}
-              value={topAfter.probability}
-              format={pct}
-              from={rows.find((r) => r.job_role === topAfter.job_role)?.before.probability}
-            />
+            <CountUp key={topAfter.job_role} value={topAfter.probability} format={pct} from={rows.find((r) => r.job_role === topAfter.job_role)?.before.probability} />
           </Typography>
         </End>
       </Box>
 
       {/* what that did, in words (App announces the same sentences to screen readers) */}
-      <Stack component="ul" spacing={0.75} sx={{ listStyle: 'none', m: 0, p: 0, mb: 2 }}>
+      <Stack component="ul" spacing={1} sx={{ listStyle: 'none', m: 0, p: 0, mb: 2 }}>
         {highlights.map((h, i) => {
           const Icon = HIGHLIGHT_ICON[h.tone]
           return (
@@ -244,19 +215,26 @@ export default function WhatIfPanel({ before, after, changes, onClear }: Props) 
               animate={{ opacity: 1, y: 0 }}
               transition={{ ...TRANSITION.large, delay: 0.12 + ((i + 1) * STAGGER) / 1000 }}
               direction="row"
-              spacing={1}
+              spacing={1.25}
               sx={{ alignItems: 'flex-start' }}
             >
-              <Icon aria-hidden="true" sx={{ fontSize: 18, mt: '2px', color: HIGHLIGHT_COLOR[h.tone] }} />
-              <Typography variant="body2">{h.text}</Typography>
+              <Box
+                aria-hidden="true"
+                sx={(t) => ({ flexShrink: 0, mt: '1px', width: 22, height: 22, borderRadius: '7px', display: 'grid', placeItems: 'center', color: HIGHLIGHT_COLOR[h.tone], bgcolor: ink(0.05), ...t.applyStyles('dark', { bgcolor: white(0.06) }) })}
+              >
+                <Icon sx={{ fontSize: 16 }} />
+              </Box>
+              <Typography variant="body2" sx={{ fontWeight: i === 0 ? 600 : 450 }}>
+                {h.text}
+              </Typography>
             </Stack>
           )
         })}
       </Stack>
 
-      {/* scrolls sideways inside the card rather than widening the page, should a label ever be too long */}
+      {/* scrolls sideways inside the panel rather than widening the page, should a label ever be too long */}
       <Box sx={{ overflowX: 'auto', mx: { xs: -0.5, sm: 0 } }}>
-        <Table size="small" aria-label="Before and after comparison" sx={{ '& td, & th': { px: { xs: 0.75, sm: 1.5 } } }}>
+        <Table size="small" aria-label="Before and after comparison" sx={{ '& td, & th': { px: { xs: 0.75, sm: 1.5 } }, '& tr:last-of-type td': { borderBottom: 0 } }}>
           <TableHead>
             <TableRow>
               <TableCell>Job role</TableCell>
@@ -280,11 +258,11 @@ export default function WhatIfPanel({ before, after, changes, onClear }: Props) 
                 transition={{ layout: TRANSITION.move }}
                 sx={(t) => ({
                   ...(m.left && { '& td': { color: 'text.secondary' } }),
-                  ...(m.entered && { bgcolor: alpha(t.palette.success.main, 0.06) }),
+                  ...(m.entered && { bgcolor: alpha(t.palette.success.main, 0.07) }),
                 })}
               >
                 <TableCell>
-                  <Box component="span" sx={{ fontWeight: m.after.rank === 1 ? 600 : 400 }}>
+                  <Box component="span" sx={{ fontWeight: m.after.rank === 1 ? 650 : 450 }}>
                     {m.label}
                   </Box>
                   {(m.entered || m.left) && (
@@ -298,14 +276,12 @@ export default function WhatIfPanel({ before, after, changes, onClear }: Props) 
                         px: 0.75,
                         borderRadius: 999,
                         fontSize: '0.6875rem',
-                        fontWeight: 600,
+                        fontWeight: 650,
                         lineHeight: '18px',
                         whiteSpace: 'nowrap',
                         verticalAlign: '1px',
                         // on the green tint the light theme needs the deeper green to stay over 4.5:1
-                        ...(m.entered
-                          ? { color: t.palette.success.dark, ...t.applyStyles('dark', { color: t.palette.success.main }) }
-                          : { color: t.palette.text.secondary }),
+                        ...(m.entered ? { color: t.palette.success.dark, ...t.applyStyles('dark', { color: t.palette.success.main }) } : { color: t.palette.text.secondary }),
                         bgcolor: m.entered ? alpha(t.palette.success.main, 0.12) : alpha(t.palette.text.primary, 0.06),
                       })}
                     >
@@ -319,7 +295,7 @@ export default function WhatIfPanel({ before, after, changes, onClear }: Props) 
                     #{m.before.rank}
                   </Typography>
                 </TableCell>
-                <TableCell align="right" sx={{ whiteSpace: 'nowrap', fontWeight: 600 }}>
+                <TableCell align="right" sx={{ whiteSpace: 'nowrap', fontWeight: 650 }}>
                   <CountUp value={m.after.probability} format={pct} from={m.before.probability} /> <RankMove m={m} />
                 </TableCell>
                 <TableCell align="right" sx={{ whiteSpace: 'nowrap', color: tone(m.delta), fontVariantNumeric: 'tabular-nums' }}>
@@ -335,6 +311,6 @@ export default function WhatIfPanel({ before, after, changes, onClear }: Props) 
           </TableBody>
         </Table>
       </Box>
-    </Paper>
+    </Box>
   )
 }

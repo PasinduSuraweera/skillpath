@@ -1,6 +1,7 @@
 import Box from '@mui/material/Box'
 import { alpha } from '@mui/material/styles'
-import { AMBIENT, FORCED_COLORS } from '../theme'
+import type { SxProps, Theme } from '@mui/material/styles'
+import { FORCED_COLORS } from '../design/tokens'
 
 // A fine grain over the glows: low-contrast gradients otherwise band into visible steps.
 const GRAIN =
@@ -8,19 +9,23 @@ const GRAIN =
   "%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E" +
   "%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")"
 
-/** Soft glows in the brand hues, strongest at the top where the page starts (light, dark opacity). */
-const GLOWS = [
-  { color: AMBIENT.indigo, at: 'ellipse 85% 75% at 0% 0%', opacity: [0.2, 0.3] },
-  { color: AMBIENT.violet, at: 'ellipse 75% 70% at 100% 5%', opacity: [0.17, 0.25] },
-  { color: AMBIENT.blue, at: 'ellipse 70% 55% at 10% 100%', opacity: [0.1, 0.1] },
+/** The aurora: soft light in the brand hues around the edges of the window (light, dark opacity). */
+const AURORA = [
+  { color: '#6366f1', at: 'ellipse 62% 52% at 6% 0%', opacity: [0.3, 0.34] },
+  { color: '#a855f7', at: 'ellipse 52% 46% at 94% 4%', opacity: [0.24, 0.3] },
+  { color: '#ec4899', at: 'ellipse 38% 34% at 88% 58%', opacity: [0.1, 0.12] },
+  { color: '#22d3ee', at: 'ellipse 56% 44% at 2% 94%', opacity: [0.18, 0.16] },
+  { color: '#3b82f6', at: 'ellipse 50% 40% at 62% 104%', opacity: [0.14, 0.18] },
 ] as const
 
-const glows = (dark: boolean) =>
-  GLOWS.map((g) => `radial-gradient(${g.at}, ${alpha(g.color, g.opacity[dark ? 1 : 0])}, transparent 75%)`).join(', ')
+const aurora = (dark: boolean) =>
+  AURORA.map((g) => `radial-gradient(${g.at}, ${alpha(g.color, g.opacity[dark ? 1 : 0])}, transparent 72%)`).join(', ')
 
 /**
- * The backdrop the glass surfaces sit on, fixed behind the page. Static: nothing in it moves
- * or follows the scroll, so it is drawn once. Not printed, and not shown in a contrast theme.
+ * The canvas the glass sits on, fixed behind the page: the aurora, a faint dot grid near the
+ * top (the "computed" texture of an AI product) and grain. Static: nothing in it moves or
+ * follows the scroll, so it is drawn once and the glass above it blurs a still image. Not
+ * printed, and not shown in a contrast theme.
  */
 export default function AmbientBackground() {
   return (
@@ -37,10 +42,20 @@ export default function AmbientBackground() {
         '@supports (height: 100lvh)': { height: '100lvh' },
         zIndex: -1,
         pointerEvents: 'none',
-        // a contrast theme keeps gradients, and puts a plate behind every line of text over them
         [FORCED_COLORS]: { display: 'none' },
-        backgroundImage: glows(false),
-        ...t.applyStyles('dark', { backgroundImage: glows(true) }),
+        backgroundImage: aurora(false),
+        ...t.applyStyles('dark', { backgroundImage: aurora(true) }),
+        // dot grid, fading out from the top centre
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          inset: 0,
+          backgroundImage: 'radial-gradient(circle, rgba(11, 16, 32, 0.09) 1px, transparent 1.4px)',
+          backgroundSize: '24px 24px',
+          maskImage: 'radial-gradient(ellipse 70% 55% at 50% 0%, #000 0%, transparent 75%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 70% 55% at 50% 0%, #000 0%, transparent 75%)',
+          ...t.applyStyles('dark', { backgroundImage: 'radial-gradient(circle, rgba(255, 255, 255, 0.07) 1px, transparent 1.4px)' }),
+        },
         '&::after': {
           content: '""',
           position: 'absolute',
@@ -50,6 +65,34 @@ export default function AmbientBackground() {
           ...t.applyStyles('dark', { opacity: 0.05 }),
         },
       })}
+    />
+  )
+}
+
+/**
+ * A soft light placed in the page itself, behind a glass surface, so the glass has colour
+ * to refract as it scrolls past. A radial gradient (no blur filter): drawn once, cheap.
+ * Put it inside a positioned parent with `isolation: isolate`.
+ */
+export function Glow({ color, size, sx, strength = [0.32, 0.4] }: { color: string; size: number; sx?: SxProps<Theme>; strength?: [number, number] }) {
+  return (
+    <Box
+      aria-hidden="true"
+      className="no-print"
+      sx={[
+        (t) => ({
+          position: 'absolute',
+          width: size,
+          height: size,
+          borderRadius: '50%',
+          zIndex: -1,
+          pointerEvents: 'none',
+          backgroundImage: `radial-gradient(closest-side, ${alpha(color, strength[0])}, transparent)`,
+          ...t.applyStyles('dark', { backgroundImage: `radial-gradient(closest-side, ${alpha(color, strength[1])}, transparent)` }),
+          [FORCED_COLORS]: { display: 'none' },
+        }),
+        ...(Array.isArray(sx) ? sx : [sx]),
+      ]}
     />
   )
 }

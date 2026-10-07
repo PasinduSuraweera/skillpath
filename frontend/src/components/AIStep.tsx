@@ -15,7 +15,7 @@ interface Props {
 }
 
 // narrowest answer card per question: short scale words share one row, sentences get room
-const MIN_WIDTH: Record<AIField, number> = { AISelect: 190, AIAgents: 220, AIAcc: 150, AISent: 130 }
+const MIN_WIDTH: Record<AIField, number> = { AISelect: 150, AIAgents: 220, AIAcc: 150, AISent: 130 }
 
 export default function AIStep({ form, setForm, options, errors }: Props) {
   return (
