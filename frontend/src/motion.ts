@@ -199,6 +199,23 @@ export const TRANSITION = {
 }
 
 /**
+ * Something that opens in the page: the what-if comparison, an alert. Nothing animates its
+ * height: the content below slides to make room (layout, see makeRoom), then it fades in.
+ * On the way out it is lifted out of the page (AnimatePresence mode="popLayout") and fades,
+ * and the content below waits for it before closing the gap, so nothing slides over it.
+ */
+export const OPENING = {
+  initial: { opacity: 0, y: -8 },
+  animate: { opacity: 1, y: 0, transition: { ...TRANSITION.medium, delay: 0.12 } },
+  exit: { opacity: 0, y: -8, transition: TRANSITION.small },
+}
+/** With reduced motion the content below jumps instead of sliding, so the panel goes at once too. */
+export const OPENING_REDUCED = { ...OPENING, exit: { opacity: 0, transition: { duration: 0 } } }
+
+/** Layout transition for the content below something that is open (it slides at once) or has just closed (it waits). */
+export const makeRoom = (open: boolean) => (open ? TRANSITION.move : { ...TRANSITION.move, delay: TRANSITION.small.duration })
+
+/**
  * One step of the results reveal, `i` steps (STAGGER_REVEAL apart) into it: a short rise
  * into place. `reveal` false (results being returned to, see RevealContext) starts it in
  * place. With reduced motion Motion drops the rise and keeps the fade.

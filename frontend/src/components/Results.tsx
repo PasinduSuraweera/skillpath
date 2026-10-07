@@ -18,7 +18,7 @@ import { useLayoutEffect, useState } from 'react'
 import type { Recommendation, SkillSuggestion } from '../api/types'
 import type { FormState } from '../form'
 import { pct } from '../format'
-import { RevealContext, TRANSITION, revealMotion } from '../motion'
+import { OPENING, OPENING_REDUCED, RevealContext, TRANSITION, makeRoom, revealMotion } from '../motion'
 import { BRAND_GRADIENT, BRAND_GRADIENT_DARK } from '../theme'
 import AnalysisSummary from './AnalysisSummary'
 import RoleCard from './RoleCard'
@@ -43,22 +43,6 @@ interface Props {
 
 /** Results that have been revealed once (see Results). */
 const revealed = new WeakSet<Recommendation>()
-
-/**
- * The what-if comparison opens above the role cards. Nothing animates its height: the
- * content below slides down to make room (layout), then the panel fades in. On the way out
- * the panel is lifted out of the page (AnimatePresence popLayout) and fades, and the content
- * below waits for it before sliding back up, so it never slides over the fading panel. With
- * reduced motion that content does not slide but jumps, so the panel goes at once too.
- */
-const PANEL = {
-  initial: { opacity: 0, y: -8 },
-  animate: { opacity: 1, y: 0, transition: { ...TRANSITION.medium, delay: 0.12 } },
-  exit: { opacity: 0, y: -8, transition: TRANSITION.small },
-}
-const PANEL_GONE = { ...PANEL, exit: { opacity: 0, transition: { duration: 0 } } }
-const MOVE = TRANSITION.move
-const MOVE_AFTER_CLOSE = { ...TRANSITION.move, delay: TRANSITION.small.duration }
 
 function Bar({ label, value, strong }: { label: string; value: number; strong?: boolean }) {
   return (
@@ -114,8 +98,9 @@ export default function Results(props: Props) {
   // position in the reveal (STAGGER_REVEAL apart): the heading, the analysis summary, then
   // each role card, then the supporting sections together
   const step = (i: number) => revealMotion(i, fresh)
-  // content below the comparison slides to its new place (transform only) instead of jumping
-  const move = comparison ? MOVE : MOVE_AFTER_CLOSE
+  // the what-if comparison opens above the role cards (OPENING): the content below slides to
+  // its new place (transform only) instead of jumping
+  const move = makeRoom(!!comparison)
   const reduce = useReducedMotion()
   const returning = fresh ? {} : { initial: { opacity: 0 }, animate: { opacity: 1 }, transition: TRANSITION.medium }
 
@@ -166,7 +151,7 @@ export default function Results(props: Props) {
           {/* a comparison returned to (Undo, the stepper) is simply there */}
           <AnimatePresence mode="popLayout" initial={false}>
             {comparison && (
-              <m.div key="comparison" {...(reduce ? PANEL_GONE : PANEL)}>
+              <m.div key="comparison" {...(reduce ? OPENING_REDUCED : OPENING)}>
                 <WhatIfPanel before={comparison.before} after={result} changes={comparison.changes} onClear={props.onClearComparison} />
               </m.div>
             )}

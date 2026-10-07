@@ -10,6 +10,7 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import CircularProgress from '@mui/material/CircularProgress'
 import Container from '@mui/material/Container'
+import Grid from '@mui/material/Grid'
 import IconButton from '@mui/material/IconButton'
 import Paper from '@mui/material/Paper'
 import Skeleton from '@mui/material/Skeleton'
@@ -18,7 +19,7 @@ import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { alpha, useColorScheme, useTheme } from '@mui/material/styles'
-import { AnimatePresence } from 'motion/react'
+import { AnimatePresence, m, useReducedMotion } from 'motion/react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { ValidationError, getOptions, predict } from './api/client'
@@ -47,7 +48,7 @@ import {
 } from './form'
 import type { Errors, FormState } from './form'
 import { pct } from './format'
-import { DURATION, EASE, isLeaving, prefersReducedMotion, useDelayedFlag } from './motion'
+import { DURATION, EASE, OPENING, OPENING_REDUCED, isLeaving, makeRoom, prefersReducedMotion, useDelayedFlag } from './motion'
 import { BRAND_GRADIENT, BRAND_GRADIENT_DARK, ELEVATION, RADIUS, glass } from './theme'
 import { SAMPLES } from './samples'
 import type { Sample } from './samples'
@@ -297,6 +298,9 @@ export default function App() {
   const technologies = Object.values(form.tech).reduce((n, t) => n + t.have.length + t.want.length, 0)
   const stepProps = options ? { form, setForm, options, errors } : null
   const errorCount = Object.keys(errors).length
+  // an alert above the questionnaire or the results; what is below slides to make room (makeRoom)
+  const alertOpen = !!apiError || (errorCount > 0 && step < RESULTS)
+  const reduce = useReducedMotion()
 
   return (
     <Box sx={{ minHeight: '100dvh' }}>
@@ -350,7 +354,8 @@ export default function App() {
             showSkeleton && <LoadingSkeleton />
           )
         ) : (
-          <Stack spacing={3} className="sp-fade">
+          // gap rather than margins, and positioned: an alert is lifted out of the flow as it leaves
+          <Stack spacing={3} useFlexGap className="sp-fade" sx={{ position: 'relative' }}>
             {step < RESULTS && (
               <Box sx={{ pb: { xs: 1, md: 3 } }}>
                 <Hero options={options} intro={intro} onPick={pickSample} disabled={showBusy} activeId={activeSample} />
@@ -366,19 +371,33 @@ export default function App() {
               onGo={(i) => goTo(i)}
             />
 
-            {apiError && (
-              <Alert severity="error" onClose={() => setApiError(null)} className="no-print sp-rise">
-                {apiError}
-              </Alert>
-            )}
-            {!apiError && errorCount > 0 && step < RESULTS && (
-              <Alert severity="warning" className="no-print sp-rise">
-                Please fix the highlighted {errorCount === 1 ? 'answer' : `${errorCount} answers`}.
-              </Alert>
-            )}
+            {/* alerts open like the what-if comparison (OPENING): what is below slides down to make room */}
+            <AnimatePresence mode="popLayout">
+              {apiError ? (
+                <m.div key="api-error" className="no-print" {...(reduce ? OPENING_REDUCED : OPENING)}>
+                  <Alert severity="error" onClose={() => setApiError(null)}>
+                    {apiError}
+                  </Alert>
+                </m.div>
+              ) : (
+                errorCount > 0 &&
+                step < RESULTS && (
+                  <m.div key="fix-answers" className="no-print" {...(reduce ? OPENING_REDUCED : OPENING)}>
+                    <Alert severity="warning">Please fix the highlighted {errorCount === 1 ? 'answer' : `${errorCount} answers`}.</Alert>
+                  </m.div>
+                )
+              )}
+            </AnimatePresence>
 
             {step < RESULTS && stepProps && (
-              <Paper sx={{ p: { xs: 2, md: 3 }, position: 'relative', borderRadius: `${RADIUS.panel}px` }} className="no-print" aria-busy={busy}>
+              <Paper
+                component={m.div}
+                layout="position"
+                transition={{ layout: makeRoom(alertOpen) }}
+                sx={{ p: { xs: 2, md: 3 }, position: 'relative', borderRadius: `${RADIUS.panel}px` }}
+                className="no-print"
+                aria-busy={busy}
+              >
                 {/* a slow prediction: the analysis state covers the form (which stays put underneath) */}
                 {showBusy && (
                   <Box
@@ -528,6 +547,9 @@ export default function App() {
 
             {step === RESULTS && current && (
               <Box
+                component={m.div}
+                layout="position"
+                transition={{ layout: makeRoom(alertOpen) }}
                 aria-busy={busy}
                 sx={{
                   opacity: showBusy ? 0.5 : 1,
@@ -597,22 +619,51 @@ export default function App() {
   )
 }
 
-/** Placeholder in the shape of the start page while GET /api/options is on its way (only if it is slow). */
+/**
+ * Placeholder in the shape of the start page while GET /api/options is on its way (only if it
+ * is slow): the title and copy, the examples panel, the stepper and the step card, on the
+ * same glass surfaces they will have. The page heading is there for screen readers.
+ */
 function LoadingSkeleton() {
   return (
-    <Stack spacing={3} role="status" aria-busy="true" aria-label="Loading" className="sp-fade">
-      <Box>
-        <Skeleton variant="text" sx={{ fontSize: '2.25rem', width: { xs: '85%', md: '45%' } }} />
-        <Skeleton variant="text" sx={{ maxWidth: 700 }} />
-        <Skeleton variant="text" sx={{ maxWidth: 520 }} />
-        <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
-          {[150, 170, 130, 120].map((w) => (
-            <Skeleton key={w} variant="rounded" width={w} height={32} sx={{ borderRadius: 999 }} />
+    <Stack spacing={3} role="status" aria-busy="true" className="sp-fade">
+      <Typography variant="h3" component="h1" className="sp-sr-only">
+        Loading SkillPath
+      </Typography>
+      <Grid container spacing={{ xs: 3, md: 6 }} sx={{ alignItems: 'center', pb: { xs: 1, md: 3 } }} aria-hidden="true">
+        <Grid size={{ xs: 12, md: 7 }}>
+          <Skeleton variant="rounded" width={260} height={26} sx={{ borderRadius: 999, mb: 2 }} />
+          <Skeleton variant="text" sx={{ fontSize: '3rem', width: '80%' }} />
+          <Skeleton variant="text" sx={{ fontSize: '3rem', width: '45%' }} />
+          <Skeleton variant="text" sx={{ mt: 1.5, maxWidth: 600 }} />
+          <Skeleton variant="text" sx={{ maxWidth: 560 }} />
+          <Skeleton variant="text" sx={{ maxWidth: 420 }} />
+        </Grid>
+        <Grid size={{ xs: 12, md: 5 }}>
+          <Paper sx={{ p: { xs: 1.5, sm: 2 } }}>
+            <Skeleton variant="text" width={160} />
+            <Skeleton variant="text" width="80%" sx={{ mb: 1.5 }} />
+            <Stack spacing={1}>
+              {[0, 1, 2, 3].map((i) => (
+                <Skeleton key={i} variant="rounded" height={64} sx={{ borderRadius: `${RADIUS.inset}px` }} />
+              ))}
+            </Stack>
+          </Paper>
+        </Grid>
+      </Grid>
+      <Skeleton variant="rounded" height={64} sx={{ borderRadius: `${RADIUS.card}px` }} aria-hidden="true" />
+      <Paper sx={{ p: { xs: 2, md: 3 }, borderRadius: `${RADIUS.panel}px` }} aria-hidden="true">
+        <Skeleton variant="text" width={220} />
+        <Skeleton variant="text" sx={{ fontSize: '1.75rem', width: 180, mt: 2 }} />
+        <Skeleton variant="text" sx={{ maxWidth: 640 }} />
+        <Grid container spacing={2} sx={{ mt: 2 }}>
+          {[0, 1, 2, 3].map((i) => (
+            <Grid key={i} size={{ xs: 12, sm: 6 }}>
+              <Skeleton variant="rounded" height={56} sx={{ borderRadius: `${RADIUS.control}px` }} />
+            </Grid>
           ))}
-        </Stack>
-      </Box>
-      <Skeleton variant="rounded" height={64} sx={{ borderRadius: `${RADIUS.card}px` }} />
-      <Skeleton variant="rounded" height={340} sx={{ borderRadius: `${RADIUS.card}px` }} />
+        </Grid>
+      </Paper>
     </Stack>
   )
 }
@@ -620,7 +671,7 @@ function LoadingSkeleton() {
 /** Empty state when the API cannot be reached; the card stays put while retrying. */
 function LoadError({ message, retrying, onRetry }: { message: string; retrying: boolean; onRetry: () => void }) {
   return (
-    <Paper sx={{ p: { xs: 3, md: 5 }, textAlign: 'center' }} className="sp-rise" role="alert">
+    <Paper variant="raised" sx={{ p: { xs: 3, md: 5 }, textAlign: 'center', borderRadius: `${RADIUS.panel}px` }} className="sp-rise" role="alert">
       <Stack spacing={2} sx={{ alignItems: 'center', maxWidth: 520, mx: 'auto' }}>
         <Box
           sx={(t) => ({
