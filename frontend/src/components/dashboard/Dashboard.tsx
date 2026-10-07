@@ -12,13 +12,14 @@ import { Eyebrow, SectionHeader } from '../../design/primitives'
 import type { Exploration } from '../../explorations'
 import type { FormState } from '../../form'
 import { pct } from '../../format'
-import { OPENING, OPENING_REDUCED, RevealContext, TRANSITION, inViewMotion, makeRoom, revealMotion } from '../../motion'
+import { OPENING, OPENING_REDUCED, RevealContext, TRANSITION, makeRoom, onView, revealChild, revealMotion } from '../../motion'
 import { Glow } from '../AmbientBackground'
 import Behind from './Behind'
 import Explorations from './Explorations'
 import Landscape from './Landscape'
 import RoleInsights from './RoleInsights'
 import RoleSwitcher from './RoleSwitcher'
+import SectionRail from './SectionRail'
 import Spotlight from './Spotlight'
 import WhatIfPanel from './WhatIfPanel'
 
@@ -99,10 +100,15 @@ export default function Dashboard(props: Props) {
   return (
     <RevealContext.Provider value={revealing}>
       {/* one group, so the content below the comparison slides when it opens and closes */}
+      {/* where you are on the page, on wide screens */}
+      <SectionRail />
       <LayoutGroup>
         <Stack component={m.div} spacing={{ xs: 3.5, md: 5 }} useFlexGap sx={{ position: 'relative', isolation: 'isolate' }} {...returning}>
-          <Glow color="#6366f1" size={620} sx={{ top: -160, left: -240 }} />
-          <Glow color="#d946ef" size={520} strength={[0.2, 0.28]} sx={{ top: 220, right: -200, display: { xs: 'none', md: 'block' } }} />
+          <Glow color="#6366f1" size={620} depth={1} sx={{ top: -160, left: -240 }} />
+          <Glow color="#d946ef" size={520} depth={0.8} strength={[0.2, 0.28]} sx={{ top: 220, right: -200, display: { xs: 'none', md: 'block' } }} />
+          {/* lower down, colour for the landscape and transparency tiles to refract */}
+          <Glow color="#22d3ee" size={560} depth={0.9} strength={[0.18, 0.2]} sx={{ top: '52%', left: -260, display: { xs: 'none', md: 'block' } }} />
+          <Glow color="#8b5cf6" size={480} depth={0.7} strength={[0.16, 0.22]} sx={{ top: '74%', right: -220, display: { xs: 'none', md: 'block' } }} />
 
           {/* headline and actions */}
           <Stack component={m.div} direction={{ xs: 'column', md: 'row' }} sx={{ justifyContent: 'space-between', alignItems: { md: 'flex-end' }, gap: 2.5, pt: { xs: 1, md: 3 } }} {...step(0)}>
@@ -142,10 +148,12 @@ export default function Dashboard(props: Props) {
           </AnimatePresence>
 
           <Stack component={m.div} spacing={{ xs: 3.5, md: 5 }} useFlexGap layout="position" transition={{ layout: move }}>
-            <Spotlight role={top} busy={props.busy} pendingTech={props.pendingTech} onTrySkill={props.onTrySkill} motion={step(1)} />
+            <Box id="overview" sx={{ scrollMarginTop: 96 }}>
+              <Spotlight role={top} busy={props.busy} pendingTech={props.pendingTech} onTrySkill={props.onTrySkill} motion={step(1)} />
+            </Box>
 
             {/* the three matches; choosing one focuses the insights below */}
-            <Box component="section" aria-labelledby="compare-title">
+            <Box component="section" id="compare" aria-labelledby="compare-title">
               <m.div {...step(2)}>
                 <SectionHeader
                   eyebrow="Compare"
@@ -160,8 +168,10 @@ export default function Dashboard(props: Props) {
               </Box>
             </Box>
 
-            <Box component="section" id="role-insights" aria-labelledby="insights-title">
-              <Typography variant="h4" component={m.h3} id="insights-title" sx={{ mb: 2 }} {...step(4.4)}>
+            {/* Below the fold from here on: each section reveals as it scrolls into view, its heading
+                first and then its tiles, a beat apart (onView / revealChild in motion.ts) */}
+            <Box component={m.section} id="role-insights" aria-labelledby="insights-title" {...onView(revealing)}>
+              <Typography variant="h4" component={m.h3} id="insights-title" sx={{ mb: 2 }} {...revealChild('fadeUp')}>
                 <Box component="span" sx={{ color: 'text.secondary', fontWeight: 500 }}>
                   #{selected.rank} ·{' '}
                 </Box>
@@ -177,7 +187,7 @@ export default function Dashboard(props: Props) {
                 pendingTech={props.pendingTech}
                 payScale={payScale}
                 onTrySkill={props.onTrySkill}
-                motion={(i) => step(4.8 + i * 0.5)}
+                motion={() => revealChild('glassLift')}
               />
             </Box>
 
@@ -193,25 +203,27 @@ export default function Dashboard(props: Props) {
               ))}
             </Box>
 
-            <Box component="section" aria-labelledby="landscape-title">
-              <m.div {...inViewMotion(revealing)}>
+            <Box component={m.section} id="landscape" aria-labelledby="landscape-title" {...onView(revealing)}>
+              <m.div {...revealChild('fadeUp')}>
                 <SectionHeader eyebrow="Career landscape" tone="cyan" id="landscape-title" title="Where your profile points" />
               </m.div>
               <Box sx={{ mt: 2.5 }}>
-                <Landscape result={result} motion={(i) => inViewMotion(revealing, i + 1)} />
+                <Landscape result={result} motion={() => revealChild('glassLift')} />
               </Box>
             </Box>
 
-            <Box component="section" aria-labelledby="behind-title">
-              <m.div {...inViewMotion(revealing)}>
+            <Box component={m.section} id="behind" aria-labelledby="behind-title" {...onView(revealing)}>
+              <m.div {...revealChild('fadeUp')}>
                 <SectionHeader eyebrow="Transparency" tone="violet" id="behind-title" title="Behind the result" />
               </m.div>
               <Box sx={{ mt: 2.5 }}>
-                <Behind result={result} answers={props.answers} motion={(i) => inViewMotion(revealing, i + 1)} />
+                <Behind result={result} answers={props.answers} motion={() => revealChild('glassLift')} />
               </Box>
             </Box>
 
-            <Explorations history={props.history} currentId={props.currentId} busy={props.busy} onRestore={props.onRestore} motion={inViewMotion(revealing)} />
+            <Box id="explorations">
+              <Explorations history={props.history} currentId={props.currentId} busy={props.busy} onRestore={props.onRestore} motion={onView(revealing, 'glassLift')} />
+            </Box>
 
             {/* the attribution carries a long URL: let it break rather than run off a narrow screen */}
             <Typography variant="caption" color="text.secondary" component="p" sx={{ maxWidth: 900, overflowWrap: 'anywhere', pb: 2 }}>

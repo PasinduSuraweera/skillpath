@@ -35,7 +35,8 @@ import type { Exploration } from './explorations'
 import { describeChanges, emptyForm, fromProfile, serverErrors, stepOf, stepProgress, toProfile, validate, withTechnology } from './form'
 import type { Errors, FormState } from './form'
 import { pct } from './format'
-import { DURATION, OPENING, OPENING_REDUCED, isLeaving, makeRoom, prefersReducedMotion, useDelayedFlag } from './motion'
+import { DURATION, OPENING, OPENING_REDUCED, isLeaving, makeRoom, useDelayedFlag } from './motion'
+import { navClearance, scrollToElement, scrollToTop, startSmoothScroll } from './scroll'
 import { SAMPLES } from './samples'
 import type { Sample } from './samples'
 import { whatIfHighlights } from './whatif'
@@ -44,9 +45,6 @@ const RESULTS = 3
 
 /** Where keyboard focus goes after a move: a heading of what is now shown, or the first invalid answer. */
 type FocusTarget = 'hero-title' | 'step-title' | 'results-title' | 'whatif-title' | 'invalid'
-
-/** Height of the floating nav, so content scrolled into view is not left under it. */
-const NAV_CLEARANCE = 84
 
 export default function App() {
   const [options, setOptions] = useState<Options | null>(null)
@@ -86,6 +84,9 @@ export default function App() {
   const showRetrying = useDelayedFlag(retrying)
   const showSlow = useDelayedFlag(busy, 6000)
 
+  // smooth wheel and trackpad scrolling for the whole session (scroll.ts)
+  useEffect(() => startSmoothScroll(), [])
+
   // the start page's entrance plays once per visit, not again when coming back from the results
   const [intro, setIntro] = useState(true)
   useEffect(() => {
@@ -122,14 +123,13 @@ export default function App() {
    */
   const reveal = (s: number, smooth: boolean, onlyIfHidden: boolean) => {
     requestAnimationFrame(() => {
-      const behavior = smooth && !prefersReducedMotion() ? 'smooth' : 'auto'
       const el = workspaceRef.current
-      if (s === RESULTS || !el) return window.scrollTo({ top: 0, behavior })
+      if (s === RESULTS || !el) return scrollToTop(0, smooth)
       const { top } = el.getBoundingClientRect()
-      const hidden = top < NAV_CLEARANCE - 8
+      const hidden = top < navClearance() - 8
       const low = top > window.innerHeight * 0.45
       if (!hidden && (onlyIfHidden || !low)) return
-      el.scrollIntoView({ block: 'start', behavior })
+      scrollToElement(el, smooth)
     })
   }
 
@@ -254,7 +254,7 @@ export default function App() {
     nextRun.current = 1
     // Clear answers stays on screen and keeps focus; Start over (on the results) goes back to the top of the page
     goTo(0, { onlyIfHidden: true, focus: fromResults && 'hero-title' })
-    if (fromResults) requestAnimationFrame(() => window.scrollTo({ top: 0 }))
+    if (fromResults) requestAnimationFrame(() => scrollToTop(0, false))
     if (!hadAnything) return
     say(snapshot.current ? 'Started over. Your answers and results were cleared.' : 'Answers cleared.', () => {
       setForm(snapshot.form)
@@ -275,7 +275,7 @@ export default function App() {
   /** "Build my profile": the questionnaire, brought into view with its first question ready. */
   function startProfile() {
     const el = workspaceRef.current
-    el?.scrollIntoView({ block: 'start', behavior: prefersReducedMotion() ? 'auto' : 'smooth' })
+    if (el) scrollToElement(el, true)
     requestAnimationFrame(() => document.getElementById('step-title')?.focus({ preventScroll: true }))
   }
 

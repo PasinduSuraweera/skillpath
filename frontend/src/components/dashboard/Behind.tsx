@@ -9,6 +9,7 @@ import Grid from '@mui/material/Grid'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import { alpha, useTheme } from '@mui/material/styles'
+import { m } from 'motion/react'
 import type { ReactNode } from 'react'
 import type { Recommendation } from '../../api/types'
 import { IconTile, Tile } from '../../design/primitives'
@@ -18,14 +19,15 @@ import type { Tone } from '../../design/tokens'
 import { stepProgress } from '../../form'
 import type { FormState } from '../../form'
 import { matchShape, pct } from '../../format'
-import { useHighlight } from '../../motion'
+import { revealChild, useHighlight } from '../../motion'
 
 function Stage({ icon, tone, label, value, detail, last }: { icon: ReactNode; tone: Tone; label: string; value: string; detail: ReactNode; last?: boolean }) {
   const theme = useTheme()
   // a what-if that changes this figure tints it briefly
   const valueRef = useHighlight<HTMLParagraphElement>(value, alpha(theme.palette.primary.main, 0.16))
   return (
-    <Box component="li" sx={{ position: 'relative', display: 'flex', gap: 1.75, pb: last ? 0 : 2.25 }}>
+    // one after another as the tile reveals: the analysis read in the order it happened
+    <Box component={m.li} {...revealChild('item')} sx={{ position: 'relative', display: 'flex', gap: 1.75, pb: last ? 0 : 2.25 }}>
       {/* the line that joins one stage to the next */}
       {!last && (
         <Box
@@ -98,7 +100,7 @@ export default function Behind({ result, answers, motion }: { result: Recommenda
         <Tile icon={<InfoOutlined />} tone="amber" title="Please keep in mind" className="avoid-break" motion={motion?.(1)}>
           <Stack component="ul" spacing={1.75} sx={{ m: 0, p: 0, listStyle: 'none' }}>
             {result.notes.map((n) => (
-              <Stack key={n} component="li" direction="row" spacing={1.25} sx={{ alignItems: 'flex-start' }}>
+              <Stack key={n} component={m.li} {...revealChild('item')} direction="row" spacing={1.25} sx={{ alignItems: 'flex-start' }}>
                 <Box aria-hidden="true" sx={(t) => ({ mt: '8px', width: 6, height: 6, borderRadius: '50%', flexShrink: 0, bgcolor: TONES.amber.light, ...t.applyStyles('dark', { bgcolor: TONES.amber.dark }) })} />
                 <Typography variant="body2" color="text.secondary">
                   {n}

@@ -21,7 +21,9 @@
 //   - CSS keyframes for small fixed entrances (index.css), and CSS transitions for
 //     anything re-triggered, including the press on buttons
 //   - the Web Animations API for the tint on figures that a what-if changed
-import { createContext, useContext, useEffect, useRef, useState } from 'react'
+import { useInView, useReducedMotion } from 'motion/react'
+import { createContext, useContext, useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import type { RefObject } from 'react'
 
 export const EASE = {
   /** entering / exiting / feedback: starts fast, so the UI feels instant */
@@ -207,21 +209,51 @@ export const TRANSITION = {
   spring: { type: 'spring' as const, bounce: 0.14, duration: 0.42 },
 }
 
+// ---------------------------------------------------------------------------
+// Scroll reveals: shared variants (one place for every "appears as you scroll" pattern)
+// ---------------------------------------------------------------------------
+
+/** When a section counts as in view: once, as its top passes 8% above the bottom of the window. */
+export const VIEWPORT = { once: true, margin: '0px 0px -8% 0px' } as const
+/** Between the members of a revealed group (header, then each card): hierarchy, not a wait. */
+export const STAGGER_CHILDREN = 0.05
+
+const rise = { ...TRANSITION.enter, duration: 0.5 }
+
 /**
- * A section further down the page that rises into place as it scrolls into view, once.
- * Returned to (RevealContext false) it is simply there. Marked data-reveal, so print
- * (which never scrolls) shows it in full (index.css).
+ * Variants for scroll reveals, all "hidden" → "shown". A container reveals on view and its
+ * children (with only `variants`) follow it, STAGGER_CHILDREN apart:
+ *   fadeUp           text and headings: a short rise
+ *   fadeIn           supporting details: a fade
+ *   scaleIn          small figures and badges: settle from just under full size
+ *   glassLift        glass tiles: rise and settle a touch larger, then reveal their own children
+ *   staggerContainer a group that only orders its children (no fade of its own, so glass inside keeps its blur)
+ *   item             rows inside a revealed tile (timeline stages, list rows)
+ * With reduced motion Motion keeps the fades and drops the movement (MotionProvider).
  */
-export const inViewMotion = (reveal: boolean, i = 0) =>
-  reveal
-    ? {
-        'data-reveal': '',
-        initial: { opacity: 0, y: 18 },
-        whileInView: { opacity: 1, y: 0 },
-        viewport: { once: true, margin: '0px 0px -6% 0px' },
-        transition: { ...TRANSITION.enter, delay: (i * STAGGER_REVEAL) / 1000 },
-      }
-    : {}
+export const VARIANTS = {
+  fadeUp: { hidden: { opacity: 0, y: 16 }, shown: { opacity: 1, y: 0, transition: rise } },
+  fadeIn: { hidden: { opacity: 0 }, shown: { opacity: 1, transition: rise } },
+  scaleIn: { hidden: { opacity: 0, scale: 0.94 }, shown: { opacity: 1, scale: 1, transition: rise } },
+  glassLift: {
+    hidden: { opacity: 0, y: 28, scale: 0.985 },
+    shown: { opacity: 1, y: 0, scale: 1, transition: { ...rise, staggerChildren: STAGGER_CHILDREN, delayChildren: 0.1 } },
+  },
+  staggerContainer: { hidden: {}, shown: { transition: { staggerChildren: STAGGER_CHILDREN * 2 } } },
+  item: { hidden: { opacity: 0, y: 10 }, shown: { opacity: 1, y: 0, transition: TRANSITION.large } },
+}
+export type Variant = keyof typeof VARIANTS
+
+/**
+ * A group that reveals as it scrolls into view, once, and orders its children (give them
+ * `revealChild`). Returned to (RevealContext false) everything is simply there. Marked
+ * data-reveal, so print (which never scrolls) shows it in full (index.css).
+ */
+export const onView = (reveal: boolean, variant: Variant = 'staggerContainer') =>
+  reveal ? { 'data-reveal': '', initial: 'hidden', whileInView: 'shown', viewport: VIEWPORT, variants: VARIANTS[variant] } : {}
+
+/** A member of an onView group: follows the group's reveal in order. Print shows it in full. */
+export const revealChild = (variant: Variant) => ({ 'data-reveal': '', variants: VARIANTS[variant] })
 
 /**
  * Something that opens in the page: the what-if comparison, an alert. Nothing animates its
@@ -265,9 +297,10 @@ export const tween = (from: number, to: number, progress: number, ease: (t: numb
  * With `from`, the first count starts there instead and moves like an update
  * (a what-if "after" figure leaving its "before" value). Returns the value to
  * draw and whether it is still moving. With reduced motion it is always the target,
- * and results being returned to (RevealContext) start at it.
+ * and results being returned to (RevealContext) start at it. With `active` false (not
+ * scrolled into view yet, see useSeen) it waits at its starting figure.
  */
-export function useCountUp(target: number, from?: number): { value: number; moving: boolean } {
+export function useCountUp(target: number, from?: number, active = true): { value: number; moving: boolean } {
   const reduce = prefersReducedMotion()
   const reveal = useReveal()
   const [value, setValue] = useState(() => (reduce || !reveal ? target : (from ?? 0)))
@@ -276,6 +309,8 @@ export function useCountUp(target: number, from?: number): { value: number; movi
   const settled = useRef(from !== undefined || !reveal)
 
   useEffect(() => {
+    // not yet in view (useSeen): hold the starting figure, and count once it is
+    if (!active && !reduce) return
     const from = shown.current
     if (reduce || from === target) {
       shown.current = target
@@ -295,7 +330,7 @@ export function useCountUp(target: number, from?: number): { value: number; movi
       else settled.current = true
     })
     return () => cancelAnimationFrame(frame)
-  }, [target, reduce])
+  }, [target, reduce, active])
 
   return { value: reduce ? target : value, moving: !reduce && value !== target }
 }
@@ -316,4 +351,60 @@ export function useHighlight<T extends HTMLElement>(value: unknown, color: strin
     })
   }, [value, color])
   return ref
+}
+
+// ---------------------------------------------------------------------------
+// Scroll-aware hooks
+// ---------------------------------------------------------------------------
+
+const printQuery = () => (typeof window === 'undefined' ? null : window.matchMedia?.('print') ?? null)
+let printing = false
+function subscribePrint(onChange: () => void) {
+  const set = (on: boolean) => () => {
+    printing = on
+    onChange()
+  }
+  const before = set(true)
+  const after = set(false)
+  const mq = printQuery()
+  const media = (e: MediaQueryListEvent) => set(e.matches)()
+  window.addEventListener('beforeprint', before)
+  window.addEventListener('afterprint', after)
+  mq?.addEventListener?.('change', media)
+  return () => {
+    window.removeEventListener('beforeprint', before)
+    window.removeEventListener('afterprint', after)
+    mq?.removeEventListener?.('change', media)
+  }
+}
+/** True while the page is being printed (print never scrolls, so nothing may wait for a scroll). */
+export const usePrinting = () => useSyncExternalStore(subscribePrint, () => printing, () => false)
+
+/**
+ * Whether a figure has come into view, so it can fill or count up as the visitor reaches it
+ * rather than off screen: once, a little before its bottom edge is visible. Results returned
+ * to (RevealContext false) and print count as seen at once.
+ */
+export function useSeen(ref: RefObject<Element | null>): boolean {
+  const reveal = useReveal()
+  const inView = useInView(ref, { once: true, margin: '0px 0px -6% 0px' })
+  const print = usePrinting()
+  return inView || !reveal || print
+}
+
+const FX_QUERY = '(min-width: 900px) and (pointer: fine)'
+function subscribeFx(onChange: () => void) {
+  const mq = window.matchMedia(FX_QUERY)
+  mq.addEventListener('change', onChange)
+  return () => mq.removeEventListener('change', onChange)
+}
+/**
+ * Whether scroll-linked depth (parallax, the hero handing over to the next section) runs:
+ * wide screens with a mouse or trackpad, without reduced motion. Phones keep plain, native
+ * touch scrolling with reveals only: less to compute, and nothing moving under the finger.
+ */
+export function useScrollFx(): boolean {
+  const reduce = useReducedMotion()
+  const wide = useSyncExternalStore(subscribeFx, () => window.matchMedia(FX_QUERY).matches, () => false)
+  return wide && !reduce
 }

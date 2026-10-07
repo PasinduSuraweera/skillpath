@@ -8,7 +8,7 @@ import IconButton from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 import { useColorScheme } from '@mui/material/styles'
-import { AnimatePresence, m } from 'motion/react'
+import { AnimatePresence, m, useReducedMotion, useScroll, useTransform } from 'motion/react'
 import type { MouseEvent } from 'react'
 import { flushSync } from 'react-dom'
 import { TRANSITION, withViewTransition } from '../motion'
@@ -43,6 +43,16 @@ export default function NavBar({ view, resultsReady, disabled, onNavigate }: Pro
   const { mode, systemMode, setMode } = useColorScheme()
   const dark = (mode === 'system' ? systemMode : mode) === 'dark'
 
+  // At the top of the page the capsule is light glass resting on the hero; as the page scrolls
+  // under it, over the first ~100 px, it becomes full glass with a shadow and settles a few px
+  // higher. Scroll-linked (no jump between states), and only opacity and transform change: the
+  // blur itself is never animated.
+  const { scrollY } = useScroll()
+  const reduce = useReducedMotion()
+  const settled = useTransform(scrollY, [0, 100], [0, 1])
+  const glassOpacity = useTransform(settled, [0, 1], [0.55, 1])
+  const lift = useTransform(settled, [0, 1], [0, reduce ? 0 : -4])
+
   const toggle = (e: MouseEvent<HTMLButtonElement>) => {
     // the new theme spreads out from the button instead of the page flashing from light to dark
     const r = e.currentTarget.getBoundingClientRect()
@@ -66,8 +76,11 @@ export default function NavBar({ view, resultsReady, disabled, onNavigate }: Pro
       })}
     >
       <Box
-        sx={(t) =>
-          mergeStyles(glass(t, 'chrome'), glassEdge(t), shadow(t, 'mid'), {
+        component={m.div}
+        style={{ y: lift }}
+        sx={{
+          position: 'relative',
+          isolation: 'isolate',
           maxWidth: 1200,
           mx: 'auto',
           height: { xs: 56, sm: 60 },
@@ -78,9 +91,24 @@ export default function NavBar({ view, resultsReady, disabled, onNavigate }: Pro
           gap: { xs: 1, sm: 2 },
           pl: { xs: 1, sm: 1.25 },
           pr: { xs: 0.75, sm: 1 },
-          '@media print': { boxShadow: 'none', border: 0, height: 'auto', px: 0, mb: 1 },
-        })}
+          '@media print': { height: 'auto', px: 0, mb: 1 },
+        }}
       >
+        {/* the glass, and its shadow, as layers under the content: their opacity follows the scroll */}
+        <Box
+          component={m.div}
+          aria-hidden="true"
+          className="no-print"
+          style={{ opacity: glassOpacity }}
+          sx={(t) => mergeStyles(glass(t, 'chrome'), glassEdge(t), { position: 'absolute', inset: 0, zIndex: -1, borderRadius: `${RADIUS.pill}px` })}
+        />
+        <Box
+          component={m.div}
+          aria-hidden="true"
+          className="no-print"
+          style={{ opacity: settled }}
+          sx={(t) => ({ ...shadow(t, 'mid'), position: 'absolute', inset: 0, zIndex: -2, borderRadius: `${RADIUS.pill}px` })}
+        />
         {/* brand */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, minWidth: 0, flexShrink: 0 }}>
           <Box

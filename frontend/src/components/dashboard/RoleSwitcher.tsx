@@ -84,7 +84,8 @@ function RoleCard({
         layout="position"
         {...revealMotion(i, reveal)}
         transition={{ ...revealMotion(i, reveal).transition, layout: TRANSITION.move }}
-        whileHover={reduce ? undefined : { y: -3, transition: TRANSITION.small }}
+        // hover: lifts 3 px and grows a hair, with a deeper shadow (CSS), so the card reads as pressable
+        whileHover={reduce ? undefined : { y: -3, scale: 1.006, transition: TRANSITION.small }}
         aria-labelledby={titleId}
         className="avoid-break"
         sx={(t) => ({
@@ -93,8 +94,8 @@ function RoleCard({
           isolation: 'isolate',
           height: '100%',
           p: { xs: 2, sm: 2.25 },
-          transition: 'box-shadow 220ms ease',
-          [HOVER]: { '&:hover': shadow(t, 'mid') },
+          transition: 'box-shadow 220ms ease, border-color 220ms ease',
+          [HOVER]: { '&:hover': { ...shadow(t, 'high'), borderColor: alpha(t.palette.primary.main, 0.32) } },
           // the stretched button is the focus target: ring the whole card around it
           '&:has(button:focus-visible)': { outline: `2px solid ${t.palette.primary.main}`, outlineOffset: 3 },
           [FORCED_COLORS]: active ? { border: '2px solid Highlight' } : {},

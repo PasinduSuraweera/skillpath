@@ -9,9 +9,9 @@ import Typography from '@mui/material/Typography'
 import { alpha } from '@mui/material/styles'
 import type { SxProps, Theme } from '@mui/material/styles'
 import { m } from 'motion/react'
-import { useId, useState } from 'react'
+import { useId, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
-import { TRANSITION, useCountUp, useReveal } from '../motion'
+import { TRANSITION, useCountUp, usePrinting, useReveal, useSeen } from '../motion'
 import { panel } from './surfaces'
 import { AURORA, BRAND_GRADIENT, BRAND_GRADIENT_DARK, FORCED_COLORS, TONES, gradientText, ink, tint, toneColor, white } from './tokens'
 import type { Tone } from './tokens'
@@ -265,17 +265,21 @@ export function Meter({
 }) {
   const reveal = useReveal()
   const clamp = (v: number) => Math.min(1, Math.max(0, v))
+  // fills when it scrolls into view (not off screen); print shows it filled at once
+  const ref = useRef<HTMLDivElement>(null)
+  const seen = useSeen(ref)
+  const print = usePrinting()
   // the first growth waits for its place in the reveal; later values move at once
   const [grown, setGrown] = useState(!reveal)
   return (
-    <Box aria-hidden="true" className="sp-track" sx={(t) => ({ position: 'relative', height, borderRadius: 999, bgcolor: ink(0.07), ...t.applyStyles('dark', { bgcolor: white(0.08) }) })}>
+    <Box ref={ref} aria-hidden="true" className="sp-track" sx={(t) => ({ position: 'relative', height, borderRadius: 999, bgcolor: ink(0.07), ...t.applyStyles('dark', { bgcolor: white(0.08) }) })}>
       <Box
         component={m.div}
         className="sp-bar"
         initial={reveal ? { scaleX: 0 } : false}
-        animate={{ scaleX: clamp(value) }}
-        transition={grown ? TRANSITION.update : { ...TRANSITION.reveal, delay }}
-        onAnimationComplete={() => setGrown(true)}
+        animate={{ scaleX: seen ? clamp(value) : 0 }}
+        transition={print ? { duration: 0 } : grown ? TRANSITION.update : { ...TRANSITION.reveal, delay }}
+        onAnimationComplete={() => seen && setGrown(true)}
         sx={(t) => ({ position: 'absolute', inset: 0, borderRadius: 999, transformOrigin: 'left', opacity: muted ? 0.5 : 1, ...barFill(t, tone) })}
       />
       {average !== undefined && (
@@ -331,7 +335,12 @@ export function RingGauge({
   /** a single tone instead of the aurora gradient */
   tone?: Tone
 }) {
-  const { value: shown } = useCountUp(value)
+  // fills (and its figure counts) when it scrolls into view; print shows the final value
+  const ref = useRef<HTMLDivElement>(null)
+  const seen = useSeen(ref)
+  const print = usePrinting()
+  const counted = useCountUp(value, undefined, seen).value
+  const shown = print ? value : counted
   const gid = `ring-${useId().replace(/:/g, '')}`
   const nominal = typeof size === 'number' ? size : size.md
   const sw = (thickness / nominal) * 100
@@ -339,7 +348,7 @@ export function RingGauge({
   const c = 2 * Math.PI * r
   const v = Math.min(1, Math.max(0, shown))
   return (
-    <Box sx={{ position: 'relative', width: size, height: size, flexShrink: 0 }}>
+    <Box ref={ref} sx={{ position: 'relative', width: size, height: size, flexShrink: 0 }}>
       <Box
         component="svg"
         viewBox="0 0 100 100"

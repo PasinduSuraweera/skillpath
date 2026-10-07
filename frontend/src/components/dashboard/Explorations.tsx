@@ -5,14 +5,14 @@ import Button from '@mui/material/Button'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import { alpha } from '@mui/material/styles'
-import { AnimatePresence, m } from 'motion/react'
+import { m } from 'motion/react'
 import { Pill, Tile } from '../../design/primitives'
 import type { SurfaceMotion } from '../../design/primitives'
 import { AURORA, FONT, RADIUS, gradientRing, insetFill, ink, white } from '../../design/tokens'
 import { explorationLabel } from '../../explorations'
 import type { Exploration } from '../../explorations'
 import { pct, points } from '../../format'
-import { TRANSITION } from '../../motion'
+import { TRANSITION, revealChild } from '../../motion'
 
 const time = new Intl.DateTimeFormat(undefined, { hour: '2-digit', minute: '2-digit' })
 
@@ -55,7 +55,6 @@ export default function Explorations({ history, currentId, busy, onRestore, moti
           scrollSnapType: { sm: 'x proximity' },
         }}
       >
-        <AnimatePresence initial={false}>
           {history.map((e, i) => {
             const top = e.result.roles[0]
             const prev = history[i - 1]
@@ -67,9 +66,9 @@ export default function Explorations({ history, currentId, busy, onRestore, moti
                 key={e.id}
                 component={m.li}
                 layout="position"
-                initial={{ opacity: 0, scale: 0.96 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ ...TRANSITION.enter, layout: TRANSITION.move }}
+                // in order as the tile reveals; a run added later rises in on its own
+                {...revealChild('item')}
+                transition={{ layout: TRANSITION.move }}
                 sx={(t) => ({
                   position: 'relative',
                   isolation: 'isolate',
@@ -139,7 +138,6 @@ export default function Explorations({ history, currentId, busy, onRestore, moti
               </Box>
             )
           })}
-        </AnimatePresence>
       </Box>
     </Tile>
   )

@@ -7,14 +7,15 @@ import Button from '@mui/material/Button'
 import CircularProgress from '@mui/material/CircularProgress'
 import IconButton from '@mui/material/IconButton'
 import Stack from '@mui/material/Stack'
-import { AnimatePresence, m } from 'motion/react'
+import { AnimatePresence, m, useScroll, useTransform } from 'motion/react'
+import { useRef } from 'react'
 import type { Dispatch, Ref, SetStateAction } from 'react'
 import type { Options } from '../api/types'
 import { Eyebrow } from '../design/primitives'
 import { panel } from '../design/surfaces'
 import { RADIUS, glass } from '../design/tokens'
 import type { Errors, FormState } from '../form'
-import { makeRoom } from '../motion'
+import { makeRoom, useScrollFx } from '../motion'
 import AIStep from './AIStep'
 import AboutStep from './AboutStep'
 import Analyzing from './Analyzing'
@@ -58,7 +59,17 @@ export default function ProfileWorkspace({ ref, ...props }: Props) {
   const technologies = Object.values(props.form.tech).reduce((n, t) => n + t.have.length + t.want.length, 0)
   const last = STEPS.length - 1
 
+  // Coming up from below the hero, the glass settles into place: it rises the last few px as
+  // its top travels from the bottom of the window to just past the middle. Movement only (a
+  // scale would leave its edges out of line with the hero above). Wide screens only; a
+  // transform on a wrapper, so the glass keeps its blur.
+  const arrival = useRef<HTMLDivElement>(null)
+  const fx = useScrollFx()
+  const { scrollYProgress } = useScroll({ target: arrival, offset: ['start end', 'start 45%'] })
+  const y = useTransform(scrollYProgress, [0, 1], [fx ? 28 : 0, 0])
+
   return (
+    <m.div ref={arrival} style={{ y }}>
     <Box
       ref={ref}
       component={m.div}
@@ -170,5 +181,6 @@ export default function ProfileWorkspace({ ref, ...props }: Props) {
         </Box>
       </Box>
     </Box>
+    </m.div>
   )
 }

@@ -116,6 +116,9 @@ single answer.
   roles side by side (choosing one focuses the detailed insights on it), the career landscape and how the result was reached.
 - **Design system** (`frontend/src/design/`): layered glass materials over a static aurora backdrop, colour tones per
   kind of insight, and shared tiles, pills, meters and rings.
+- **Scrolling:** eased wheel and trackpad scrolling (Lenis; touch and keyboard stay native), sections and tiles that reveal as they
+  scroll into view, a hero that hands over to the questionnaire, light parallax depth behind the glass, a nav whose glass
+  firms up as the page scrolls, and a section rail on wide screens. All of it is off with reduced motion; phones keep reveals only.
 - **Light and dark themes.** The theme follows the system setting, and the nav button overrides it.
 - **Print / Save as PDF** prints only the results, in light colours, without buttons.
 - **Responsive** from 320 px phones to wide desktops.
@@ -192,7 +195,7 @@ All outputs of this pipeline are committed, so the app and tests run from a clea
 | **Data mining / ML** | Python, pandas, NumPy, scikit-learn 1.8.0 (pinned), PyArrow (Parquet), joblib, SciPy |
 | **Analysis and reporting** | Jupyter + Jupytext (notebooks kept as `.py`), matplotlib, seaborn, nbconvert, ReportLab (PDF report), XlsxWriter |
 | **Backend** | FastAPI, Pydantic v2, Uvicorn |
-| **Frontend** | React 19, TypeScript 6, Vite 8, Material UI 9 (Emotion), Motion for React 14, Inter variable font (Fontsource; used where SF Pro is not available) |
+| **Frontend** | React 19, TypeScript 6, Vite 8, Material UI 9 (Emotion), Motion for React 14, Lenis (smooth wheel scrolling), Inter variable font (Fontsource; used where SF Pro is not available) |
 | **Testing** | pytest (with FastAPI `TestClient`), Vitest, Puppeteer (`puppeteer-core`) driving Chrome |
 | **Code quality** | TypeScript compiler (`tsc -b`), oxlint |
 | **Storage** | Files only: Parquet, CSV, JSON and joblib. No database |
@@ -257,7 +260,8 @@ frontend/
 │   ├── questions.ts          question wording from the 2025 questionnaire
 │   ├── samples.ts            the four example profiles
 │   ├── theme.ts              MUI theme built from the design tokens, light and dark
-│   ├── motion.ts             shared easing/duration tokens and animation helpers
+│   ├── motion.ts             shared easing/duration tokens, reveal variants and scroll-aware hooks
+│   ├── scroll.ts             smooth scrolling (Lenis) and programmatic scrolling
 │   ├── index.css             entrance keyframes, reduced-motion, contrast-theme and print rules
 │   └── *.test.ts             Vitest unit tests
 ├── e2e/run.mjs               browser test (15 cases) in Chrome via Puppeteer

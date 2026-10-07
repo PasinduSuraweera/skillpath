@@ -29,7 +29,7 @@ export default function RefineHeader({ result, onBack, disabled }: { result: Rec
       transition={TRANSITION.enter}
       sx={{ position: 'relative', isolation: 'isolate', pt: { xs: 1, md: 3 } }}
     >
-      <Glow color="#8b5cf6" size={520} sx={{ top: -200, left: -200 }} />
+      <Glow color="#8b5cf6" size={520} depth={0.8} sx={{ top: -200, left: -200 }} />
       <Stack direction={{ xs: 'column', md: 'row' }} sx={{ justifyContent: 'space-between', alignItems: { md: 'flex-end' }, gap: 2.5 }}>
         <Box component={m.div} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={TRANSITION.enter} sx={{ minWidth: 0, maxWidth: 680 }}>
           <Eyebrow tone="violet">What if…?</Eyebrow>
