@@ -8,7 +8,7 @@ import IconButton from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 import { useColorScheme } from '@mui/material/styles'
-import { AnimatePresence, m, useReducedMotion, useScroll, useTransform } from 'motion/react'
+import { AnimatePresence, m, useReducedMotion, useScroll, useSpring, useTransform } from 'motion/react'
 import type { MouseEvent } from 'react'
 import { flushSync } from 'react-dom'
 import { TRANSITION, withViewTransition } from '../motion'
@@ -43,15 +43,18 @@ export default function NavBar({ view, resultsReady, disabled, onNavigate }: Pro
   const { mode, systemMode, setMode } = useColorScheme()
   const dark = (mode === 'system' ? systemMode : mode) === 'dark'
 
-  // At the top of the page the capsule is light glass resting on the hero; as the page scrolls
-  // under it, over the first ~100 px, it becomes full glass with a shadow and settles a few px
-  // higher. Scroll-linked (no jump between states), and only opacity and transform change: the
-  // blur itself is never animated.
-  const { scrollY } = useScroll()
+  // At the top of the page the capsule is barely there, a whisper of glass resting on the hero;
+  // as the page scrolls under it, over the first ~120 px, it becomes full glass with a shadow and
+  // settles a few px higher. Scroll-linked (no jump between states), and only opacity and
+  // transform change: the blur itself is never animated. A hairline along its foot fills with
+  // the reading progress through the page, eased by a spring so it glides rather than ticks.
+  const { scrollY, scrollYProgress } = useScroll()
   const reduce = useReducedMotion()
-  const settled = useTransform(scrollY, [0, 100], [0, 1])
-  const glassOpacity = useTransform(settled, [0, 1], [0.55, 1])
+  const settled = useTransform(scrollY, [0, 120], [0, 1])
+  const glassOpacity = useTransform(settled, [0, 1], [0.3, 1])
   const lift = useTransform(settled, [0, 1], [0, reduce ? 0 : -4])
+  const read = useSpring(scrollYProgress, { stiffness: 140, damping: 30, mass: 0.4 })
+  const progress = reduce ? scrollYProgress : read
 
   const toggle = (e: MouseEvent<HTMLButtonElement>) => {
     // the new theme spreads out from the button instead of the page flashing from light to dark
@@ -109,6 +112,27 @@ export default function NavBar({ view, resultsReady, disabled, onNavigate }: Pro
           style={{ opacity: settled }}
           sx={(t) => ({ ...shadow(t, 'mid'), position: 'absolute', inset: 0, zIndex: -2, borderRadius: `${RADIUS.pill}px` })}
         />
+        {/* reading progress: a hairline along the foot of the capsule, inside its curve; shown once
+            the page has moved (it has nothing to say at the top) */}
+        <Box
+          component={m.div}
+          aria-hidden="true"
+          className="no-print"
+          style={{ opacity: settled }}
+          sx={{ position: 'absolute', left: 28, right: 28, bottom: 0, height: 2, borderRadius: 2, overflow: 'hidden', pointerEvents: 'none', [FORCED_COLORS]: { display: 'none' } }}
+        >
+          <Box
+            component={m.div}
+            style={{ scaleX: progress }}
+            sx={(t) => ({
+              height: '100%',
+              transformOrigin: 'left',
+              backgroundImage: 'linear-gradient(90deg, rgba(99, 102, 241, 0), #6366f1 30%, #a855f7 70%, #d946ef)',
+              opacity: 0.75,
+              ...t.applyStyles('dark', { backgroundImage: 'linear-gradient(90deg, rgba(165, 180, 252, 0), #a5b4fc 30%, #c4b5fd 70%, #f0abfc)', opacity: 0.85 }),
+            })}
+          />
+        </Box>
         {/* brand */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, minWidth: 0, flexShrink: 0 }}>
           <Box

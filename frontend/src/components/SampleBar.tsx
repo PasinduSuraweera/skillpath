@@ -1,3 +1,4 @@
+import ArrowForward from '@mui/icons-material/ArrowForward'
 import CheckCircle from '@mui/icons-material/CheckCircle'
 import ChevronRight from '@mui/icons-material/ChevronRight'
 import PhoneAndroid from '@mui/icons-material/PhoneAndroid'
@@ -6,6 +7,7 @@ import School from '@mui/icons-material/School'
 import SwapHoriz from '@mui/icons-material/SwapHoriz'
 import Bolt from '@mui/icons-material/Bolt'
 import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
 import ButtonBase from '@mui/material/ButtonBase'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
@@ -24,6 +26,8 @@ const MotionButtonBase = m.create(ButtonBase)
 
 interface Props {
   onPick: (s: Sample) => void
+  /** results for the example that is loaded, straight from here */
+  onRun?: () => void
   disabled: boolean
   /** the example the answers still match, if any */
   activeId: string | null
@@ -37,7 +41,7 @@ const LOOK: Record<string, { icon: typeof School; tone: Tone }> = {
 }
 
 /** Example profiles: the summary is visible, and one press fills every step. */
-export default function SampleBar({ onPick, disabled, activeId }: Props) {
+export default function SampleBar({ onPick, onRun, disabled, activeId }: Props) {
   // a fresh group each time the start page opens, so the highlight does not fly in from a past visit
   const group = useId()
   const reduce = useReducedMotion()
@@ -145,6 +149,14 @@ export default function SampleBar({ onPick, disabled, activeId }: Props) {
           })}
         </Box>
       </LayoutGroup>
+      {/* an example is loaded: its results are one press away, without scrolling to the questionnaire */}
+      {onRun && activeId && (
+        <Box className="sp-rise" sx={{ mt: 1.5 }}>
+          <Button variant="contained" fullWidth endIcon={<ArrowForward />} onClick={onRun} disabled={disabled}>
+            See results for this example
+          </Button>
+        </Box>
+      )}
     </Box>
   )
 }

@@ -5,14 +5,17 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import { useTheme } from '@mui/material/styles'
 import { AnimatePresence, LayoutGroup, m, useReducedMotion } from 'motion/react'
-import { useLayoutEffect, useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import type { Recommendation, SkillSuggestion } from '../../api/types'
 import { Eyebrow, SectionHeader } from '../../design/primitives'
 import type { Exploration } from '../../explorations'
 import type { FormState } from '../../form'
 import { pct } from '../../format'
-import { OPENING, OPENING_REDUCED, RevealContext, TRANSITION, makeRoom, onView, revealChild, revealMotion } from '../../motion'
+import { useMood } from '../../depth'
+import { OPENING, OPENING_REDUCED, RevealContext, TRANSITION, makeRoom, onView, revealChild, revealMotion, rowVariant } from '../../motion'
 import { Glow } from '../AmbientBackground'
 import Behind from './Behind'
 import Explorations from './Explorations'
@@ -20,6 +23,7 @@ import Landscape from './Landscape'
 import RoleInsights from './RoleInsights'
 import RoleSwitcher from './RoleSwitcher'
 import SectionRail from './SectionRail'
+import SkillJourney from './SkillJourney'
 import Spotlight from './Spotlight'
 import WhatIfPanel from './WhatIfPanel'
 
@@ -52,9 +56,12 @@ const revealed = new WeakSet<Recommendation>()
  *   2. the what-if comparison, when answers were changed
  *   3. the spotlight: the best match, readiness, and the recommended next step
  *   4. the three matches side by side; choosing one focuses the insights below
- *   5. the focused role in detail: AI outlook, pay, and the skill map
- *   6. the career landscape (families, all 20 roles), how the result was reached, the
+ *   5. the focused role in detail: AI outlook and pay
+ *   6. its skills as a path: what you have, the gap, what to learn, readiness, the role
+ *   7. the career landscape (families, all 20 roles), how the result was reached, the
  *      session's explorations, and the model and data credits
+ * The backdrop's mood follows the story (depth.ts): rich at the top, the accent hues while
+ * choosing between roles, cooler along the path, settled for the wider picture.
  */
 export default function Dashboard(props: Props) {
   const { result, comparison } = props
@@ -97,6 +104,16 @@ export default function Dashboard(props: Props) {
   const selected = result.roles.find((r) => r.job_role === focus) ?? top
   const others = result.roles.filter((r) => r.job_role !== selected.job_role)
 
+  const opening = useRef<HTMLDivElement>(null)
+  const choosing = useRef<HTMLDivElement>(null)
+  const wider = useRef<HTMLDivElement>(null)
+  useMood(opening, 'dawn')
+  useMood(choosing, 'accent')
+  useMood(wider, 'calm')
+  // tiles side by side (from 900 px) arrive from their own side (rowVariant)
+  const wide = useMediaQuery(useTheme().breakpoints.up('md'))
+  const pair = (i: number) => revealChild(rowVariant(i, 2, wide))
+
   return (
     <RevealContext.Provider value={revealing}>
       {/* one group, so the content below the comparison slides when it opens and closes */}
@@ -104,11 +121,11 @@ export default function Dashboard(props: Props) {
       <SectionRail />
       <LayoutGroup>
         <Stack component={m.div} spacing={{ xs: 3.5, md: 5 }} useFlexGap sx={{ position: 'relative', isolation: 'isolate' }} {...returning}>
-          <Glow color="#6366f1" size={620} depth={1} sx={{ top: -160, left: -240 }} />
-          <Glow color="#d946ef" size={520} depth={0.8} strength={[0.2, 0.28]} sx={{ top: 220, right: -200, display: { xs: 'none', md: 'block' } }} />
+          <Glow color="#6366f1" size={620} speed={0.5} sx={{ top: -160, left: -240 }} />
+          <Glow color="#d946ef" size={520} speed={0.6} strength={[0.2, 0.28]} sx={{ top: 220, right: -200, display: { xs: 'none', md: 'block' } }} />
           {/* lower down, colour for the landscape and transparency tiles to refract */}
-          <Glow color="#22d3ee" size={560} depth={0.9} strength={[0.18, 0.2]} sx={{ top: '52%', left: -260, display: { xs: 'none', md: 'block' } }} />
-          <Glow color="#8b5cf6" size={480} depth={0.7} strength={[0.16, 0.22]} sx={{ top: '74%', right: -220, display: { xs: 'none', md: 'block' } }} />
+          <Glow color="#22d3ee" size={560} speed={0.55} strength={[0.18, 0.2]} sx={{ top: '52%', left: -260, display: { xs: 'none', md: 'block' } }} />
+          <Glow color="#8b5cf6" size={480} speed={0.65} strength={[0.16, 0.22]} sx={{ top: '74%', right: -220, display: { xs: 'none', md: 'block' } }} />
 
           {/* headline and actions */}
           <Stack component={m.div} direction={{ xs: 'column', md: 'row' }} sx={{ justifyContent: 'space-between', alignItems: { md: 'flex-end' }, gap: 2.5, pt: { xs: 1, md: 3 } }} {...step(0)}>
@@ -148,10 +165,12 @@ export default function Dashboard(props: Props) {
           </AnimatePresence>
 
           <Stack component={m.div} spacing={{ xs: 3.5, md: 5 }} useFlexGap layout="position" transition={{ layout: move }}>
-            <Box id="overview" sx={{ scrollMarginTop: 96 }}>
+            <Box id="overview" ref={opening} sx={{ scrollMarginTop: 96 }}>
               <Spotlight role={top} busy={props.busy} pendingTech={props.pendingTech} onTrySkill={props.onTrySkill} motion={step(1)} />
             </Box>
 
+            {/* choosing between the roles: the three matches, then the chosen one in detail */}
+            <Stack ref={choosing} spacing={{ xs: 3.5, md: 5 }} useFlexGap>
             {/* the three matches; choosing one focuses the insights below */}
             <Box component="section" id="compare" aria-labelledby="compare-title">
               <m.div {...step(2)}>
@@ -164,7 +183,7 @@ export default function Dashboard(props: Props) {
                 />
               </m.div>
               <Box sx={{ mt: 2.5 }}>
-                <RoleSwitcher roles={result.roles} selected={selected.job_role} onSelect={setFocus} previous={previous} revealFrom={2.6} />
+                <RoleSwitcher roles={result.roles} selected={selected.job_role} onSelect={setFocus} previous={previous} />
               </Box>
             </Box>
 
@@ -187,9 +206,14 @@ export default function Dashboard(props: Props) {
                 pendingTech={props.pendingTech}
                 payScale={payScale}
                 onTrySkill={props.onTrySkill}
-                motion={() => revealChild('glassLift')}
+                skillsInPrintOnly
+                motion={pair}
               />
             </Box>
+            </Stack>
+
+            {/* its skills as a path, pinned while it passes on wide screens (skills to grow, printed above) */}
+            <SkillJourney role={selected} busy={props.busy} pendingTech={props.pendingTech} onTrySkill={props.onTrySkill} />
 
             {/* printed: the other two roles in detail as well (on screen they are one press away) */}
             <Box className="print-only">
@@ -203,12 +227,14 @@ export default function Dashboard(props: Props) {
               ))}
             </Box>
 
+            {/* the wider picture and the record */}
+            <Stack ref={wider} spacing={{ xs: 3.5, md: 5 }} useFlexGap>
             <Box component={m.section} id="landscape" aria-labelledby="landscape-title" {...onView(revealing)}>
               <m.div {...revealChild('fadeUp')}>
                 <SectionHeader eyebrow="Career landscape" tone="cyan" id="landscape-title" title="Where your profile points" />
               </m.div>
               <Box sx={{ mt: 2.5 }}>
-                <Landscape result={result} motion={() => revealChild('glassLift')} />
+                <Landscape result={result} motion={pair} />
               </Box>
             </Box>
 
@@ -217,7 +243,7 @@ export default function Dashboard(props: Props) {
                 <SectionHeader eyebrow="Transparency" tone="violet" id="behind-title" title="Behind the result" />
               </m.div>
               <Box sx={{ mt: 2.5 }}>
-                <Behind result={result} answers={props.answers} motion={() => revealChild('glassLift')} />
+                <Behind result={result} answers={props.answers} motion={pair} />
               </Box>
             </Box>
 
@@ -232,6 +258,7 @@ export default function Dashboard(props: Props) {
               {` (top 3 career families: ${pct(model.test_family_top3_accuracy)}). `}
               {result.attribution}
             </Typography>
+            </Stack>
           </Stack>
         </Stack>
       </LayoutGroup>

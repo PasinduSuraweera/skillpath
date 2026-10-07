@@ -5,6 +5,7 @@ import Box from '@mui/material/Box'
 import ButtonBase from '@mui/material/ButtonBase'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
+import useMediaQuery from '@mui/material/useMediaQuery'
 import { alpha, useTheme } from '@mui/material/styles'
 import { m, useReducedMotion } from 'motion/react'
 import { useId } from 'react'
@@ -13,7 +14,7 @@ import { Meter, Pill } from '../../design/primitives'
 import { panel } from '../../design/surfaces'
 import { AURORA, FONT, FORCED_COLORS, HOVER, RADIUS, gradientRing, ink, shadow, white } from '../../design/tokens'
 import { money, pct, points } from '../../format'
-import { TRANSITION, revealMotion, useHighlight, useReveal } from '../../motion'
+import { TRANSITION, onView, revealChild, rowVariant, useHighlight, useReveal } from '../../motion'
 import CountUp from '../CountUp'
 
 interface Props {
@@ -22,8 +23,6 @@ interface Props {
   onSelect: (job: string) => void
   /** each role's place in the previous result, while a what-if comparison is shown */
   previous: (job: string) => { rank: number; probability: number } | null
-  /** position of the first card in the results reveal */
-  revealFrom: number
 }
 
 /**
@@ -32,16 +31,21 @@ interface Props {
  * slides between the cards. Each card is an article with its own heading; a button stretched
  * over it does the choosing (a heading cannot live inside a button).
  */
-export default function RoleSwitcher({ roles, selected, onSelect, previous, revealFrom }: Props) {
+export default function RoleSwitcher({ roles, selected, onSelect, previous }: Props) {
   const group = useId()
+  // the row is watched as one (a card's own hidden offset could keep it out of view on its own)
+  const reveal = useReveal()
+  // side by side from 600 px (the grid below); stacked under that
+  const row = useMediaQuery(useTheme().breakpoints.up('sm'))
   return (
     <Box
-      component="ol"
+      component={m.ol}
+      {...onView(reveal)}
       aria-label="Your top three job roles"
       sx={{ listStyle: 'none', m: 0, p: 0, display: 'grid', gap: { xs: 1.5, md: 2 }, gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, minmax(0, 1fr))' } }}
     >
       {roles.map((r, i) => (
-        <RoleCard key={r.job_role} role={r} group={group} active={r.job_role === selected} onSelect={() => onSelect(r.job_role)} previous={previous(r.job_role)} i={revealFrom + i * 0.6} />
+        <RoleCard key={r.job_role} role={r} group={group} active={r.job_role === selected} onSelect={() => onSelect(r.job_role)} previous={previous(r.job_role)} i={i} n={roles.length} row={row} />
       ))}
     </Box>
   )
@@ -54,13 +58,19 @@ function RoleCard({
   onSelect,
   previous,
   i,
+  n,
+  row,
 }: {
   role: RoleRecommendation
   group: string
   active: boolean
   onSelect: () => void
   previous: { rank: number; probability: number } | null
+  /** place in the row, of `n` */
   i: number
+  n: number
+  /** the cards sit side by side */
+  row: boolean
 }) {
   const theme = useTheme()
   const reveal = useReveal()
@@ -74,16 +84,20 @@ function RoleCard({
   const changed = Math.abs(delta) >= 0.0005
   // a brief tint on the figure that a what-if just changed, so the eye finds it
   const scoreRef = useHighlight<HTMLDivElement>(Math.round(role.probability * 1000), alpha(theme.palette.primary.main, 0.16))
+  // a new result: the row assembles as it comes into view, the outer cards in from their sides and
+  // the middle one up from further back, a beat apart (the list orders them). Returned to, the
+  // cards are simply there.
+  const entrance = reveal ? revealChild(rowVariant(i, n, row)) : {}
 
   return (
     <Box component="li" sx={{ minWidth: 0 }}>
-      {/* the reveal, the reorder after a what-if and the hover lift are on the glass card itself:
+      {/* the entrance, the reorder after a what-if and the hover lift are on the glass card itself:
           a fading wrapper would stop it blurring the page (SurfaceMotion) */}
       <Box
         component={m.article}
         layout="position"
-        {...revealMotion(i, reveal)}
-        transition={{ ...revealMotion(i, reveal).transition, layout: TRANSITION.move }}
+        {...entrance}
+        transition={{ layout: TRANSITION.move }}
         // hover: lifts 3 px and grows a hair, with a deeper shadow (CSS), so the card reads as pressable
         whileHover={reduce ? undefined : { y: -3, scale: 1.006, transition: TRANSITION.small }}
         aria-labelledby={titleId}

@@ -15,6 +15,7 @@ import { Eyebrow } from '../design/primitives'
 import { panel } from '../design/surfaces'
 import { RADIUS, glass } from '../design/tokens'
 import type { Errors, FormState } from '../form'
+import { useMood } from '../depth'
 import { makeRoom, useScrollFx } from '../motion'
 import AIStep from './AIStep'
 import AboutStep from './AboutStep'
@@ -67,6 +68,7 @@ export default function ProfileWorkspace({ ref, ...props }: Props) {
   const fx = useScrollFx()
   const { scrollYProgress } = useScroll({ target: arrival, offset: ['start end', 'start 45%'] })
   const y = useTransform(scrollYProgress, [0, 1], [fx ? 28 : 0, 0])
+  useMood(arrival, 'focus')
 
   return (
     <m.div ref={arrival} style={{ y }}>

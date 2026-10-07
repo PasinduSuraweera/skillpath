@@ -4,12 +4,14 @@ import Button from '@mui/material/Button'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import { m } from 'motion/react'
+import { useRef } from 'react'
 import type { Recommendation } from '../api/types'
 import { Eyebrow, RingGauge } from '../design/primitives'
 import { panel } from '../design/surfaces'
 import { RADIUS } from '../design/tokens'
 import { pct } from '../format'
 import { RevealContext, TRANSITION } from '../motion'
+import { useMood } from '../depth'
 import { Glow } from './AmbientBackground'
 
 /**
@@ -18,8 +20,11 @@ import { Glow } from './AmbientBackground'
  */
 export default function RefineHeader({ result, onBack, disabled }: { result: Recommendation; onBack: () => void; disabled: boolean }) {
   const top = result.roles[0]
+  const ref = useRef<HTMLElement>(null)
+  useMood(ref, 'dawn')
   return (
     <Box
+      ref={ref}
       component={m.section}
       aria-labelledby="refine-title"
       className="no-print"
@@ -29,7 +34,7 @@ export default function RefineHeader({ result, onBack, disabled }: { result: Rec
       transition={TRANSITION.enter}
       sx={{ position: 'relative', isolation: 'isolate', pt: { xs: 1, md: 3 } }}
     >
-      <Glow color="#8b5cf6" size={520} depth={0.8} sx={{ top: -200, left: -200 }} />
+      <Glow color="#8b5cf6" size={520} sx={{ top: -200, left: -200 }} />
       <Stack direction={{ xs: 'column', md: 'row' }} sx={{ justifyContent: 'space-between', alignItems: { md: 'flex-end' }, gap: 2.5 }}>
         <Box component={m.div} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={TRANSITION.enter} sx={{ minWidth: 0, maxWidth: 680 }}>
           <Eyebrow tone="violet">What if…?</Eyebrow>

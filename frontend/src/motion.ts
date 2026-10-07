@@ -229,8 +229,13 @@ const rise = { ...TRANSITION.enter, duration: 0.5 }
  *   glassLift        glass tiles: rise and settle a touch larger, then reveal their own children
  *   staggerContainer a group that only orders its children (no fade of its own, so glass inside keeps its blur)
  *   item             rows inside a revealed tile (timeline stages, list rows)
+ *   fromLeft, depth, fromRight
+ *                    cards of a row arriving from different depths: the outer ones slide in from
+ *                    their own side, the middle one rises from further back, so the row assembles
+ *                    in space rather than fading up as one
  * With reduced motion Motion keeps the fades and drops the movement (MotionProvider).
  */
+const assemble = { ...rise, duration: 0.62, staggerChildren: STAGGER_CHILDREN, delayChildren: 0.12 }
 export const VARIANTS = {
   fadeUp: { hidden: { opacity: 0, y: 16 }, shown: { opacity: 1, y: 0, transition: rise } },
   fadeIn: { hidden: { opacity: 0 }, shown: { opacity: 1, transition: rise } },
@@ -239,6 +244,9 @@ export const VARIANTS = {
     hidden: { opacity: 0, y: 28, scale: 0.985 },
     shown: { opacity: 1, y: 0, scale: 1, transition: { ...rise, staggerChildren: STAGGER_CHILDREN, delayChildren: 0.1 } },
   },
+  fromLeft: { hidden: { opacity: 0, x: -40, y: 14, scale: 0.97 }, shown: { opacity: 1, x: 0, y: 0, scale: 1, transition: assemble } },
+  depth: { hidden: { opacity: 0, y: 44, scale: 0.94 }, shown: { opacity: 1, y: 0, scale: 1, transition: assemble } },
+  fromRight: { hidden: { opacity: 0, x: 40, y: 14, scale: 0.97 }, shown: { opacity: 1, x: 0, y: 0, scale: 1, transition: assemble } },
   staggerContainer: { hidden: {}, shown: { transition: { staggerChildren: STAGGER_CHILDREN * 2 } } },
   item: { hidden: { opacity: 0, y: 10 }, shown: { opacity: 1, y: 0, transition: TRANSITION.large } },
 }
@@ -254,6 +262,13 @@ export const onView = (reveal: boolean, variant: Variant = 'staggerContainer') =
 
 /** A member of an onView group: follows the group's reveal in order. Print shows it in full. */
 export const revealChild = (variant: Variant) => ({ 'data-reveal': '', variants: VARIANTS[variant] })
+
+/**
+ * The variant for the card at `i` of a row of `n`: in from the left, up from depth, in from the
+ * right. Only while the cards really sit side by side (`row`); stacked on a phone, each rises.
+ */
+export const rowVariant = (i: number, n: number, row = true): Variant =>
+  !row || n < 2 ? 'depth' : i === 0 ? 'fromLeft' : i === n - 1 ? 'fromRight' : 'depth'
 
 /**
  * Something that opens in the page: the what-if comparison, an alert. Nothing animates its

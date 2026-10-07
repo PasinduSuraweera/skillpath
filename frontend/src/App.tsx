@@ -15,7 +15,7 @@ import Typography from '@mui/material/Typography'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { useColorScheme, useTheme } from '@mui/material/styles'
 import { AnimatePresence, m, useReducedMotion } from 'motion/react'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { ValidationError, getOptions, predict } from './api/client'
 import type { Options, SkillSuggestion } from './api/types'
@@ -25,8 +25,8 @@ import type { View } from './components/NavBar'
 import PopTransition from './components/PopTransition'
 import ProfileWorkspace from './components/ProfileWorkspace'
 import RefineHeader from './components/RefineHeader'
+import StoryDeck from './components/StoryDeck'
 import type { Direction } from './components/StepPane'
-import Dashboard from './components/dashboard/Dashboard'
 import { IconTile } from './design/primitives'
 import { panel } from './design/surfaces'
 import { RADIUS, glass, glassEdge, mergeStyles, shadow } from './design/tokens'
@@ -42,6 +42,11 @@ import type { Sample } from './samples'
 import { whatIfHighlights } from './whatif'
 
 const RESULTS = 3
+
+// The results are their own chunk: the start page does not wait for them, and they are fetched
+// in the background as soon as the app is up (below), long before anyone can ask for results.
+const loadDashboard = () => import('./components/dashboard/Dashboard')
+const Dashboard = lazy(loadDashboard)
 
 /** Where keyboard focus goes after a move: a heading of what is now shown, or the first invalid answer. */
 type FocusTarget = 'hero-title' | 'step-title' | 'results-title' | 'whatif-title' | 'invalid'
@@ -74,6 +79,7 @@ export default function App() {
   const { mode, setMode } = useColorScheme()
   const busyRef = useRef(false) // guards double submits without visibly disabling anything for a ~15 ms request
   const workspaceRef = useRef<HTMLDivElement>(null)
+  const storyRef = useRef<HTMLElement>(null)
   // toast: top-right on wide screens; on phones at the bottom, just above the sticky action bar
   const wide = useMediaQuery(useTheme().breakpoints.up('sm'))
 
@@ -86,6 +92,8 @@ export default function App() {
 
   // smooth wheel and trackpad scrolling for the whole session (scroll.ts)
   useEffect(() => startSmoothScroll(), [])
+  // the results' code, ready before the first prediction comes back
+  useEffect(() => void loadDashboard(), [])
 
   // the start page's entrance plays once per visit, not again when coming back from the results
   const [intro, setIntro] = useState(true)
@@ -237,7 +245,7 @@ export default function App() {
     setHistory([])
     nextRun.current = 1
     goTo(0, { onlyIfHidden: true, focus: false }) // the example just pressed keeps focus
-    say(`Loaded “${s.name}”. Review the answers or press Get recommendations.`)
+    say(`Loaded “${s.name}”. Get recommendations now, or review the answers below.`)
   }
 
   /** Empty the form (and the results). Nothing is lost for good: the toast offers to undo it. */
@@ -366,8 +374,22 @@ export default function App() {
               (current ? (
                 <RefineHeader result={current.result} onBack={() => goTo(RESULTS)} disabled={showBusy} />
               ) : (
-                <Hero options={options} intro={intro} onPick={pickSample} onStart={startProfile} disabled={showBusy} activeId={activeSample} />
+                <Hero
+                  options={options}
+                  intro={intro}
+                  onPick={pickSample}
+                  onRun={() => void run(form)}
+                  onStart={startProfile}
+                  onTour={() => storyRef.current && scrollToElement(storyRef.current, true)}
+                  disabled={showBusy}
+                  activeId={activeSample}
+                />
               ))}
+
+            {/* how it works, between the opening and the questionnaire (first visit to the start page) */}
+            {step < RESULTS && !current && (
+              <StoryDeck ref={storyRef} roles={options.job_roles.length} families={new Set(options.job_roles.map((r) => r.family)).size} />
+            )}
 
             {/* alerts open like the what-if comparison (OPENING): what is below slides down to make room */}
             <AnimatePresence mode="popLayout" initial={false}>
@@ -417,6 +439,7 @@ export default function App() {
                 // no dimming: fading a wrapper would switch off the blur of the glass inside it
                 sx={{ pointerEvents: showBusy ? 'none' : undefined }}
               >
+                <Suspense fallback={null}>
                 <Dashboard
                   result={current.result}
                   answers={current.form}
@@ -435,6 +458,7 @@ export default function App() {
                   }}
                   onRestore={(e) => void run(e.form, { from: e.id })}
                 />
+                </Suspense>
               </Box>
             )}
           </Stack>

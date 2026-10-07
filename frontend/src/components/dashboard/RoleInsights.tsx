@@ -33,6 +33,8 @@ interface Props {
   onTrySkill: (s: SkillSuggestion) => void
   /** print copies of the insights for the roles not on screen: no actions */
   printCopy?: boolean
+  /** the skills tile in print only: on screen the skills are the path below (SkillJourney) */
+  skillsInPrintOnly?: boolean
   /** each tile's entrance, by position (see SurfaceMotion) */
   motion?: (i: number) => SurfaceMotion
 }
@@ -170,7 +172,7 @@ function Readiness({ role }: { role: RoleRecommendation }) {
  * paid, and the skill map (the role's distinctive technologies the visitor uses, and the ones
  * to learn next, each one tap from a what-if).
  */
-export default function RoleInsights({ role, busy, pendingTech, payScale, onTrySkill, printCopy, motion }: Props) {
+export default function RoleInsights({ role, busy, pendingTech, payScale, onTrySkill, printCopy, skillsInPrintOnly, motion }: Props) {
   const ai = role.ai_outlook
   const s = role.salary
   const gap = role.skill_gap
@@ -250,7 +252,7 @@ export default function RoleInsights({ role, busy, pendingTech, payScale, onTryS
         </Tile>
       </Grid>
 
-      <Grid size={12}>
+      <Grid size={12} className={skillsInPrintOnly ? 'print-only' : undefined}>
         <Tile icon={<TrendingUp />} tone="indigo" title="Skills to grow" help={SKILL_HELP} headingLevel={heading} className="avoid-break" motion={motion?.(2)}>
           <Swap k={k}>
           <Box sx={{ display: 'grid', gap: { xs: 3, md: 4 }, gridTemplateColumns: { xs: '1fr', md: 'minmax(240px, 0.8fr) minmax(0, 1.6fr)' } }}>
@@ -334,7 +336,7 @@ export default function RoleInsights({ role, busy, pendingTech, payScale, onTryS
                         </Stack>
                         <Meter value={sk.share_pct / 100} tone="indigo" height={5} />
                       </Box>
-                      {!printCopy && (
+                      {!printCopy && !skillsInPrintOnly && (
                         <Tooltip describeChild title={`Re-run with ${sk.technology} added and compare`}>
                           <Box component="span" className="no-print" sx={{ flexShrink: 0 }}>
                             <Button

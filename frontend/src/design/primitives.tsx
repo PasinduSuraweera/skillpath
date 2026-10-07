@@ -8,10 +8,10 @@ import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 import { alpha } from '@mui/material/styles'
 import type { SxProps, Theme } from '@mui/material/styles'
-import { m } from 'motion/react'
+import { m, useScroll, useTransform } from 'motion/react'
 import { useId, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
-import { TRANSITION, useCountUp, usePrinting, useReveal, useSeen } from '../motion'
+import { TRANSITION, useCountUp, usePrinting, useReveal, useScrollFx, useSeen } from '../motion'
 import { panel } from './surfaces'
 import { AURORA, BRAND_GRADIENT, BRAND_GRADIENT_DARK, FORCED_COLORS, TONES, gradientText, ink, tint, toneColor, white } from './tokens'
 import type { Tone } from './tokens'
@@ -172,6 +172,40 @@ export function HelpTip({ title, label }: { title: string; label: string }) {
  * fade ends, then snap. Wrappers of glass may only move (transform).
  */
 export type SurfaceMotion = Record<string, unknown>
+
+/**
+ * Light catching a large glass surface as it moves: a soft diagonal band of reflection that
+ * slides across the glass while it crosses the window, so the material reads as a real pane
+ * turning past a light rather than a flat tint. Put it first inside the glass (it sits under
+ * the content: the glass's blur makes it a stacking context). A transform on one layer
+ * (compositor only); wide screens only (useScrollFx), never printed.
+ */
+export function GlassSheen() {
+  const ref = useRef<HTMLDivElement>(null)
+  const fx = useScrollFx()
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
+  const x = useTransform(scrollYProgress, [0, 1], ['-55%', '55%'])
+  if (!fx) return <div ref={ref} hidden />
+  return (
+    <Box
+      ref={ref}
+      aria-hidden="true"
+      className="no-print"
+      sx={{ position: 'absolute', inset: 0, borderRadius: 'inherit', overflow: 'hidden', pointerEvents: 'none', zIndex: -1, [FORCED_COLORS]: { display: 'none' } }}
+    >
+      <Box
+        component={m.div}
+        style={{ x }}
+        sx={(t) => ({
+          position: 'absolute',
+          inset: '-20% -40%',
+          backgroundImage: `linear-gradient(105deg, transparent 38%, ${white(0.3)} 48%, ${white(0.08)} 54%, transparent 62%)`,
+          ...t.applyStyles('dark', { backgroundImage: `linear-gradient(105deg, transparent 38%, ${white(0.055)} 48%, ${white(0.015)} 54%, transparent 62%)` }),
+        })}
+      />
+    </Box>
+  )
+}
 
 /**
  * A titled glass tile: icon, heading (level 3 by default) and an optional explanation and

@@ -12,6 +12,7 @@ const SECTIONS = [
   { id: 'overview', label: 'Best match' },
   { id: 'compare', label: 'Compare' },
   { id: 'role-insights', label: 'In detail' },
+  { id: 'path', label: 'Your path' },
   { id: 'landscape', label: 'Landscape' },
   { id: 'behind', label: 'Behind the result' },
   { id: 'explorations', label: 'Explorations' },

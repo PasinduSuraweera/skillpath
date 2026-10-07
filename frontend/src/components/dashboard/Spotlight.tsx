@@ -12,7 +12,7 @@ import { alpha } from '@mui/material/styles'
 import { m } from 'motion/react'
 import type { ReactNode } from 'react'
 import type { RoleRecommendation, SkillSuggestion } from '../../api/types'
-import { DotScale, Eyebrow, Pill, RingGauge } from '../../design/primitives'
+import { DotScale, Eyebrow, GlassSheen, Pill, RingGauge } from '../../design/primitives'
 import { spotlight } from '../../design/surfaces'
 import type { SurfaceMotion } from '../../design/primitives'
 import { AURORA, FORCED_COLORS, RADIUS, gradientText, gradientRing, toneColor, white } from '../../design/tokens'
@@ -74,6 +74,8 @@ export default function Spotlight({ role, busy, pendingTech, onTrySkill, motion 
         alignItems: 'center',
       })}
     >
+      {/* light passing over the glass as it scrolls */}
+      <GlassSheen />
       {/* the match figure, on a ring that fills as it counts up */}
       <Box sx={{ justifySelf: { xs: 'center', sm: 'start' } }}>
         <MatchRing probability={role.probability} />
