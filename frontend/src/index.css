@@ -1,6 +1,6 @@
 /* Global styles. Motion tokens (--ease-out, --dur-*, --stagger) come from
    src/motion.ts through the theme (MuiCssBaseline), so they match MUI's own
-   transitions. Only transform and opacity are animated here. */
+   transitions. Only transform and opacity are animated here (and a 2px blur on the icon swap). */
 
 /* --- mobile baseline ------------------------------------------------------ */
 html {
@@ -167,6 +167,12 @@ h2[tabindex='-1']:focus {
   animation: none;
   mix-blend-mode: normal;
 }
+/* while the theme switches, elements take their new colours at once (motion.ts) */
+:root.sp-instant *,
+:root.sp-instant *::before,
+:root.sp-instant *::after {
+  transition: none !important;
+}
 
 /* --- reduced motion: keep the fades that explain a change, drop movement -- */
 @media (prefers-reduced-motion: reduce) {
@@ -191,10 +197,12 @@ h2[tabindex='-1']:focus {
   .MuiTooltip-tooltip {
     transform: none !important;
   }
-  /* expanding panels and changing bars jump to their end state */
+  /* expanding panels, changing bars and floating field labels jump to their end state */
   .MuiCollapse-root,
+  .MuiInputLabel-root,
   .MuiLinearProgress-bar,
-  .sp-meter {
+  .sp-meter,
+  .sp-grow-x {
     transition-duration: 1ms !important;
   }
   /* the 3% press scale stays: it is feedback under the finger, not movement */

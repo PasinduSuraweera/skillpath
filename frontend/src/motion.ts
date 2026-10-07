@@ -6,13 +6,14 @@
 //   1. essential: state changes, navigation, feedback, loading (CSS transitions, < 300 ms)
 //   2. helpful:   selection, data that changes, progressive disclosure (CSS / WAAPI, < 300 ms)
 //   3. explanatory, once per result: the match count-up and the results reveal (longer, see DURATION.reveal)
-// Nothing loops, and nothing animates on a keyboard shortcut or while typing.
+// Each explanatory animation plays once per new result. Nothing loops except the loading ring
+// while a request is actually slow, and nothing animates on a keyboard shortcut or while typing.
 //
 // Tools: CSS keyframes for fixed entrances (index.css), CSS transitions for
 // anything that can be re-triggered, and the Web Animations API for the two
 // dynamic cases (layout moves and change highlights). No spring library: there
 // are no gestures to carry velocity through, so curves are enough.
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { createContext, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 export const EASE = {
   /** entering / exiting / feedback: starts fast, so the UI feels instant */
@@ -68,6 +69,14 @@ export const motionCssVars = {
 export const prefersReducedMotion = () =>
   typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 
+/**
+ * Whether the results on screen are being revealed (a new result) or returned to (Undo,
+ * the stepper). The reveal and the count-ups explain a new result, so a return shows
+ * everything as it was left instead of playing them again.
+ */
+export const RevealContext = createContext(true)
+export const useReveal = () => useContext(RevealContext)
+
 /** True once `on` has stayed true for `delay` ms; false again as soon as it turns off. */
 export function useDelayedFlag(on: boolean, delay = BUSY_DELAY): boolean {
   const [shown, setShown] = useState(false)
@@ -93,10 +102,20 @@ type ViewTransition = { ready: Promise<void>; finished: Promise<void> }
 export function withViewTransition(update: () => void, from?: { x: number; y: number }) {
   const doc = document as Document & { startViewTransition?: (cb: () => void) => ViewTransition }
   if (!doc.startViewTransition) return update()
-  const reveal = !!from && !prefersReducedMotion()
   const root = document.documentElement
+  // the page's own colour transitions wait while the new state is drawn: the switch is the
+  // transition, and inside it text would otherwise still be fading from its old colour
+  root.classList.add('sp-instant')
+  const release = () => root.classList.remove('sp-instant')
+  if (!doc.startViewTransition) {
+    update()
+    requestAnimationFrame(() => requestAnimationFrame(release))
+    return
+  }
+  const reveal = !!from && !prefersReducedMotion()
   if (reveal) root.classList.add('sp-theme-reveal') // turns off the default crossfade
   const transition = doc.startViewTransition(update)
+  transition.finished.finally(release).catch(() => {})
   if (!reveal || !from) return
   transition.ready
     .then(() => {
@@ -170,14 +189,16 @@ export const tween = (from: number, to: number, progress: number, ease: (t: numb
  * revealed), then from wherever it is to each new target (a what-if moving it).
  * With `from`, the first count starts there instead and moves like an update
  * (a what-if "after" figure leaving its "before" value). Returns the value to
- * draw and whether it is still moving. With reduced motion it is always the target.
+ * draw and whether it is still moving. With reduced motion it is always the target,
+ * and results being returned to (RevealContext) start at it.
  */
 export function useCountUp(target: number, from?: number): { value: number; moving: boolean } {
   const reduce = prefersReducedMotion()
-  const [value, setValue] = useState(() => (reduce ? target : (from ?? 0)))
+  const reveal = useReveal()
+  const [value, setValue] = useState(() => (reduce || !reveal ? target : (from ?? 0)))
   const shown = useRef(value)
   // false until the first count has finished: an interrupted first count is still the reveal
-  const settled = useRef(from !== undefined)
+  const settled = useRef(from !== undefined || !reveal)
 
   useEffect(() => {
     const from = shown.current

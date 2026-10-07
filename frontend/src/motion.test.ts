@@ -1,5 +1,7 @@
+import { createElement } from 'react'
+import { renderToString } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
-import { DURATION, cubicBezier, easeInOut, easeOut, motionCssVars, tween } from './motion'
+import { DURATION, RevealContext, cubicBezier, easeInOut, easeOut, motionCssVars, tween, useCountUp } from './motion'
 
 describe('cubicBezier', () => {
   it('starts at 0 and ends at 1', () => {
@@ -59,5 +61,23 @@ describe('motion tokens', () => {
   it('exposes every duration used by the stylesheet as a CSS variable', () => {
     expect(motionCssVars['--dur-enter']).toBe(`${DURATION.enter}ms`)
     expect(motionCssVars['--stagger-reveal']).toMatch(/^\d+ms$/)
+  })
+})
+
+describe('useCountUp', () => {
+  /** the figure drawn on the first frame */
+  const firstFrame = (reveal: boolean, from?: number) => {
+    const Probe = () => String(useCountUp(0.42, from).value)
+    return renderToString(createElement(RevealContext.Provider, { value: reveal }, createElement(Probe)))
+  }
+
+  it('counts a new result up from 0, or from its previous figure', () => {
+    expect(firstFrame(true)).toBe('0')
+    expect(firstFrame(true, 0.3)).toBe('0.3')
+  })
+
+  it('shows results that are returned to at their final figures', () => {
+    expect(firstFrame(false)).toBe('0.42')
+    expect(firstFrame(false, 0.3)).toBe('0.42')
   })
 })
