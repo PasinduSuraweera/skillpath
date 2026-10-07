@@ -1,10 +1,167 @@
-/* Print / save as PDF: only the results are printed, without buttons. */
+/* Global styles. Motion tokens (--ease-out, --dur-*, --stagger) come from
+   src/motion.ts through the theme (MuiCssBaseline), so they match MUI's own
+   transitions. Only transform and opacity are animated here. */
+
+/* --- mobile baseline ------------------------------------------------------ */
+html {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+}
+button,
+[role='button'],
+.MuiChip-clickable {
+  touch-action: manipulation; /* no double-tap zoom delay */
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* headings that receive focus after a step change or a result (tabindex -1): focus is moved
+   there so Tab continues from the new content; they are not controls, so no ring */
+h1[tabindex='-1']:focus,
+h2[tabindex='-1']:focus {
+  outline: none;
+}
+
+/* read by screen readers, not drawn (e.g. the final value of a number that is counting up).
+   Pinned to the corner of its positioned ancestor: left where it falls in the line, the end of
+   a long line would place it past a card's edge and make the card scrollable sideways. */
+.sp-sr-only {
+  position: absolute !important;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --- entrances ----------------------------------------------------------- */
+/* Small pieces that appear (an alert, a check mark, a status line) arrive with a
+   short rise or fade instead of teleporting; wizard steps and the results reveal
+   are Motion (StepPane, revealMotion). Mount-only: nothing here
+   re-runs when data inside the element changes. Fill mode "backwards" holds
+   the start frame during a stagger delay and leaves no transform behind. */
+@keyframes sp-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+@keyframes sp-fade {
+  from {
+    opacity: 0;
+  }
+}
+/* a mark that confirms a selection (checkmark): settles from slightly small; never from scale(0) */
+@keyframes sp-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+
+.sp-rise {
+  animation: sp-rise var(--dur-large) var(--ease-out) backwards;
+  /* --i: position in a group entrance */
+  animation-delay: calc(var(--i, 0) * var(--stagger));
+}
+
+/* loading ring: only mounted while a request is actually slow */
+@keyframes sp-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+.sp-spin {
+  animation: sp-spin 900ms linear infinite;
+}
+.sp-pop {
+  display: inline-flex;
+  animation: sp-pop var(--dur-small) var(--ease-out) backwards;
+}
+.sp-fade {
+  animation: sp-fade var(--dur-medium) var(--ease-out) backwards;
+}
+
+/* theme switch: a short crossfade of the whole page (View Transitions API) ... */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--dur-large);
+  animation-timing-function: ease;
+}
+/* ... or, from the header button, the new theme revealed in a growing circle (motion.ts) */
+:root.sp-theme-reveal::view-transition-old(root),
+:root.sp-theme-reveal::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+/* while the theme switches, elements take their new colours at once (motion.ts) */
+:root.sp-instant *,
+:root.sp-instant *::before,
+:root.sp-instant *::after {
+  transition: none !important;
+}
+
+/* --- reduced motion: keep the fades that explain a change, drop movement -- */
+@media (prefers-reduced-motion: reduce) {
+  .sp-rise,
+  .sp-pop {
+    animation-name: sp-fade;
+    animation-delay: 0ms;
+  }
+  /* a loading ring is feedback, not decoration: it keeps turning, more slowly */
+  .sp-spin {
+    animation-duration: 2s;
+  }
+  /* Motion does the same for its animations (MotionProvider): no rise, slide or reorder, the
+     fades stay. Count-ups are skipped (useCountUp), menus, tooltips and toasts only fade
+     (PopTransition), and change highlights stay (colour only). */
+  /* expanding panels, changing bars and floating field labels jump to their end state */
+  .MuiCollapse-root,
+  .MuiInputLabel-root,
+  .MuiLinearProgress-bar,
+  .sp-meter {
+    transition-duration: 1ms !important;
+  }
+  /* the 3% press scale stays: it is feedback under the finger, not movement */
+}
+
+/* --- contrast themes (forced colours): the system replaces colours and drops gradients, which
+   would leave bars empty; they are drawn in the text colour on an outlined track ------------ */
+@media (forced-colors: active) {
+  .MuiLinearProgress-bar,
+  .sp-bar {
+    forced-color-adjust: none;
+    background: CanvasText !important;
+  }
+  .MuiLinearProgress-root,
+  .sp-track {
+    outline: 1px solid CanvasText;
+  }
+}
+
+/* --- print / save as PDF: only the results, without buttons ------------- */
 @media print {
   .no-print {
     display: none !important;
   }
   .avoid-break {
     break-inside: avoid;
+  }
+  /* role details folded away on a phone are printed anyway */
+  .sp-details {
+    height: auto !important;
+    visibility: visible !important;
+  }
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
   }
   @page {
     margin: 12mm;

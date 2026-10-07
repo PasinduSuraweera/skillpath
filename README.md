@@ -310,12 +310,21 @@ What the app does:
   in dark mode). **Dark mode** follows the system setting; the header button switches it.
 * **Try an example:** four sample profiles for the demo (Sri Lankan CS undergrad, Data/ML-leaning
   graduate, Mobile developer, Career switcher), defined in `frontend/src/samples.ts`.
+* **Motion and feedback:** one set of easing curves and durations (`frontend/src/motion.ts`)
+  drives both MUI's own transitions and the app's CSS animations, all under 300 ms and only on
+  `transform`/`opacity`. Wizard steps slide in the direction of travel, the role cards stagger
+  in, and the what-if panel expands instead of pushing the cards. Busy indicators wait 200 ms,
+  so a normal ~15 ms prediction never flickers. With "reduce motion" turned on, movement
+  becomes a plain fade.
 
 ```
 frontend/src/api/        types mirroring app/schemas.py, fetch client (422 -> field errors)
 frontend/src/form.ts     form state <-> API profile, client validation, what-if differences
 frontend/src/questions.ts  question wording from the 2025 questionnaire
 frontend/src/components/   wizard steps, role card, what-if panel, results page
+frontend/src/theme.ts      colours, type, surfaces and component styles (light and dark)
+frontend/src/motion.ts     easing and duration tokens, delayed busy flag, view transition
+frontend/src/index.css     entrance keyframes, reduced motion, print rules
 ```
 
 ## Testing (Stage 11)

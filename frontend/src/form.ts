@@ -130,6 +130,22 @@ export function stepOf(key: string): number {
   return 0
 }
 
+/** How many questions of each wizard step are answered (a technology area counts once, "none" included). */
+export function stepProgress(form: FormState): { answered: number; total: number }[] {
+  const filled = (v: string | null) => !!v && v.trim() !== ''
+  const about = [form.country, form.years_code, form.work_exp, form.ed_level].filter(filled).length
+  const tech = TECH_BLOCKS.filter((b) => {
+    const t = form.tech[b]
+    return t.none || t.have.length > 0 || t.want.length > 0
+  }).length
+  const ai = [...AI_FIELDS.map((f) => form.ai[f]), form.learn_code_ai].filter(filled).length
+  return [
+    { answered: about, total: 4 },
+    { answered: tech, total: TECH_BLOCKS.length },
+    { answered: ai, total: AI_FIELDS.length + 1 },
+  ]
+}
+
 const FIELD_LABELS: Record<string, string> = {
   country: 'Country',
   years_code: 'Years coding',

@@ -10,6 +10,7 @@ import {
   fromProfile,
   serverErrors,
   stepOf,
+  stepProgress,
   toProfile,
   validate,
   withTechnology,
@@ -211,5 +212,34 @@ describe('describeChanges / withTechnology', () => {
 
   it('does not add a technology twice', () => {
     expect(withTechnology(base, 'Language', 'Java').tech.Language.have.filter((t) => t === 'Java')).toHaveLength(1)
+  })
+})
+
+describe('stepProgress', () => {
+  it('counts nothing for an empty form', () => {
+    expect(stepProgress(emptyForm())).toEqual([
+      { answered: 0, total: 4 },
+      { answered: 0, total: 7 },
+      { answered: 0, total: 5 },
+    ])
+  })
+
+  it('counts a technology area once, including "I don\u2019t use any"', () => {
+    const form = emptyForm()
+    form.tech.Language = { have: ['Python', 'Go'], want: ['Rust'], none: false }
+    form.tech.Database = { have: [], want: [], none: true }
+    form.years_code = '  '
+    form.country = 'Sri Lanka'
+    form.learn_code_ai = 'Yes'
+    const [about, tech, ai] = stepProgress(form)
+    expect(about.answered).toBe(1) // blank text does not count
+    expect(tech.answered).toBe(2)
+    expect(ai.answered).toBe(1)
+  })
+
+  it('never counts more than the total for the example profiles', () => {
+    for (const s of SAMPLES) {
+      for (const p of stepProgress(fromProfile(s.profile))) expect(p.answered).toBeLessThanOrEqual(p.total)
+    }
   })
 })

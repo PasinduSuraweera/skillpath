@@ -10,9 +10,10 @@ afterEach(() => vi.unstubAllGlobals())
 
 describe('API client', () => {
   it('posts the profile as JSON and returns the body', async () => {
-    const fetch = reply(200, { roles: [] })
+    const body = { roles: [{ rank: 1 }], ranking: [], families: [], model: {} }
+    const fetch = reply(200, body)
     vi.stubGlobal('fetch', fetch)
-    await expect(predict({ years_code: 3 })).resolves.toEqual({ roles: [] })
+    await expect(predict({ years_code: 3 })).resolves.toEqual(body)
     const [path, init] = fetch.mock.calls[0]
     expect(path).toBe('/api/predict')
     expect(init.method).toBe('POST')
@@ -36,6 +37,20 @@ describe('API client', () => {
   it('explains how to start the API when the network request fails', async () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Failed to fetch')))
     await expect(getOptions()).rejects.toThrow(/Cannot reach the SkillPath API/)
+  })
+
+  it('rejects a 200 that is not the API\'s JSON (e.g. an HTML page from a proxy)', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('<!doctype html><title>proxy</title>', { status: 200 })))
+    await expect(predict({})).rejects.toThrow(/sent a response this page cannot read/)
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('<html></html>', { status: 200 })))
+    await expect(getOptions()).rejects.toThrow(/sent a response this page cannot read/)
+  })
+
+  it('rejects JSON without the parts the page relies on', async () => {
+    vi.stubGlobal('fetch', reply(200, { ok: true }))
+    await expect(predict({})).rejects.toThrow(/sent a response this page cannot read/)
+    vi.stubGlobal('fetch', reply(200, { roles: [], ranking: [], families: [], model: {} }))
+    await expect(predict({})).rejects.toThrow(/sent a response this page cannot read/)
   })
 
   it('reports other HTTP errors with their status', async () => {
