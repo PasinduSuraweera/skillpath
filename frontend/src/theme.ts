@@ -12,6 +12,12 @@ import { DURATION, EASE, motionCssVars } from './motion'
 // best match and the analysis state. Neutral controls (outlined and text
 // buttons) stay grey so the one primary action on a screen stands out.
 //
+// Glass: the page sits on a static ambient background (AmbientBackground) and
+// the layers above it are translucent. Real backdrop blur is kept for the layers
+// that content scrolls or sits under (header and sticky bars, menus, tooltips,
+// toasts, overlays), where it is visible. Cards are translucent without blur: over
+// a soft gradient a blurred card looks the same and costs a GPU pass every frame.
+//
 // Motion: MUI's transition tokens are set from motion.ts, so its own menus,
 // tooltips, collapses and colour changes use the same curves and durations as
 // the app's animations. MUI uses "easeInOut" as the default for nearly all of
@@ -33,8 +39,51 @@ export const BRAND_GRADIENT_DARK = `linear-gradient(135deg, #8da4ff 0%, ${BRAND_
  */
 export const tintInk = (t: Theme) => ({ color: t.palette.primary.dark, ...t.applyStyles('dark', { color: t.palette.primary.main }) })
 
-/** Radius scale: controls, inset panels, cards. */
-export const RADIUS = { control: 10, inset: 12, card: 16 }
+/** Radius scale: controls, inset panels, cards, large panels. */
+export const RADIUS = { control: 10, inset: 12, card: 16, panel: 20 }
+
+/** Brand hues behind the glass (AmbientBackground): the accent indigo, the violet, and a cool blue. */
+export const AMBIENT = { indigo: '#3e63dd', violet: BRAND_VIOLET.light, blue: '#0ea5e9' }
+
+/** Card fills (light, dark): translucent so the ambient background shows through, never blurred. */
+export const SURFACE = { card: [white(0.72), white(0.04)], raised: [white(0.84), white(0.06)] } as const
+
+/** Floating layers in dark mode sit a step above the paper colour. */
+const FLOATING_DARK = '#151b25'
+
+type GlassLayer = 'chrome' | 'floating' | 'overlay'
+/** Backdrop blur in px (wide screens, phones; on a phone it costs more and shows less) and fill opacity (light, dark). */
+const GLASS: Record<GlassLayer, { blur: [number, number]; fill: [number, number]; saturate: boolean }> = {
+  /** header and sticky bars: content scrolls under them */
+  chrome: { blur: [16, 10], fill: [0.72, 0.66], saturate: true },
+  /** menus, tooltips, toasts: above the page, and must read clearly over anything */
+  floating: { blur: [20, 10], fill: [0.84, 0.82], saturate: true },
+  /** covers content that is waiting (the analysis state over the form) */
+  overlay: { blur: [8, 6], fill: [0.8, 0.8], saturate: false },
+}
+
+/**
+ * A blurred glass layer. Solid when the browser cannot blur, when the visitor asks for less
+ * transparency, and in print.
+ */
+export function glass(t: Theme, layer: GlassLayer) {
+  const { blur, fill, saturate } = GLASS[layer]
+  const base = (dark: boolean) =>
+    layer === 'chrome' ? t.palette.background.default : dark && layer === 'floating' ? FLOATING_DARK : t.palette.background.paper
+  const filter = (px: number) => `${saturate ? 'saturate(160%) ' : ''}blur(${px}px)`
+  const solid = { backgroundColor: base(false), ...t.applyStyles('dark', { backgroundColor: base(true) }) }
+  const flat = { backdropFilter: 'none', WebkitBackdropFilter: 'none', ...solid }
+  return {
+    backgroundColor: alpha(base(false), fill[0]),
+    ...t.applyStyles('dark', { backgroundColor: alpha(base(true), fill[1]) }),
+    backdropFilter: filter(blur[0]),
+    WebkitBackdropFilter: filter(blur[0]),
+    [t.breakpoints.down('sm')]: { backdropFilter: filter(blur[1]), WebkitBackdropFilter: filter(blur[1]) },
+    '@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)))': solid,
+    '@media (prefers-reduced-transparency: reduce)': flat,
+    '@media print': flat,
+  }
+}
 
 /** Elevation scale (light mode; dark mode uses borders and a top highlight instead). */
 export const ELEVATION = {
@@ -147,17 +196,9 @@ export const theme = createTheme({
     MuiCssBaseline: {
       styleOverrides: (theme) => ({
         ':root': motionCssVars,
-        body: {
-          WebkitFontSmoothing: 'antialiased',
-          MozOsxFontSmoothing: 'grayscale',
-          // a faint wash of the accent at the top of the page; static, and drawn as an image so
-          // background-color stays the plain page colour (print and the dark-mode test read it)
-          backgroundImage: `radial-gradient(1100px 420px at 50% -160px, ${alpha(theme.palette.primary.main, 0.09)}, transparent 70%)`,
-          backgroundRepeat: 'no-repeat',
-          ...theme.applyStyles('dark', {
-            backgroundImage: `radial-gradient(1100px 420px at 50% -160px, ${alpha(theme.palette.primary.main, 0.12)}, transparent 70%)`,
-          }),
-        },
+        // background-color stays the plain page colour (print and the dark-mode test read it);
+        // the colour above it is AmbientBackground
+        body: { WebkitFontSmoothing: 'antialiased', MozOsxFontSmoothing: 'grayscale' },
         '::selection': { backgroundColor: alpha(theme.palette.primary.main, 0.2) },
       }),
     },

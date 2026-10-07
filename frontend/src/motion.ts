@@ -9,10 +9,11 @@
 // Each explanatory animation plays once per new result. Nothing loops except the loading ring
 // while a request is actually slow, and nothing animates on a keyboard shortcut or while typing.
 //
-// Tools: CSS keyframes for fixed entrances (index.css), CSS transitions for
-// anything that can be re-triggered, and the Web Animations API for the two
-// dynamic cases (layout moves and change highlights). No spring library: there
-// are no gestures to carry velocity through, so curves are enough.
+// Tools: Motion (motion/react) for elements that animate as React adds and
+// removes them (AnimatePresence), with its timings taken from TRANSITION below;
+// CSS keyframes for fixed entrances (index.css); CSS transitions for anything
+// that can be re-triggered; and the Web Animations API for the two dynamic
+// cases (layout moves and change highlights).
 import { createContext, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 export const EASE = {
@@ -101,7 +102,6 @@ type ViewTransition = { ready: Promise<void>; finished: Promise<void> }
  */
 export function withViewTransition(update: () => void, from?: { x: number; y: number }) {
   const doc = document as Document & { startViewTransition?: (cb: () => void) => ViewTransition }
-  if (!doc.startViewTransition) return update()
   const root = document.documentElement
   // the page's own colour transitions wait while the new state is drawn: the switch is the
   // transition, and inside it text would otherwise still be fading from its old colour
@@ -172,9 +172,27 @@ export function cubicBezier(x1: number, y1: number, x2: number, y2: number): (t:
   }
 }
 
-const parseBezier = (css: string) => cubicBezier(...(css.match(/[\d.]+/g)!.map(Number) as [number, number, number, number]))
-export const easeOut = parseBezier(EASE.out)
-export const easeInOut = parseBezier(EASE.inOut)
+type Bezier = [number, number, number, number]
+const bezierPoints = (css: string) => css.match(/[\d.]+/g)!.map(Number) as Bezier
+export const easeOut = cubicBezier(...bezierPoints(EASE.out))
+export const easeInOut = cubicBezier(...bezierPoints(EASE.inOut))
+
+// ---------------------------------------------------------------------------
+// The same tokens for Motion (seconds, and curves as control points)
+// ---------------------------------------------------------------------------
+
+const motionTween = (ms: number, css: string = EASE.out) => ({ duration: ms / 1000, ease: bezierPoints(css) })
+
+/** Motion transitions on the DURATION scale: entering, leaving and feedback on EASE.out. */
+export const TRANSITION = {
+  press: motionTween(DURATION.press),
+  small: motionTween(DURATION.small),
+  medium: motionTween(DURATION.medium),
+  large: motionTween(DURATION.large),
+  enter: motionTween(DURATION.enter),
+  /** something already on screen moving or resizing */
+  move: motionTween(DURATION.large, EASE.inOut),
+}
 
 /** The value `progress` (0-1) of the way from `from` to `to` along `ease`. */
 export const tween = (from: number, to: number, progress: number, ease: (t: number) => number = easeOut) =>

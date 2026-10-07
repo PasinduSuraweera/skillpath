@@ -6,40 +6,42 @@ import IconButton from '@mui/material/IconButton'
 import Toolbar from '@mui/material/Toolbar'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
-import { alpha, useColorScheme } from '@mui/material/styles'
-import { useState } from 'react'
+import { useColorScheme } from '@mui/material/styles'
+import { AnimatePresence, m } from 'motion/react'
 import type { MouseEvent } from 'react'
 import { flushSync } from 'react-dom'
-import { withViewTransition } from '../motion'
+import { TRANSITION, withViewTransition } from '../motion'
+import { glass } from '../theme'
+
+/** The icon swap: the old icon turns away as the new one turns in, settling from slightly smaller and blurred. */
+const turn = (deg: number) => ({ opacity: 0, scale: 0.8, rotate: deg, filter: 'blur(2px)' })
 
 export default function Header() {
   const { mode, systemMode, setMode } = useColorScheme()
   const dark = (mode === 'system' ? systemMode : mode) === 'dark'
-  // the icon only animates after a click, not on page load
-  const [toggled, setToggled] = useState(false)
 
   const toggle = (e: MouseEvent<HTMLButtonElement>) => {
-    setToggled(true)
     // the new theme spreads out from the button instead of the page flashing from light to dark
     const r = e.currentTarget.getBoundingClientRect()
     withViewTransition(() => flushSync(() => setMode(dark ? 'light' : 'dark')), { x: r.left + r.width / 2, y: r.top + r.height / 2 })
   }
 
   return (
+    // the chrome glass layer: the page scrolls under it
     <AppBar
       position="sticky"
       color="inherit"
       elevation={0}
-      className="sp-material"
-      sx={(t) => ({
-        '--sp-solid': t.palette.background.default,
-        bgcolor: alpha(t.palette.background.default, 0.78),
-        backdropFilter: 'saturate(180%) blur(14px)',
-        WebkitBackdropFilter: 'saturate(180%) blur(14px)',
-        borderBottom: 1,
-        borderColor: 'divider',
-        backgroundImage: 'none',
-      })}
+      sx={(t) => {
+        const chrome = glass(t, 'chrome')
+        return {
+          ...chrome,
+          borderBottom: 1,
+          borderColor: 'divider',
+          backgroundImage: 'none',
+          '@media print': { ...chrome['@media print'], position: 'static' },
+        }
+      }}
     >
       <Toolbar
         sx={{
@@ -69,9 +71,18 @@ export default function Header() {
         {mode && (
           <Tooltip title={dark ? 'Switch to light mode' : 'Switch to dark mode'}>
             <IconButton onClick={toggle} className="no-print" aria-label="Toggle dark mode" aria-pressed={dark}>
-              <Box component="span" key={String(dark)} className={toggled ? 'sp-icon-in' : undefined} sx={{ display: 'inline-flex' }}>
-                {dark ? <LightMode /> : <DarkMode />}
-              </Box>
+              {/* no animation on page load, only when the theme changes */}
+              <AnimatePresence mode="popLayout" initial={false}>
+                <m.span
+                  key={String(dark)}
+                  style={{ display: 'inline-flex' }}
+                  initial={turn(-30)}
+                  animate={{ opacity: 1, scale: 1, rotate: 0, filter: 'blur(0px)' }}
+                  exit={{ ...turn(30), transition: TRANSITION.small }}
+                >
+                  {dark ? <LightMode /> : <DarkMode />}
+                </m.span>
+              </AnimatePresence>
             </IconButton>
           </Tooltip>
         )}

@@ -1,6 +1,6 @@
 /* Global styles. Motion tokens (--ease-out, --dur-*, --stagger) come from
    src/motion.ts through the theme (MuiCssBaseline), so they match MUI's own
-   transitions. Only transform and opacity are animated here (and a 2px blur on the icon swap). */
+   transitions. Only transform and opacity are animated here. */
 
 /* --- mobile baseline ------------------------------------------------------ */
 html {
@@ -66,14 +66,6 @@ h2[tabindex='-1']:focus {
 @keyframes sp-fade {
   from {
     opacity: 0;
-  }
-}
-/* icon swap (theme toggle): settles from slightly smaller and blurred */
-@keyframes sp-icon-in {
-  from {
-    opacity: 0;
-    transform: scale(0.8) rotate(-30deg);
-    filter: blur(2px);
   }
 }
 /* toast: drops in from the edge it is anchored to (top) */
@@ -147,10 +139,6 @@ h2[tabindex='-1']:focus {
 .sp-step-back {
   animation: sp-from-left var(--dur-medium) var(--ease-out) backwards;
 }
-.sp-icon-in {
-  display: inline-flex;
-  animation: sp-icon-in var(--dur-medium) var(--ease-out) backwards;
-}
 .sp-drop {
   animation: sp-drop var(--dur-medium) var(--ease-out) backwards;
 }
@@ -181,7 +169,6 @@ h2[tabindex='-1']:focus {
   .sp-step-forward,
   .sp-step-back,
   .sp-drop,
-  .sp-icon-in,
   .sp-pop,
   .sp-grow-x {
     animation-name: sp-fade;
@@ -208,7 +195,7 @@ h2[tabindex='-1']:focus {
   /* the 3% press scale stays: it is feedback under the finger, not movement */
 }
 
-/* translucent header: solid when the visitor asks for less transparency */
+/* the questionnaire's sticky action bar: solid when the visitor asks for less transparency */
 @media (prefers-reduced-transparency: reduce) {
   .sp-material {
     backdrop-filter: none !important;
@@ -224,9 +211,6 @@ h2[tabindex='-1']:focus {
   }
   .avoid-break {
     break-inside: avoid;
-  }
-  body {
-    background-image: none !important; /* the accent wash is for the screen only */
   }
   /* role details folded away on a phone are printed anyway */
   .sp-details {
