@@ -439,7 +439,7 @@ export default function App() {
                   }}
                 >
                   <Box
-                    className="sp-meter"
+                    className="sp-meter sp-bar"
                     sx={(t) => ({
                       height: '100%',
                       backgroundImage: BRAND_GRADIENT,

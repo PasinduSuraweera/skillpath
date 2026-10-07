@@ -1,8 +1,9 @@
 import Autocomplete from '@mui/material/Autocomplete'
 import Grid from '@mui/material/Grid'
+import ListSubheader from '@mui/material/ListSubheader'
 import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
-import { useMemo } from 'react'
+import { useId, useMemo } from 'react'
 import type { Dispatch, SetStateAction } from 'react'
 import type { Options } from '../api/types'
 import type { Errors, FormState } from '../form'
@@ -23,6 +24,7 @@ export default function AboutStep({ form, setForm, options, errors }: Props) {
   )
   const region = options.countries.find((c) => c.Country === form.country)?.Region
   const max = options.limits.years_max
+  const regionId = useId()
 
   return (
     <Grid container spacing={3}>
@@ -37,6 +39,18 @@ export default function AboutStep({ form, setForm, options, errors }: Props) {
         <Autocomplete
           options={countries}
           groupBy={(c) => c.Region}
+          // each region is a labelled group of options: MUI's default puts the options in a plain
+          // list inside the listbox, which screen readers cannot tie to the listbox
+          renderGroup={(params) => (
+            <li key={params.key} role="presentation">
+              <ListSubheader component="div" role="presentation" id={`${regionId}-${params.key}`} className="MuiAutocomplete-groupLabel">
+                {params.group}
+              </ListSubheader>
+              <ul role="group" aria-labelledby={`${regionId}-${params.key}`} className="MuiAutocomplete-groupUl">
+                {params.children}
+              </ul>
+            </li>
+          )}
           getOptionLabel={(c) => c.Country}
           value={countries.find((c) => c.Country === form.country) ?? null}
           onChange={(_, c) => setForm((f) => ({ ...f, country: c?.Country ?? null }))}

@@ -130,6 +130,19 @@ h2[tabindex='-1']:focus {
   /* the 3% press scale stays: it is feedback under the finger, not movement */
 }
 
+/* --- contrast themes (forced colours): the system replaces colours and drops gradients, which
+   would leave bars empty; they are drawn in the text colour on an outlined track ------------ */
+@media (forced-colors: active) {
+  .MuiLinearProgress-bar,
+  .sp-bar {
+    forced-color-adjust: none;
+    background: CanvasText !important;
+  }
+  .MuiLinearProgress-root,
+  .sp-track {
+    outline: 1px solid CanvasText;
+  }
+}
 
 /* --- print / save as PDF: only the results, without buttons ------------- */
 @media print {

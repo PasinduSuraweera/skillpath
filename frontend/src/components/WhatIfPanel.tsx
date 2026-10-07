@@ -95,6 +95,7 @@ function DeltaBar({ delta, scale }: { delta: number; scale: number }) {
   return (
     <Box
       aria-hidden="true"
+      className="sp-track"
       sx={(t) => ({
         position: 'relative',
         display: { xs: 'none', sm: 'inline-block' },
@@ -108,6 +109,7 @@ function DeltaBar({ delta, scale }: { delta: number; scale: number }) {
     >
       <Box
         component={motion.div}
+        className="sp-bar"
         // the bar is the value, so it grows from its zero line (scaleX 0), not from a squashed shape
         initial={reveal ? { scaleX: 0 } : false}
         animate={{ scaleX: frac }}

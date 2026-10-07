@@ -24,7 +24,7 @@ import type { RoleRecommendation, SkillSuggestion } from '../api/types'
 import { money, pct, points } from '../format'
 import { useId, useState } from 'react'
 import { DURATION, EASE, useCountUp, useHighlight } from '../motion'
-import { BRAND_GRADIENT, BRAND_GRADIENT_DARK, tintInk } from '../theme'
+import { BRAND_GRADIENT, BRAND_GRADIENT_DARK, FORCED_COLORS, tintInk } from '../theme'
 import CountUp from './CountUp'
 import { AverageTick, InsightSection, Metric } from './InsightSection'
 
@@ -210,6 +210,11 @@ export default function RoleCard({ role, busy, pendingTech, payScale, previous, 
             boxShadow: `inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 14px 34px -14px ${alpha(t.palette.primary.main, 0.45)}`,
             '&::before': gradientRing(BRAND_GRADIENT_DARK),
           }),
+          // a contrast theme drops the ring (a background): a plain, heavier border keeps it the stand-out card
+          [FORCED_COLORS]: { border: '2px solid CanvasText', p: { xs: '15px', sm: '19px' } },
+          // PDF output ignores the mask that cuts the ring down to its edge, so the whole card would
+          // print as a block of gradient: print a plain accent border instead
+          '@media print': { border: `1px solid ${t.palette.primary.main}`, p: { xs: 2, sm: 2.5 }, '&::before': { display: 'none' } },
         }),
       })}
     >
@@ -293,6 +298,7 @@ export default function RoleCard({ role, busy, pendingTech, payScale, previous, 
         {role.low_confidence && (
           <Tooltip
             arrow
+            describeChild
             title="The model correctly identifies fewer than 1 in 10 people who actually hold this role, because the survey has few of them. Treat it as a weaker suggestion."
           >
             <Chip icon={<WarningAmber />} label="Low confidence" color="warning" size="small" variant="outlined" tabIndex={0} sx={{ mt: 1.5 }} />
@@ -434,7 +440,7 @@ export default function RoleCard({ role, busy, pendingTech, payScale, previous, 
                       >
                         {m.lift.toFixed(1)}×
                       </Typography>
-                      <Tooltip title={`What if I had used ${m.technology}? Re-run with it added.`}>
+                      <Tooltip describeChild title={`What if I had used ${m.technology}? Re-run with it added.`}>
                         <Box component="span" className="no-print" sx={{ flexShrink: 0 }}>
                           <IconButton
                             size="small"

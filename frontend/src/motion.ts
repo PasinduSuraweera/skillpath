@@ -55,7 +55,7 @@ export const STAGGER = 40
 export const STAGGER_REVEAL = 70
 
 /** Busy indicators wait this long, so a fast answer (the API takes ~15 ms) never flickers. */
-export const BUSY_DELAY = 200
+const BUSY_DELAY = 200
 
 /** CSS custom properties for the stylesheet (index.css): the tokens its keyframes use. */
 export const motionCssVars = {

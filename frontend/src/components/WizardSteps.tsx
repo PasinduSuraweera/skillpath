@@ -10,7 +10,7 @@ import type { StepIconProps } from '@mui/material/StepIcon'
 import { m } from 'motion/react'
 import type { Ref } from 'react'
 import { DURATION, TRANSITION } from '../motion'
-import { surfaceFill } from '../theme'
+import { FORCED_COLORS, surfaceFill } from '../theme'
 
 const STEPS = ['About you', 'Technologies', 'AI usage', 'Results']
 // when the stepper is narrow (phones under 360 px, or larger text) the full labels would run into each other.
@@ -74,6 +74,8 @@ function StepDot({ active, completed, icon }: StepIconProps) {
             borderRadius: '50%',
             bgcolor: t.palette.primary.main,
             boxShadow: `0 0 0 4px ${alpha(t.palette.primary.main, 0.16)}`,
+            // a contrast theme drops the fill: a heavier ring marks the current step instead
+            [FORCED_COLORS]: { border: '2px solid CanvasText' },
           })}
         />
       )}

@@ -264,6 +264,21 @@ await testCase('E2E-09', 'Printing from dark mode prints in light colours withou
     }),
   )
   assert(hidden, 'buttons visible in print')
+  // PDF output ignores CSS masks (a masked layer prints whole, covering what is under it) and
+  // backdrop blur, so nothing printed may rely on them
+  const unprintable = await page.evaluate(() =>
+    [...document.querySelectorAll('body *')]
+      .filter((el) => el.getClientRects().length)
+      .flatMap((el) =>
+        [null, '::before', '::after']
+          .filter((pseudo) => {
+            const s = getComputedStyle(el, pseudo)
+            return s.display !== 'none' && ((s.maskImage || 'none') !== 'none' || s.backdropFilter !== 'none')
+          })
+          .map((pseudo) => `${el.tagName.toLowerCase()}.${[...el.classList].filter((c) => !c.startsWith('css-')).join('.')}${pseudo ?? ''}`),
+      ),
+  )
+  assert(unprintable.length === 0, `masked or blurred in print: ${unprintable.slice(0, 3).join(', ')}`)
   await shot('08-print')
   await page.pdf({ path: `${SHOTS}results.pdf`, format: 'A4', printBackground: true })
   await page.emulateMediaType('screen')

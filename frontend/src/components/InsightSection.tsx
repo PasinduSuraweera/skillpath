@@ -19,7 +19,7 @@ export function InsightSection(props: { icon: ReactNode; title: string; help: st
         </Typography>
         {/* a real button, so the explanation also opens with the keyboard (and on tap) */}
         <Tooltip title={props.help} arrow describeChild enterTouchDelay={0} leaveTouchDelay={5000}>
-          <IconButton size="small" aria-label={`About “${props.title}”`} sx={{ p: 0.25, ml: '2px !important', color: 'text.secondary' }}>
+          <IconButton size="small" className="no-print" aria-label={`About “${props.title}”`} sx={{ p: 0.25, ml: '2px !important', color: 'text.secondary' }}>
             <InfoOutlined sx={{ fontSize: 16 }} />
           </IconButton>
         </Tooltip>

@@ -50,7 +50,7 @@ export const AMBIENT = { indigo: '#3e63dd', violet: BRAND_VIOLET.light, blue: '#
  * Fills (light, dark), translucent so the ambient background shows through and never blurred:
  * cards, and controls on them (fields, answer cards, outlined buttons), a step brighter than the card.
  */
-export const SURFACE = {
+const SURFACE = {
   card: [white(0.72), white(0.04)],
   raised: [white(0.84), white(0.06)],
   control: [white(0.7), white(0.03)],
@@ -126,6 +126,11 @@ const colorTransition = (props: string[]) =>
 const press = `transform ${DURATION.press}ms ${EASE.out}`
 const hoverOnly = '@media (hover: hover) and (pointer: fine)'
 const touch = '@media (pointer: coarse)'
+/**
+ * High-contrast modes (Windows contrast themes): the system replaces colours and drops gradients and
+ * shadows, so anything that is drawn only with them needs a plain border there.
+ */
+export const FORCED_COLORS = '@media (forced-colors: active)'
 
 /** On touch screens, a hit area of at least 44 × 44 px around a small control, without changing its layout. */
 const touchTarget = {
@@ -285,6 +290,8 @@ export const theme = createTheme({
             },
           },
           '&.Mui-disabled': { boxShadow: 'none', backgroundImage: 'none' },
+          // its edge is the gradient, which a contrast theme removes
+          [FORCED_COLORS]: { border: '1px solid ButtonText' },
           ...theme.applyStyles('dark', {
             backgroundImage: BRAND_GRADIENT_DARK,
             boxShadow: `inset 0 1px 0 ${white(0.3)}`,
@@ -371,17 +378,23 @@ export const theme = createTheme({
     MuiAutocomplete: {
       styleOverrides: {
         paper: floatingSurface,
-        listbox: { padding: 6 },
-        option: { borderRadius: 8, minHeight: '36px !important' },
-        groupLabel: ({ theme }) => ({
-          fontSize: '0.6875rem',
-          fontWeight: 600,
-          letterSpacing: '0.08em',
-          textTransform: 'uppercase',
-          lineHeight: '32px',
-          color: theme.palette.text.secondary,
-          backgroundColor: 'inherit',
+        // groups are styled by class, so a list that renders its own groups (AboutStep) matches
+        listbox: ({ theme }) => ({
+          padding: 6,
+          '& .MuiAutocomplete-groupLabel': {
+            top: -6,
+            fontSize: '0.6875rem',
+            fontWeight: 600,
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+            lineHeight: '32px',
+            color: theme.palette.text.secondary,
+            // sticky over the options scrolling under it: glass like the menu, so they blur away behind it
+            ...glass(theme, 'floating'),
+          },
+          '& .MuiAutocomplete-groupUl': { padding: 0, '& .MuiAutocomplete-option': { paddingLeft: 24 } },
         }),
+        option: { borderRadius: 8, minHeight: '36px !important' },
         tag: { maxWidth: 'calc(100% - 8px)', borderRadius: 8 },
       },
     },

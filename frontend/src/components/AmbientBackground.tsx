@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box'
 import { alpha } from '@mui/material/styles'
-import { AMBIENT } from '../theme'
+import { AMBIENT, FORCED_COLORS } from '../theme'
 
 // A fine grain over the glows: low-contrast gradients otherwise band into visible steps.
 const GRAIN =
@@ -20,7 +20,7 @@ const glows = (dark: boolean) =>
 
 /**
  * The backdrop the glass surfaces sit on, fixed behind the page. Static: nothing in it moves
- * or follows the scroll, so it is drawn once. Not printed.
+ * or follows the scroll, so it is drawn once. Not printed, and not shown in a contrast theme.
  */
 export default function AmbientBackground() {
   return (
@@ -37,6 +37,8 @@ export default function AmbientBackground() {
         '@supports (height: 100lvh)': { height: '100lvh' },
         zIndex: -1,
         pointerEvents: 'none',
+        // a contrast theme keeps gradients, and puts a plate behind every line of text over them
+        [FORCED_COLORS]: { display: 'none' },
         backgroundImage: glows(false),
         ...t.applyStyles('dark', { backgroundImage: glows(true) }),
         '&::after': {
