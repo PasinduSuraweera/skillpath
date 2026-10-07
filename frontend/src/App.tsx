@@ -1,10 +1,6 @@
-import ArrowBack from '@mui/icons-material/ArrowBack'
-import ArrowForward from '@mui/icons-material/ArrowForward'
-import AutoAwesome from '@mui/icons-material/AutoAwesome'
 import Close from '@mui/icons-material/Close'
-import CloudOff from '@mui/icons-material/CloudOff'
+import CloudOff from '@mui/icons-material/CloudOffOutlined'
 import Refresh from '@mui/icons-material/Refresh'
-import RestartAlt from '@mui/icons-material/RestartAlt'
 import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -12,57 +8,48 @@ import CircularProgress from '@mui/material/CircularProgress'
 import Container from '@mui/material/Container'
 import Grid from '@mui/material/Grid'
 import IconButton from '@mui/material/IconButton'
-import Paper from '@mui/material/Paper'
 import Skeleton from '@mui/material/Skeleton'
 import Snackbar from '@mui/material/Snackbar'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import useMediaQuery from '@mui/material/useMediaQuery'
-import { alpha, useColorScheme, useTheme } from '@mui/material/styles'
+import { useColorScheme, useTheme } from '@mui/material/styles'
 import { AnimatePresence, m, useReducedMotion } from 'motion/react'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { ValidationError, getOptions, predict } from './api/client'
-import type { Options, Recommendation, SkillSuggestion } from './api/types'
-import AIStep from './components/AIStep'
-import Analyzing from './components/Analyzing'
-import AboutStep from './components/AboutStep'
-import Header from './components/Header'
+import type { Options, SkillSuggestion } from './api/types'
 import Hero from './components/Hero'
+import NavBar from './components/NavBar'
+import type { View } from './components/NavBar'
 import PopTransition from './components/PopTransition'
-import StepPane from './components/StepPane'
+import ProfileWorkspace from './components/ProfileWorkspace'
+import RefineHeader from './components/RefineHeader'
+import StoryDeck from './components/StoryDeck'
 import type { Direction } from './components/StepPane'
-import Results from './components/Results'
-import TechStep from './components/TechStep'
-import WizardSteps from './components/WizardSteps'
-import {
-  describeChanges,
-  emptyForm,
-  fromProfile,
-  serverErrors,
-  stepOf,
-  stepProgress,
-  toProfile,
-  validate,
-  withTechnology,
-} from './form'
+import { IconTile } from './design/primitives'
+import { panel } from './design/surfaces'
+import { RADIUS, glass, glassEdge, mergeStyles, shadow } from './design/tokens'
+import { MAX_EXPLORATIONS } from './explorations'
+import type { Exploration } from './explorations'
+import { describeChanges, emptyForm, fromProfile, serverErrors, stepOf, stepProgress, toProfile, validate, withTechnology } from './form'
 import type { Errors, FormState } from './form'
 import { pct } from './format'
-import { DURATION, EASE, OPENING, OPENING_REDUCED, isLeaving, makeRoom, prefersReducedMotion, useDelayedFlag } from './motion'
-import { BRAND_GRADIENT, BRAND_GRADIENT_DARK, ELEVATION, RADIUS, glass } from './theme'
+import { DURATION, OPENING, OPENING_REDUCED, isLeaving, makeRoom, useDelayedFlag } from './motion'
+import { navClearance, scrollToElement, scrollToTop, startSmoothScroll } from './scroll'
 import { SAMPLES } from './samples'
 import type { Sample } from './samples'
 import { whatIfHighlights } from './whatif'
 
 const RESULTS = 3
 
+// The results are their own chunk: the start page does not wait for them, and they are fetched
+// in the background as soon as the app is up (below), long before anyone can ask for results.
+const loadDashboard = () => import('./components/dashboard/Dashboard')
+const Dashboard = lazy(loadDashboard)
+
 /** Where keyboard focus goes after a move: a heading of what is now shown, or the first invalid answer. */
 type FocusTarget = 'hero-title' | 'step-title' | 'results-title' | 'whatif-title' | 'invalid'
-
-interface Run {
-  form: FormState // the answers that produced this result
-  result: Recommendation
-}
 
 export default function App() {
   const [options, setOptions] = useState<Options | null>(null)
@@ -70,14 +57,19 @@ export default function App() {
   const [retrying, setRetrying] = useState(false)
   const [form, setForm] = useState<FormState>(emptyForm)
   const [step, setStep] = useState(0)
+  // the questionnaire step to return to from the results (the nav's Profile)
+  const lastStep = useRef(0)
   // direction of the last step change; null until the visitor first moves, so nothing slides on page load
   const [direction, setDirection] = useState<Direction>(null)
   const [errors, setErrors] = useState<Errors>({})
   const [apiError, setApiError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
   const [pendingTech, setPendingTech] = useState<string | null>(null)
-  const [current, setCurrent] = useState<Run | null>(null)
-  const [comparison, setComparison] = useState<{ before: Recommendation; changes: string[] } | null>(null)
+  // every prediction of this session (memory only); `current` is the one on screen
+  const [history, setHistory] = useState<Exploration[]>([])
+  const [current, setCurrent] = useState<Exploration | null>(null)
+  const nextRun = useRef(1)
+  const [comparison, setComparison] = useState<{ before: Exploration['result']; changes: string[] } | null>(null)
   // one message at a time; a new one replaces it (key restarts the timer). `undo` adds an Undo button.
   const [toast, setToast] = useState<{ message: string; undo?: () => void; key: number } | null>(null)
   const say = (message: string, undo?: () => void) => setToast({ message, undo, key: Date.now() })
@@ -86,22 +78,28 @@ export default function App() {
   const announce = (text: string) => setAnnouncement((a) => ({ text, n: a.n + 1 }))
   const { mode, setMode } = useColorScheme()
   const busyRef = useRef(false) // guards double submits without visibly disabling anything for a ~15 ms request
-  const stepperRef = useRef<HTMLDivElement>(null)
+  const workspaceRef = useRef<HTMLDivElement>(null)
+  const storyRef = useRef<HTMLElement>(null)
   // toast: top-right on wide screens; on phones at the bottom, just above the sticky action bar
   const wide = useMediaQuery(useTheme().breakpoints.up('sm'))
 
-  // The API usually answers in ~15 ms: spinners, dimming and disabled buttons only
+  // The API usually answers in ~15 ms: spinners, overlays and disabled buttons only
   // appear when it is actually slow, so a normal request never flickers.
   const showBusy = useDelayedFlag(busy)
   const showSkeleton = useDelayedFlag(!options && !loadError, 150)
   const showRetrying = useDelayedFlag(retrying)
   const showSlow = useDelayedFlag(busy, 6000)
 
+  // smooth wheel and trackpad scrolling for the whole session (scroll.ts)
+  useEffect(() => startSmoothScroll(), [])
+  // the results' code, ready before the first prediction comes back
+  useEffect(() => void loadDashboard(), [])
+
   // the start page's entrance plays once per visit, not again when coming back from the results
   const [intro, setIntro] = useState(true)
   useEffect(() => {
     if (!options) return
-    const t = window.setTimeout(() => setIntro(false), 1200)
+    const t = window.setTimeout(() => setIntro(false), 1400)
     return () => window.clearTimeout(t)
   }, [options])
 
@@ -126,20 +124,20 @@ export default function App() {
   }
 
   /**
-   * Bring the stepper to the top of the window when it has scrolled away, or (for step
-   * changes) when the step starts so low that the new content would open below the fold,
-   * as on a phone. Instant, except for a what-if on the results page, which glides up so
-   * it is clear where the comparison went.
+   * After a move, bring the right place into view. The results open at the top of the page
+   * (a what-if glides up, so it is clear where the comparison went). A questionnaire step
+   * brings the workspace up when it has scrolled away under the nav or (for step changes)
+   * starts so low that the new step would open below the fold, as on a phone.
    */
-  const revealWizard = (smooth: boolean, onlyIfHidden: boolean) => {
+  const reveal = (s: number, smooth: boolean, onlyIfHidden: boolean) => {
     requestAnimationFrame(() => {
-      const el = stepperRef.current
-      if (!el) return window.scrollTo({ top: 0 })
-      const { top, bottom } = el.getBoundingClientRect()
-      const hidden = top < 56 // under the sticky header or above it
-      const low = bottom > window.innerHeight * 0.6
+      const el = workspaceRef.current
+      if (s === RESULTS || !el) return scrollToTop(0, smooth)
+      const { top } = el.getBoundingClientRect()
+      const hidden = top < navClearance() - 8
+      const low = top > window.innerHeight * 0.45
       if (!hidden && (onlyIfHidden || !low)) return
-      el.scrollIntoView({ block: 'start', behavior: smooth && !prefersReducedMotion() ? 'smooth' : 'auto' })
+      scrollToElement(el, smooth)
     })
   }
 
@@ -154,7 +152,7 @@ export default function App() {
     const target = focusNext.current
     if (!target) return
     focusNext.current = null
-    // after revealWizard's scroll (also queued for the next frame). The step on its way out
+    // after reveal's scroll (also queued for the next frame). The step on its way out
     // is still on the page, with the same ids: only the one that is staying counts.
     const find = (selector: string) => [...document.querySelectorAll<HTMLElement>(selector)].find((el) => !isLeaving(el))
     requestAnimationFrame(() => {
@@ -176,13 +174,14 @@ export default function App() {
     { smooth = false, onlyIfHidden = false, focus = true }: { smooth?: boolean; onlyIfHidden?: boolean; focus?: boolean | FocusTarget } = {},
   ) => {
     if (s !== step) setDirection(s > step ? 'forward' : 'back')
+    if (s < RESULTS) lastStep.current = s
     setStep(s)
-    revealWizard(smooth, onlyIfHidden)
+    reveal(s, smooth, onlyIfHidden)
     if (focus) focusNext.current = focus === true ? (s === RESULTS ? 'results-title' : 'step-title') : focus
   }
 
-  /** Validate, call the API, and keep the previous result for the what-if comparison. */
-  async function run(answers: FormState, tech?: string) {
+  /** Validate, call the API, keep the previous result for the what-if comparison, and log the run. */
+  async function run(answers: FormState, how: { tech?: string; from?: number } = {}) {
     if (!options || busyRef.current) return
     const clientErrors = validate(answers, options)
     setErrors(clientErrors)
@@ -195,13 +194,21 @@ export default function App() {
     busyRef.current = true
     setToast(null) // the "example loaded" hint has done its job
     setBusy(true)
-    setPendingTech(tech ?? null)
+    setPendingTech(how.tech ?? null)
     try {
       const result = await predict(toProfile(answers))
       const changes = current ? describeChanges(current.form, answers) : []
-      // re-running unchanged answers keeps the comparison that is already shown
-      if (current && changes.length) setComparison({ before: current.result, changes })
-      setCurrent({ form: answers, result })
+      let entry: Exploration
+      if (current && !changes.length) {
+        // re-running unchanged answers refreshes the same run and keeps the comparison that is shown
+        entry = { ...current, result }
+        setHistory((h) => h.map((e) => (e.id === current.id ? entry : e)))
+      } else {
+        entry = { id: nextRun.current++, at: Date.now(), form: answers, result, changes, tech: how.tech ?? null, from: how.from ?? null }
+        setHistory((h) => [...h, entry].slice(-MAX_EXPLORATIONS))
+        if (current) setComparison({ before: current.result, changes })
+      }
+      setCurrent(entry)
       setForm(answers)
       // a what-if from the results page glides up to the comparison, so it is clear where it went
       goTo(RESULTS, { smooth: step === RESULTS })
@@ -235,26 +242,34 @@ export default function App() {
     setApiError(null)
     setCurrent(null)
     setComparison(null)
+    setHistory([])
+    nextRun.current = 1
     goTo(0, { onlyIfHidden: true, focus: false }) // the example just pressed keeps focus
-    say(`Loaded “${s.name}”. Review the answers or press Get recommendations.`)
+    say(`Loaded “${s.name}”. Get recommendations now, or review the answers below.`)
   }
 
   /** Empty the form (and the results). Nothing is lost for good: the toast offers to undo it. */
   function restart() {
-    const snapshot = { form, current, comparison, step }
+    const snapshot = { form, current, comparison, step, history, nextRun: nextRun.current }
     const hadAnything = current !== null || JSON.stringify(form) !== JSON.stringify(emptyForm())
+    const fromResults = step === RESULTS
     setForm(emptyForm())
     setErrors({})
     setApiError(null)
     setCurrent(null)
     setComparison(null)
+    setHistory([])
+    nextRun.current = 1
     // Clear answers stays on screen and keeps focus; Start over (on the results) goes back to the top of the page
-    goTo(0, { onlyIfHidden: true, focus: step === RESULTS && 'hero-title' })
+    goTo(0, { onlyIfHidden: true, focus: fromResults && 'hero-title' })
+    if (fromResults) requestAnimationFrame(() => scrollToTop(0, false))
     if (!hadAnything) return
     say(snapshot.current ? 'Started over. Your answers and results were cleared.' : 'Answers cleared.', () => {
       setForm(snapshot.form)
       setCurrent(snapshot.current)
       setComparison(snapshot.comparison)
+      setHistory(snapshot.history)
+      nextRun.current = snapshot.nextRun
       setToast(null)
       goTo(snapshot.step, { onlyIfHidden: true })
     })
@@ -262,10 +277,17 @@ export default function App() {
 
   function trySkill(s: SkillSuggestion) {
     if (!current) return
-    void run(withTechnology(current.form, s.area, s.technology), s.technology)
+    void run(withTechnology(current.form, s.area, s.technology), { tech: s.technology })
   }
 
-  // the example whose answers are still loaded unchanged, shown as selected in the example bar
+  /** "Build my profile": the questionnaire, brought into view with its first question ready. */
+  function startProfile() {
+    const el = workspaceRef.current
+    if (el) scrollToElement(el, true)
+    requestAnimationFrame(() => document.getElementById('step-title')?.focus({ preventScroll: true }))
+  }
+
+  // the example whose answers are still loaded unchanged, shown as selected in the example list
   const activeSample = useMemo(() => {
     const answers = JSON.stringify(form)
     return SAMPLES.find((s) => JSON.stringify(fromProfile(s.profile)) === answers)?.id ?? null
@@ -293,33 +315,27 @@ export default function App() {
   }, [mode, setMode])
 
   const progress = useMemo(() => stepProgress(form), [form])
-  const answered = progress.reduce((n, p) => n + p.answered, 0)
-  const questions = progress.reduce((n, p) => n + p.total, 0)
-  const technologies = Object.values(form.tech).reduce((n, t) => n + t.have.length + t.want.length, 0)
-  const stepProps = options ? { form, setForm, options, errors } : null
   const errorCount = Object.keys(errors).length
   // an alert above the questionnaire or the results; what is below slides to make room (makeRoom)
   const alertOpen = !!apiError || (errorCount > 0 && step < RESULTS)
   const reduce = useReducedMotion()
+  const view: View = step === RESULTS ? 'results' : 'profile'
 
   return (
-    <Box sx={{ minHeight: '100dvh' }}>
-      <Header />
-      {/* a slow what-if re-run: say what is happening, just under the header (the results dim meanwhile) */}
-      <PopTransition
-        in={showBusy && step === RESULTS}
-        unmountOnExit
-        timeout={{ enter: DURATION.medium, exit: DURATION.small }}
-        from="top"
-        travel={12}
-      >
+    // clip, not hidden: the decorative glows may bleed past the sides without making the page scroll
+    // sideways, and clip does not create a scroll container, so the nav stays sticky
+    <Box sx={{ minHeight: '100dvh', overflowX: 'clip' }}>
+      <NavBar view={view} resultsReady={current !== null} disabled={showBusy} onNavigate={(v) => goTo(v === 'results' ? RESULTS : lastStep.current)} />
+
+      {/* a slow what-if re-run: say what is happening, just under the nav */}
+      <PopTransition in={showBusy && step === RESULTS} unmountOnExit timeout={{ enter: DURATION.medium, exit: DURATION.small }} from="top" travel={12}>
         <Box
           role="status"
           className="no-print"
-          sx={(t) => ({
-            ...glass(t, 'floating'),
+          sx={(t) =>
+            mergeStyles(glass(t, 'floating'), glassEdge(t), shadow(t, 'high'), {
             position: 'fixed',
-            top: { xs: 68, sm: 72 },
+            top: { xs: 76, sm: 88 },
             // centred with margins, not a transform: the arrival animation owns transform
             left: 0,
             right: 0,
@@ -334,10 +350,7 @@ export default function App() {
             py: 1,
             borderRadius: 999,
             fontSize: '0.875rem',
-            fontWeight: 500,
-            border: 1,
-            borderColor: 'divider',
-            boxShadow: ELEVATION.floating,
+            fontWeight: 550,
           })}
         >
           <CircularProgress size={16} thickness={5} />
@@ -346,7 +359,8 @@ export default function App() {
           </Box>
         </Box>
       </PopTransition>
-      <Container component="main" maxWidth="lg" sx={{ py: { xs: 2.5, md: 5 } }}>
+
+      <Container component="main" maxWidth="lg" sx={{ pt: { xs: 2, md: 3 }, pb: { xs: 4, md: 8 } }}>
         {!options ? (
           loadError ? (
             <LoadError message={loadError} retrying={showRetrying} onRetry={retryOptions} />
@@ -355,24 +369,30 @@ export default function App() {
           )
         ) : (
           // gap rather than margins, and positioned: an alert is lifted out of the flow as it leaves
-          <Stack spacing={3} useFlexGap className="sp-fade" sx={{ position: 'relative' }}>
-            {step < RESULTS && (
-              <Box sx={{ pb: { xs: 1, md: 3 } }}>
-                <Hero options={options} intro={intro} onPick={pickSample} disabled={showBusy} activeId={activeSample} />
-              </Box>
+          <Stack spacing={{ xs: 3, md: 4 }} useFlexGap sx={{ position: 'relative' }}>
+            {step < RESULTS &&
+              (current ? (
+                <RefineHeader result={current.result} onBack={() => goTo(RESULTS)} disabled={showBusy} />
+              ) : (
+                <Hero
+                  options={options}
+                  intro={intro}
+                  onPick={pickSample}
+                  onRun={() => void run(form)}
+                  onStart={startProfile}
+                  onTour={() => storyRef.current && scrollToElement(storyRef.current, true)}
+                  disabled={showBusy}
+                  activeId={activeSample}
+                />
+              ))}
+
+            {/* how it works, between the opening and the questionnaire (first visit to the start page) */}
+            {step < RESULTS && !current && (
+              <StoryDeck ref={storyRef} roles={options.job_roles.length} families={new Set(options.job_roles.map((r) => r.family)).size} />
             )}
 
-            <WizardSteps
-              ref={stepperRef}
-              step={step}
-              progress={progress}
-              resultsReady={current !== null}
-              disabled={showBusy}
-              onGo={(i) => goTo(i)}
-            />
-
             {/* alerts open like the what-if comparison (OPENING): what is below slides down to make room */}
-            <AnimatePresence mode="popLayout">
+            <AnimatePresence mode="popLayout" initial={false}>
               {apiError ? (
                 <m.div key="api-error" className="no-print" {...(reduce ? OPENING_REDUCED : OPENING)}>
                   <Alert severity="error" onClose={() => setApiError(null)}>
@@ -389,160 +409,24 @@ export default function App() {
               )}
             </AnimatePresence>
 
-            {step < RESULTS && stepProps && (
-              <Paper
-                component={m.div}
-                layout="position"
-                transition={{ layout: makeRoom(alertOpen) }}
-                sx={{ p: { xs: 2, md: 3 }, position: 'relative', borderRadius: `${RADIUS.panel}px` }}
-                className="no-print"
-                aria-busy={busy}
-              >
-                {/* a slow prediction: the analysis state covers the form (which stays put underneath) */}
-                {showBusy && (
-                  <Box
-                    className="sp-fade"
-                    sx={(t) => ({
-                      ...glass(t, 'overlay'),
-                      position: 'absolute',
-                      inset: 0,
-                      zIndex: 3,
-                      borderRadius: `${RADIUS.panel}px`,
-                      px: 2,
-                      pt: { xs: 4, md: 7 },
-                    })}
-                  >
-                    {/* sticky, so it stays in view however far down a long step the visitor is */}
-                    <Box sx={{ position: 'sticky', top: 140, maxWidth: 440, mx: 'auto', mb: 4 }}>
-                      <Analyzing
-                        answered={answered}
-                        questions={questions}
-                        technologies={technologies}
-                        roles={options.job_roles.length}
-                        slow={showSlow}
-                      />
-                    </Box>
-                  </Box>
-                )}
-                {/* how much of the whole profile is answered: a hairline in the brand gradient along the card's top edge */}
-                <Box
-                  aria-hidden="true"
-                  sx={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    height: 3,
-                    overflow: 'hidden',
-                    borderTopLeftRadius: RADIUS.panel,
-                    borderTopRightRadius: RADIUS.panel,
-                  }}
-                >
-                  <Box
-                    className="sp-meter sp-bar"
-                    sx={(t) => ({
-                      height: '100%',
-                      backgroundImage: BRAND_GRADIENT,
-                      ...t.applyStyles('dark', { backgroundImage: BRAND_GRADIENT_DARK }),
-                      transformOrigin: 'left',
-                      transform: `scaleX(${answered / questions})`,
-                      transition: `transform ${DURATION.large}ms ${EASE.inOut}`,
-                    })}
-                  />
-                </Box>
-                <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 2, minHeight: 32 }}>
-                  <Typography variant="overline" color="text.secondary" sx={{ lineHeight: 1.4 }}>
-                    Step {step + 1} of {RESULTS}
-                    <Box component="span" sx={{ fontVariantNumeric: 'tabular-nums', display: { xs: 'none', sm: 'inline' } }}>
-                      {' '}
-                      · {answered} of {questions} questions answered
-                    </Box>
-                  </Typography>
-                  <Button size="small" color="inherit" startIcon={<RestartAlt />} disabled={showBusy} onClick={restart}>
-                    Clear answers
-                  </Button>
-                </Stack>
-
-                {/* the new step arrives while the previous one leaves. No animation when the page opens;
-                    coming back from the results, the step slides in from the side it is on */}
-                <AnimatePresence mode="popLayout" initial={direction !== null} custom={direction}>
-                  <StepPane key={step} direction={direction} inert={showBusy}>
-                    {step === 0 && <AboutStep {...stepProps} />}
-                    {step === 1 && <TechStep {...stepProps} />}
-                    {step === 2 && <AIStep {...stepProps} />}
-                  </StepPane>
-                </AnimatePresence>
-
-                {/* chrome glass: sticks to the bottom of the screen while the step is taller than the window */}
-                <Box
-                  sx={(t) => ({
-                    ...glass(t, 'chrome'),
-                    position: 'sticky',
-                    bottom: 0,
-                    zIndex: 2,
-                    mt: 4,
-                    mx: { xs: -2, md: -3 },
-                    mb: { xs: -2, md: -3 },
-                    px: { xs: 1.5, md: 3 },
-                    pt: 1.5,
-                    pb: 'max(12px, env(safe-area-inset-bottom))',
-                    // a phone held sideways: a slimmer bar leaves more of the step visible
-                    '@media (max-height: 500px)': { pt: 0.75, pb: 'max(6px, env(safe-area-inset-bottom))' },
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    flexWrap: 'wrap',
-                    gap: 1,
-                    borderTop: 1,
-                    borderColor: 'divider',
-                    // inside the card's 1px border
-                    borderBottomLeftRadius: RADIUS.panel - 1,
-                    borderBottomRightRadius: RADIUS.panel - 1,
-                  })}
-                >
-                  <Box>
-                    <Button
-                      startIcon={<ArrowBack />}
-                      disabled={step === 0 || showBusy}
-                      onClick={() => goTo(step - 1)}
-                      sx={{ display: { xs: 'none', sm: 'inline-flex' } }}
-                    >
-                      Back
-                    </Button>
-                    <IconButton
-                      aria-label="Back"
-                      disabled={step === 0 || showBusy}
-                      onClick={() => goTo(step - 1)}
-                      sx={{ display: { xs: 'inline-flex', sm: 'none' } }}
-                    >
-                      <ArrowBack />
-                    </IconButton>
-                  </Box>
-                  {/* wraps (right-aligned) when the buttons do not fit side by side, e.g. with large text */}
-                  <Stack direction="row" useFlexGap sx={{ ml: 'auto', gap: 1, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-                    {step < 2 && (
-                      <Button
-                        variant="outlined"
-                        endIcon={<ArrowForward />}
-                        disabled={showBusy}
-                        onClick={() => goTo(step + 1)}
-                        sx={{ '& .MuiButton-endIcon': { display: { xs: 'none', sm: 'inherit' } } }}
-                      >
-                        Next
-                      </Button>
-                    )}
-                    <Button
-                      variant="contained"
-                      startIcon={showBusy ? <CircularProgress size={18} color="inherit" /> : <AutoAwesome />}
-                      disabled={showBusy}
-                      onClick={() => void run(form)}
-                      sx={{ '& .MuiButton-startIcon': { display: { xs: 'none', sm: 'inherit' } } }}
-                    >
-                      Get recommendations
-                    </Button>
-                  </Stack>
-                </Box>
-              </Paper>
+            {step < RESULTS && (
+              <ProfileWorkspace
+                ref={workspaceRef}
+                step={step}
+                direction={direction}
+                form={form}
+                setForm={setForm}
+                options={options}
+                errors={errors}
+                progress={progress}
+                busy={showBusy}
+                pending={busy}
+                slow={showSlow}
+                alertOpen={alertOpen}
+                onGo={(i) => goTo(i)}
+                onSubmit={() => void run(form)}
+                onClear={restart}
+              />
             )}
 
             {step === RESULTS && current && (
@@ -551,19 +435,20 @@ export default function App() {
                 layout="position"
                 transition={{ layout: makeRoom(alertOpen) }}
                 aria-busy={busy}
-                sx={{
-                  opacity: showBusy ? 0.5 : 1,
-                  transition: `opacity ${DURATION.medium}ms ease`,
-                  pointerEvents: showBusy ? 'none' : undefined,
-                }}
+                // while a slow what-if runs, the page stays as it is (the status above says what is happening);
+                // no dimming: fading a wrapper would switch off the blur of the glass inside it
+                sx={{ pointerEvents: showBusy ? 'none' : undefined }}
               >
-                <Results
+                <Suspense fallback={null}>
+                <Dashboard
                   result={current.result}
                   answers={current.form}
                   comparison={comparison}
                   busy={showBusy}
                   pendingTech={pendingTech}
-                  onEdit={() => goTo(0)}
+                  history={history}
+                  currentId={current.id}
+                  onEdit={() => goTo(lastStep.current)}
                   onRestart={restart}
                   onPrint={() => window.print()}
                   onTrySkill={trySkill}
@@ -571,7 +456,9 @@ export default function App() {
                     setComparison(null)
                     focusNext.current = 'results-title' // the Hide comparison button goes away with the panel
                   }}
+                  onRestore={(e) => void run(e.form, { from: e.id })}
                 />
+                </Suspense>
               </Box>
             )}
           </Stack>
@@ -592,7 +479,7 @@ export default function App() {
                 size="small"
                 onClick={toast.undo}
                 // the toast is ink in light mode and near-white in dark mode: a light and a deep indigo, both over 4.5:1
-                sx={(t) => ({ color: '#a8b9ff', fontWeight: 700, ...t.applyStyles('dark', { color: '#3051c4' }) })}
+                sx={(t) => ({ color: '#c7d2fe', fontWeight: 700, ...t.applyStyles('dark', { color: '#4338ca' }) })}
               >
                 Undo
               </Button>
@@ -607,13 +494,13 @@ export default function App() {
         transitionDuration={{ enter: DURATION.medium, exit: DURATION.small }}
         // arrives from the edge it is anchored to
         slotProps={{ transition: { from: wide ? 'top' : 'bottom', travel: 12 } }}
-        sx={wide ? { top: '76px !important' } : { bottom: 'calc(76px + env(safe-area-inset-bottom)) !important' }}
+        sx={wide ? { top: '92px !important' } : { bottom: 'calc(80px + env(safe-area-inset-bottom)) !important' }}
       />
 
       {/* what a prediction found, for screen readers (the page shows it; this says it) */}
       <div role="status" className="sp-sr-only">
         {announcement.text}
-        {announcement.n % 2 ? '\u00a0' : ''}
+        {announcement.n % 2 ? ' ' : ''}
       </div>
     </Box>
   )
@@ -621,49 +508,68 @@ export default function App() {
 
 /**
  * Placeholder in the shape of the start page while GET /api/options is on its way (only if it
- * is slow): the title and copy, the examples panel, the stepper and the step card, on the
- * same glass surfaces they will have. The page heading is there for screen readers.
+ * is slow): the headline and copy, the examples panel and the workspace, on the glass they will
+ * have. Each surface fades in itself (a fading wrapper would switch off its blur). The page
+ * heading is there for screen readers.
  */
 function LoadingSkeleton() {
   return (
-    <Stack spacing={3} role="status" aria-busy="true" className="sp-fade">
-      <Typography variant="h3" component="h1" className="sp-sr-only">
+    <Stack spacing={4} role="status" aria-busy="true" sx={{ pt: { xs: 2, md: 5 } }}>
+      <Typography variant="h1" className="sp-sr-only">
         Loading SkillPath
       </Typography>
-      <Grid container spacing={{ xs: 3, md: 6 }} sx={{ alignItems: 'center', pb: { xs: 1, md: 3 } }} aria-hidden="true">
-        <Grid size={{ xs: 12, md: 7 }}>
-          <Skeleton variant="rounded" width={260} height={26} sx={{ borderRadius: 999, mb: 2 }} />
-          <Skeleton variant="text" sx={{ fontSize: '3rem', width: '80%' }} />
-          <Skeleton variant="text" sx={{ fontSize: '3rem', width: '45%' }} />
-          <Skeleton variant="text" sx={{ mt: 1.5, maxWidth: 600 }} />
+      <Grid container spacing={{ xs: 4, md: 6 }} sx={{ alignItems: 'center' }} aria-hidden="true">
+        <Grid size={{ xs: 12, md: 7 }} className="sp-fade">
+          <Skeleton variant="rounded" width={300} height={28} sx={{ borderRadius: 999, mb: 2.5 }} />
+          <Skeleton variant="text" sx={{ fontSize: '4rem', width: '85%' }} />
+          <Skeleton variant="text" sx={{ fontSize: '4rem', width: '50%' }} />
+          <Skeleton variant="text" sx={{ mt: 2, maxWidth: 590 }} />
           <Skeleton variant="text" sx={{ maxWidth: 560 }} />
-          <Skeleton variant="text" sx={{ maxWidth: 420 }} />
+          <Skeleton variant="rounded" width={200} height={52} sx={{ borderRadius: 999, mt: 3.5 }} />
         </Grid>
         <Grid size={{ xs: 12, md: 5 }}>
-          <Paper sx={{ p: { xs: 1.5, sm: 2 } }}>
-            <Skeleton variant="text" width={160} />
+          <Box className="sp-fade" sx={(t) => ({ ...panel(t, { elevation: 'high', radius: RADIUS.panel }), p: 2.25 })}>
+            <Skeleton variant="text" width={200} sx={{ fontSize: '1.25rem' }} />
             <Skeleton variant="text" width="80%" sx={{ mb: 1.5 }} />
             <Stack spacing={1}>
               {[0, 1, 2, 3].map((i) => (
-                <Skeleton key={i} variant="rounded" height={64} sx={{ borderRadius: `${RADIUS.inset}px` }} />
+                <Skeleton key={i} variant="rounded" height={66} sx={{ borderRadius: `${RADIUS.inset}px` }} />
               ))}
             </Stack>
-          </Paper>
+          </Box>
         </Grid>
       </Grid>
-      <Skeleton variant="rounded" height={64} sx={{ borderRadius: `${RADIUS.card}px` }} aria-hidden="true" />
-      <Paper sx={{ p: { xs: 2, md: 3 }, borderRadius: `${RADIUS.panel}px` }} aria-hidden="true">
-        <Skeleton variant="text" width={220} />
-        <Skeleton variant="text" sx={{ fontSize: '1.75rem', width: 180, mt: 2 }} />
-        <Skeleton variant="text" sx={{ maxWidth: 640 }} />
-        <Grid container spacing={2} sx={{ mt: 2 }}>
-          {[0, 1, 2, 3].map((i) => (
-            <Grid key={i} size={{ xs: 12, sm: 6 }}>
-              <Skeleton variant="rounded" height={56} sx={{ borderRadius: `${RADIUS.control}px` }} />
-            </Grid>
-          ))}
-        </Grid>
-      </Paper>
+      <Box
+        aria-hidden="true"
+        className="sp-fade"
+        sx={(t) => ({
+          ...panel(t, { elevation: 'high', radius: RADIUS.panel }),
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', md: '272px 1fr' },
+          minHeight: 420,
+        })}
+      >
+        <Box sx={{ p: 2.5, display: { xs: 'none', md: 'block' }, borderRight: 1, borderColor: 'divider' }}>
+          <Skeleton variant="circular" width={64} height={64} />
+          <Stack spacing={1} sx={{ mt: 3 }}>
+            {[0, 1, 2].map((i) => (
+              <Skeleton key={i} variant="rounded" height={58} sx={{ borderRadius: `${RADIUS.inset}px` }} />
+            ))}
+          </Stack>
+        </Box>
+        <Box sx={{ p: { xs: 2, md: 4 } }}>
+          <Skeleton variant="text" width={240} />
+          <Skeleton variant="text" sx={{ fontSize: '2rem', width: 220, mt: 2 }} />
+          <Skeleton variant="text" sx={{ maxWidth: 640 }} />
+          <Grid container spacing={2} sx={{ mt: 2 }}>
+            {[0, 1, 2, 3].map((i) => (
+              <Grid key={i} size={{ xs: 12, sm: 6 }}>
+                <Skeleton variant="rounded" height={56} sx={{ borderRadius: `${RADIUS.control}px` }} />
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
+      </Box>
     </Stack>
   )
 }
@@ -671,37 +577,26 @@ function LoadingSkeleton() {
 /** Empty state when the API cannot be reached; the card stays put while retrying. */
 function LoadError({ message, retrying, onRetry }: { message: string; retrying: boolean; onRetry: () => void }) {
   return (
-    <Paper variant="raised" sx={{ p: { xs: 3, md: 5 }, textAlign: 'center', borderRadius: `${RADIUS.panel}px` }} className="sp-rise" role="alert">
-      <Stack spacing={2} sx={{ alignItems: 'center', maxWidth: 520, mx: 'auto' }}>
-        <Box
-          sx={(t) => ({
-            width: 52,
-            height: 52,
-            borderRadius: '50%',
-            display: 'grid',
-            placeItems: 'center',
-            color: 'error.main',
-            bgcolor: alpha(t.palette.error.main, 0.1),
-          })}
-        >
+    <Box
+      role="alert"
+      className="sp-rise"
+      sx={(t) => ({ ...panel(t, { elevation: 'high', radius: RADIUS.panel }), p: { xs: 3, md: 6 }, mt: { xs: 2, md: 6 }, textAlign: 'center', maxWidth: 640, mx: 'auto' })}
+    >
+      <Stack spacing={2} sx={{ alignItems: 'center' }}>
+        <IconTile tone="rose" size={56}>
           <CloudOff />
-        </Box>
+        </IconTile>
         {/* the only heading on the page in this state */}
-        <Typography variant="h6" component="h1">
+        <Typography variant="h3" component="h1">
           SkillPath can’t load right now
         </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ overflowWrap: 'anywhere' }}>
+        <Typography variant="body2" color="text.secondary" sx={{ overflowWrap: 'anywhere', maxWidth: 520 }}>
           {message}
         </Typography>
-        <Button
-          variant="contained"
-          onClick={onRetry}
-          disabled={retrying}
-          startIcon={retrying ? <CircularProgress size={18} color="inherit" /> : <Refresh />}
-        >
+        <Button variant="contained" size="large" onClick={onRetry} disabled={retrying} startIcon={retrying ? <CircularProgress size={18} color="inherit" /> : <Refresh />}>
           Try again
         </Button>
       </Stack>
-    </Paper>
+    </Box>
   )
 }

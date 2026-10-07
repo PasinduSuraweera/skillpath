@@ -1,140 +1,46 @@
 import { alpha, createTheme } from '@mui/material/styles'
 import type { Theme } from '@mui/material/styles'
+import '@fontsource-variable/inter/opsz.css'
 import PopTransition from './components/PopTransition'
+import {
+  BRAND,
+  BRAND_GRADIENT,
+  BRAND_GRADIENT_DARK,
+  FONT,
+  FORCED_COLORS,
+  HOVER,
+  INK,
+  INK_DARK,
+  RADIUS,
+  TOUCH,
+  glass,
+  glassEdge,
+  ink,
+  mergeStyles,
+  shadow,
+  white,
+} from './design/tokens'
 import { DURATION, EASE, motionCssVars } from './motion'
 
-// Light and dark palettes. The app starts in the visitor's system setting and
-// the header button switches it (MUI remembers the choice in localStorage).
+// The MUI theme, built from the design tokens (design/tokens.ts). The app starts in the
+// visitor's system setting and the nav button switches it (MUI remembers the choice).
 //
-// Visual language: quiet neutral surfaces, one indigo accent for anything the
-// model says or the visitor should act on, and a single indigo-to-violet
-// gradient (BRAND_GRADIENT) kept for the few "intelligence" moments: the
-// primary action, the best match and the analysis state. Neutral controls
-// (outlined and text buttons) stay grey so the one primary action on a screen
-// stands out.
+// Visual language: content on layered glass over an aurora canvas. One indigo-to-violet
+// gradient marks the primary action and the model's strongest statements; insights get
+// their own tones (design/tokens.ts TONES). Secondary controls are neutral glass so the
+// one primary action on a screen stands out.
 //
-// Glass: the page sits on a static ambient background (AmbientBackground) and
-// the layers above it are translucent. Real backdrop blur is kept for the layers
-// that content scrolls or sits under (header and sticky bars, menus, tooltips,
-// toasts, overlays), where it is visible. Cards are translucent without blur: over
-// a soft gradient a blurred card looks the same and costs a GPU pass every frame.
-//
-// Motion: MUI's transition tokens are set from motion.ts, so its own menus,
-// tooltips, collapses and colour changes use the same curves and durations as
-// the app's animations. MUI uses "easeInOut" as the default for nearly all of
-// them (most are enters and exits), so it is the strong ease-out here; real
-// on-screen movement uses EASE.inOut from motion.ts directly.
+// Motion: MUI's transition tokens come from motion.ts, so its menus, tooltips, collapses
+// and colour changes share the app's curves. MUI uses "easeInOut" for nearly all of them
+// (mostly enters and exits), so it is the strong ease-out here; real on-screen movement
+// uses EASE.inOut from motion.ts directly.
 
-const ink = '#0f1729'
-const slate = (a: number) => `rgba(15, 23, 42, ${a})`
-const white = (a: number) => `rgba(255, 255, 255, ${a})`
-
-/** Accent used for the best match and the analysis state, never for plain controls. */
-export const BRAND_VIOLET = { light: '#6e56cf', dark: '#b49cff' }
-export const BRAND_GRADIENT = `linear-gradient(135deg, #3e63dd 0%, ${BRAND_VIOLET.light} 100%)`
-export const BRAND_GRADIENT_DARK = `linear-gradient(135deg, #8da4ff 0%, ${BRAND_VIOLET.dark} 100%)`
-
-/**
- * Accent-coloured text on a tint of the accent (pills, status chips). In light mode the
- * deeper indigo keeps it over 4.5:1, which the main indigo misses on a 12% tint.
- */
-export const tintInk = (t: Theme) => ({ color: t.palette.primary.dark, ...t.applyStyles('dark', { color: t.palette.primary.main }) })
-
-/** Radius scale: controls, inset panels, cards, large panels. */
-export const RADIUS = { control: 10, inset: 12, card: 16, panel: 20 }
-
-/** Brand hues behind the glass (AmbientBackground): the accent indigo, the violet, and a cool blue. */
-export const AMBIENT = { indigo: '#3e63dd', violet: BRAND_VIOLET.light, blue: '#0ea5e9' }
-
-/**
- * Fills (light, dark), translucent so the ambient background shows through and never blurred:
- * cards, and controls on them (fields, answer cards, outlined buttons), a step brighter than the card.
- */
-const SURFACE = {
-  card: [white(0.72), white(0.04)],
-  raised: [white(0.84), white(0.06)],
-  control: [white(0.7), white(0.03)],
-} as const
-
-/** One of the SURFACE fills for the current colour scheme. */
-export const surfaceFill = (t: Theme, level: keyof typeof SURFACE) => ({
-  backgroundColor: SURFACE[level][0],
-  ...t.applyStyles('dark', { backgroundColor: SURFACE[level][1] }),
-})
-
-/** Floating layers in dark mode sit a step above the paper colour. */
-const FLOATING_DARK = '#151b25'
-/** Tooltips and toasts in dark mode: near-white, with ink text. */
-const INVERSE_DARK = '#e7e9ee'
-
-type GlassLayer = 'chrome' | 'floating' | 'inverse' | 'overlay'
-/** Backdrop blur in px (wide screens, phones; on a phone it costs more and shows less) and fill opacity (light, dark). */
-const GLASS: Record<GlassLayer, { blur: [number, number]; fill: [number, number]; saturate: boolean }> = {
-  /** header and sticky bars: content scrolls under them */
-  chrome: { blur: [16, 10], fill: [0.72, 0.66], saturate: true },
-  /** menus, tooltips, toasts: above the page, and must read clearly over anything */
-  floating: { blur: [20, 10], fill: [0.84, 0.82], saturate: true },
-  /** tooltips and toasts: ink on a light page, light on a dark one, so a short message stands apart */
-  inverse: { blur: [12, 8], fill: [0.9, 0.92], saturate: true },
-  /** covers content that is waiting (the analysis state over the form) */
-  overlay: { blur: [8, 6], fill: [0.8, 0.8], saturate: false },
-}
-
-/**
- * A blurred glass layer. Solid when the browser cannot blur, when the visitor asks for less
- * transparency, and in print.
- */
-export function glass(t: Theme, layer: GlassLayer) {
-  const { blur, fill, saturate } = GLASS[layer]
-  const base = (dark: boolean) =>
-    layer === 'chrome'
-      ? t.palette.background.default
-      : layer === 'inverse'
-        ? dark
-          ? INVERSE_DARK
-          : ink
-        : dark && layer === 'floating'
-          ? FLOATING_DARK
-          : t.palette.background.paper
-  const filter = (px: number) => `${saturate ? 'saturate(160%) ' : ''}blur(${px}px)`
-  const solid = { backgroundColor: base(false), ...t.applyStyles('dark', { backgroundColor: base(true) }) }
-  const flat = { backdropFilter: 'none', WebkitBackdropFilter: 'none', ...solid }
-  return {
-    backgroundColor: alpha(base(false), fill[0]),
-    ...t.applyStyles('dark', { backgroundColor: alpha(base(true), fill[1]) }),
-    backdropFilter: filter(blur[0]),
-    WebkitBackdropFilter: filter(blur[0]),
-    [t.breakpoints.down('sm')]: { backdropFilter: filter(blur[1]), WebkitBackdropFilter: filter(blur[1]) },
-    '@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)))': solid,
-    '@media (prefers-reduced-transparency: reduce)': flat,
-    '@media print': flat,
-  }
-}
-
-/** A shadow in the accent's hue: soft depth that belongs to the page instead of grey smudges. */
-const indigo = (a: number) => `rgba(46, 64, 160, ${a})`
-
-/** Elevation scale (light mode; dark mode uses edges and a top highlight instead). */
-export const ELEVATION = {
-  card: `0 1px 2px ${slate(0.04)}, 0 4px 14px -6px ${indigo(0.1)}`,
-  raised: `0 1px 2px ${slate(0.05)}, 0 14px 32px -14px ${indigo(0.26)}`,
-  floating: `0 18px 44px -14px ${indigo(0.3)}, 0 4px 12px -4px ${slate(0.08)}`,
-}
-
-const colorTransition = (props: string[]) =>
-  props.map((p) => `${p} ${DURATION.hover}ms ${EASE.standard}`).join(', ')
+const colorTransition = (props: string[]) => props.map((p) => `${p} ${DURATION.hover}ms ${EASE.standard}`).join(', ')
 const press = `transform ${DURATION.press}ms ${EASE.out}`
-const hoverOnly = '@media (hover: hover) and (pointer: fine)'
-const touch = '@media (pointer: coarse)'
-/**
- * High-contrast modes (Windows contrast themes): the system replaces colours and drops gradients and
- * shadows, so anything that is drawn only with them needs a plain border there.
- */
-export const FORCED_COLORS = '@media (forced-colors: active)'
 
 /** On touch screens, a hit area of at least 44 × 44 px around a small control, without changing its layout. */
 const touchTarget = {
-  [touch]: {
+  [TOUCH]: {
     '&::after': {
       content: '""',
       position: 'absolute',
@@ -148,76 +54,38 @@ const touchTarget = {
 }
 
 const focusRing = ({ theme }: { theme: Theme }) => ({
-  '&.Mui-focusVisible': {
-    outline: `2px solid ${theme.palette.primary.main}`,
-    outlineOffset: 2,
-  },
+  '&.Mui-focusVisible': { outline: `2px solid ${theme.palette.primary.main}`, outlineOffset: 2 },
 })
 
-/**
- * The resting card, a glass surface: translucent fill, a hairline edge, a lit top edge and a
- * soft shadow (dark mode: the edges only). Solid when the visitor asks for less transparency.
- */
-const cardSurface = ({ theme }: { theme: Theme }) => ({
-  ...surfaceFill(theme, 'card'),
-  borderColor: theme.palette.divider,
-  boxShadow: `inset 0 1px 0 ${white(0.9)}, ${ELEVATION.card}`,
-  ...theme.applyStyles('dark', { boxShadow: `inset 0 1px 0 ${white(0.06)}` }),
-  '@media (prefers-reduced-transparency: reduce)': { backgroundColor: theme.palette.background.paper },
-})
-
-/**
- * The raised surface, for the focal panels (the analysis summary, the best match, the what-if
- * comparison): a brighter fill and a deeper, accent-tinted shadow. <Paper variant="raised">
- */
-const raisedSurface = ({ theme }: { theme: Theme }) => ({
-  ...surfaceFill(theme, 'raised'),
-  border: `1px solid ${theme.palette.divider}`,
-  boxShadow: `inset 0 1px 0 ${white(0.9)}, ${ELEVATION.raised}`,
-  ...theme.applyStyles('dark', { boxShadow: `inset 0 1px 0 ${white(0.07)}, 0 16px 36px -18px rgba(0, 0, 0, 0.7)` }),
-  '@media (prefers-reduced-transparency: reduce)': { backgroundColor: theme.palette.background.paper },
-})
-
-declare module '@mui/material/Paper' {
-  interface PaperPropsVariantOverrides {
-    raised: true
-  }
-}
-
-/** Floating layers (menus, autocomplete lists): blurred glass and a deeper shadow, so they read as above the page. */
-const floatingSurface = ({ theme }: { theme: Theme }) => ({
-  ...glass(theme, 'floating'),
-  borderRadius: RADIUS.inset,
-  border: `1px solid ${theme.palette.divider}`,
-  boxShadow: `inset 0 1px 0 ${white(0.7)}, ${ELEVATION.floating}`,
-  ...theme.applyStyles('dark', { boxShadow: `inset 0 1px 0 ${white(0.06)}, 0 16px 40px -8px rgba(0, 0, 0, 0.6)` }),
-})
+/** Floating layers (menus, autocomplete lists): the most opaque glass and the deepest shadow. */
+const floatingSurface = ({ theme }: { theme: Theme }) =>
+  mergeStyles(glass(theme, 'floating'), glassEdge(theme), shadow(theme, 'high'), { borderRadius: RADIUS.inset })
 
 export const theme = createTheme({
   colorSchemes: {
     light: {
       palette: {
-        primary: { main: '#3e63dd', dark: '#3051c4', light: '#6f8ef0' },
-        secondary: { main: '#d97706' },
-        // deep enough to stay over 4.5:1 as text on the page grey and on the light tints they sit on
-        success: { main: '#127452' },
-        error: { main: '#c8321f' },
+        primary: { main: BRAND.indigo.light, dark: '#4338ca', light: '#818cf8', contrastText: '#ffffff' },
+        secondary: { main: '#b45309' },
+        // deep enough to stay over 4.5:1 as text on the page and on the light tints they sit on
+        success: { main: '#047857', dark: '#065f46' },
+        error: { main: '#c42b1c' },
         warning: { main: '#a35a00' },
-        background: { default: '#f7f8fa', paper: '#ffffff' },
-        text: { primary: ink, secondary: '#525c6b' },
-        divider: slate(0.09),
+        background: { default: '#f3f4fa', paper: '#ffffff' },
+        text: { primary: INK, secondary: '#4a5470' },
+        divider: ink(0.09),
       },
     },
     dark: {
       palette: {
-        primary: { main: '#8da4ff', dark: '#7088f0', light: '#b1c0ff' },
-        secondary: { main: '#fbbf24' },
-        success: { main: '#4cc38a' },
-        error: { main: '#ff6b5e' },
-        warning: { main: '#f5a524' },
-        background: { default: '#0a0d12', paper: '#11161e' },
-        text: { primary: '#e7e9ee', secondary: 'rgba(231, 233, 238, 0.64)' },
-        divider: white(0.08),
+        primary: { main: BRAND.indigo.dark, dark: '#818cf8', light: '#c7d2fe', contrastText: INK },
+        secondary: { main: '#fcd34d' },
+        success: { main: '#6ee7b7', dark: '#34d399' },
+        error: { main: '#ff8a80' },
+        warning: { main: '#fbbf24' },
+        background: { default: '#06070d', paper: '#11142a' },
+        text: { primary: INK_DARK, secondary: 'rgba(238, 240, 248, 0.68)' },
+        divider: white(0.09),
       },
     },
   },
@@ -235,20 +103,21 @@ export const theme = createTheme({
     },
   },
   typography: {
-    // the platform UI face (SF Pro, Segoe UI, Roboto): no web font to download, and it renders crisply everywhere
-    fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-    // tighter tracking as type gets bigger; body text stays at 0
-    h3: { fontWeight: 700, letterSpacing: '-0.035em', lineHeight: 1.08 },
-    h4: { fontWeight: 700, letterSpacing: '-0.028em', lineHeight: 1.15 },
-    h5: { fontWeight: 650, letterSpacing: '-0.02em', lineHeight: 1.2 },
-    h6: { fontWeight: 600, letterSpacing: '-0.012em', lineHeight: 1.3, fontSize: '1.125rem' },
-    subtitle1: { fontWeight: 600, letterSpacing: '-0.006em', lineHeight: 1.4 },
-    subtitle2: { fontWeight: 600, letterSpacing: '-0.003em' },
-    body1: { lineHeight: 1.6 },
-    body2: { lineHeight: 1.55 },
-    caption: { lineHeight: 1.45, letterSpacing: '0.005em' },
-    overline: { fontWeight: 600, letterSpacing: '0.08em', fontSize: '0.6875rem', lineHeight: 1.6 },
-    button: { fontWeight: 600, textTransform: 'none', letterSpacing: '-0.003em' },
+    fontFamily: FONT.sans,
+    // tighter tracking as type gets bigger; body text stays near 0
+    h1: { fontWeight: 700, letterSpacing: '-0.045em', lineHeight: 1.02, fontSize: 'clamp(2.375rem, 1.45rem + 3.5vw, 4.25rem)' },
+    h2: { fontWeight: 700, letterSpacing: '-0.035em', lineHeight: 1.08, fontSize: 'clamp(1.75rem, 1.3rem + 1.6vw, 2.5rem)' },
+    h3: { fontWeight: 680, letterSpacing: '-0.028em', lineHeight: 1.12, fontSize: 'clamp(1.375rem, 1.15rem + 0.9vw, 1.875rem)' },
+    h4: { fontWeight: 650, letterSpacing: '-0.02em', lineHeight: 1.2, fontSize: '1.25rem' },
+    h5: { fontWeight: 620, letterSpacing: '-0.014em', lineHeight: 1.3, fontSize: '1.0625rem' },
+    h6: { fontWeight: 600, letterSpacing: '-0.01em', lineHeight: 1.35, fontSize: '0.9375rem' },
+    subtitle1: { fontWeight: 600, letterSpacing: '-0.01em', lineHeight: 1.4 },
+    subtitle2: { fontWeight: 600, letterSpacing: '-0.006em', lineHeight: 1.45 },
+    body1: { lineHeight: 1.6, letterSpacing: '-0.006em' },
+    body2: { lineHeight: 1.55, letterSpacing: '-0.003em' },
+    caption: { lineHeight: 1.45, letterSpacing: '0' },
+    overline: { fontWeight: 650, letterSpacing: '0.1em', fontSize: '0.6875rem', lineHeight: 1.6 },
+    button: { fontWeight: 600, textTransform: 'none', letterSpacing: '-0.008em' },
   },
   components: {
     MuiCssBaseline: {
@@ -256,11 +125,16 @@ export const theme = createTheme({
         ':root': motionCssVars,
         // background-color stays the plain page colour (print and the dark-mode test read it);
         // the colour above it is AmbientBackground
-        body: { WebkitFontSmoothing: 'antialiased', MozOsxFontSmoothing: 'grayscale' },
-        '::selection': { backgroundColor: alpha(theme.palette.primary.main, 0.2) },
+        body: {
+          WebkitFontSmoothing: 'antialiased',
+          MozOsxFontSmoothing: 'grayscale',
+          fontOpticalSizing: 'auto',
+          textRendering: 'optimizeLegibility',
+        },
+        '::selection': { backgroundColor: alpha(theme.palette.primary.main, 0.22) },
       }),
     },
-    // No Material ripple: presses scale instead (below) and keyboard focus gets a ring.
+    // No Material ripple: presses scale instead and keyboard focus gets a ring.
     MuiButtonBase: {
       defaultProps: { disableRipple: true },
       styleOverrides: { root: focusRing },
@@ -268,86 +142,85 @@ export const theme = createTheme({
     MuiButton: {
       defaultProps: { disableElevation: true },
       styleOverrides: {
+        // capsule buttons: the shape reads as "pressable" at a glance
         root: {
-          borderRadius: RADIUS.control,
-          minHeight: 38,
-          paddingInline: 16,
+          borderRadius: RADIUS.pill,
+          minHeight: 42,
+          paddingInline: 18,
           transition: `${colorTransition(['background-color', 'border-color', 'color', 'box-shadow'])}, ${press}`,
           '&:active': { transform: 'scale(0.97)' },
-          // fingers need taller buttons than a mouse pointer
-          [touch]: { minHeight: 44 },
+          [TOUCH]: { minHeight: 46 },
         },
-        sizeSmall: { minHeight: 32, paddingInline: 10, ...touchTarget, [touch]: { ...touchTarget[touch], minHeight: 36 } },
-        sizeLarge: { minHeight: 46, paddingInline: 22, fontSize: '0.975rem' },
+        sizeSmall: { minHeight: 32, paddingInline: 12, fontSize: '0.8125rem', ...touchTarget, [TOUCH]: { ...touchTarget[TOUCH], minHeight: 36 } },
+        sizeLarge: { minHeight: 52, paddingInline: 26, fontSize: '1rem' },
         contained: ({ theme }) => ({
-          // the brand gradient, a light top edge and a tinted shadow give the one primary action some depth
+          // the brand gradient, a lit top edge and a glow in the accent's hue: the one primary action
           backgroundImage: BRAND_GRADIENT,
-          boxShadow: `inset 0 1px 0 ${white(0.16)}, 0 1px 2px ${alpha(theme.palette.primary.dark, 0.3)}, 0 2px 6px -2px ${alpha(theme.palette.primary.main, 0.35)}`,
-          // gated: on touch screens a tap would leave the hover shadow stuck
-          [hoverOnly]: {
+          boxShadow: `inset 0 1px 0 ${white(0.22)}, 0 1px 2px ${alpha('#4338ca', 0.35)}, 0 8px 22px -8px ${alpha('#6d28d9', 0.55)}`,
+          [HOVER]: {
             '&:hover': {
-              boxShadow: `inset 0 1px 0 ${white(0.16)}, 0 1px 2px ${alpha(theme.palette.primary.dark, 0.3)}, 0 6px 16px -4px ${alpha(theme.palette.primary.main, 0.45)}`,
+              boxShadow: `inset 0 1px 0 ${white(0.22)}, 0 1px 2px ${alpha('#4338ca', 0.35)}, 0 14px 32px -10px ${alpha('#6d28d9', 0.7)}`,
             },
           },
           '&.Mui-disabled': { boxShadow: 'none', backgroundImage: 'none' },
-          // its edge is the gradient, which a contrast theme removes
           [FORCED_COLORS]: { border: '1px solid ButtonText' },
           ...theme.applyStyles('dark', {
             backgroundImage: BRAND_GRADIENT_DARK,
-            boxShadow: `inset 0 1px 0 ${white(0.3)}`,
-            [hoverOnly]: { '&:hover': { boxShadow: `inset 0 1px 0 ${white(0.3)}, 0 6px 18px -6px ${alpha(BRAND_VIOLET.dark, 0.5)}` } },
+            boxShadow: `inset 0 1px 0 ${white(0.5)}, 0 10px 28px -10px ${alpha('#a78bfa', 0.6)}`,
+            [HOVER]: { '&:hover': { boxShadow: `inset 0 1px 0 ${white(0.5)}, 0 14px 36px -10px ${alpha('#a78bfa', 0.8)}` } },
           }),
         }),
-        // outlined and text buttons are neutral: secondary actions should not compete with the primary one
+        // outlined buttons are neutral glass: secondary actions should not compete with the primary one
         outlined: ({ theme }) => ({
           color: theme.palette.text.primary,
-          borderColor: slate(0.14),
-          backgroundColor: SURFACE.control[0],
-          boxShadow: `0 1px 2px ${slate(0.05)}`,
-          [hoverOnly]: { '&:hover': { borderColor: slate(0.24), backgroundColor: white(0.9) } },
+          borderColor: ink(0.12),
+          backgroundColor: white(0.62),
+          boxShadow: `inset 0 1px 0 ${white(0.9)}, 0 1px 2px ${ink(0.06)}`,
+          [HOVER]: { '&:hover': { borderColor: ink(0.22), backgroundColor: white(0.9) } },
           '&.Mui-disabled': { boxShadow: 'none' },
           ...theme.applyStyles('dark', {
             borderColor: white(0.14),
-            backgroundColor: white(0.03),
-            boxShadow: 'none',
-            [hoverOnly]: { '&:hover': { borderColor: white(0.26), backgroundColor: white(0.06) } },
+            backgroundColor: white(0.05),
+            boxShadow: `inset 0 1px 0 ${white(0.06)}`,
+            [HOVER]: { '&:hover': { borderColor: white(0.26), backgroundColor: white(0.1) } },
           }),
         }),
-        text: ({ theme }) => ({
-          [hoverOnly]: { '&:hover': { backgroundColor: theme.palette.action.hover } },
-        }),
+        text: ({ theme }) => ({ [HOVER]: { '&:hover': { backgroundColor: theme.palette.action.hover } } }),
       },
     },
     MuiIconButton: {
       styleOverrides: {
         root: {
           transition: `${colorTransition(['background-color', 'color'])}, ${press}`,
-          '&:active': { transform: 'scale(0.95)' },
+          '&:active': { transform: 'scale(0.94)' },
           ...touchTarget,
         },
       },
     },
     MuiChip: {
       styleOverrides: {
-        root: { fontWeight: 500, transition: `${colorTransition(['background-color', 'border-color', 'color'])}, ${press}` },
-        clickable: { '&:active': { transform: 'scale(0.97)', boxShadow: 'none' } },
+        root: { fontWeight: 550, borderRadius: RADIUS.pill, transition: `${colorTransition(['background-color', 'border-color', 'color'])}, ${press}` },
+        clickable: { '&:active': { transform: 'scale(0.96)', boxShadow: 'none' } },
       },
       variants: [
         {
-          // neutral chips get the same hairline as inputs and outlined buttons
           props: { variant: 'outlined', color: 'default' },
-          style: ({ theme }) => ({ borderColor: slate(0.14), ...theme.applyStyles('dark', { borderColor: white(0.14) }) }),
+          style: ({ theme }) => ({
+            borderColor: ink(0.12),
+            backgroundColor: white(0.5),
+            ...theme.applyStyles('dark', { borderColor: white(0.14), backgroundColor: white(0.04) }),
+          }),
         },
       ],
     },
     MuiMenuItem: {
       styleOverrides: {
         root: ({ theme }) => ({
-          borderRadius: 8,
+          borderRadius: 10,
           marginInline: 6,
-          minHeight: 38,
+          minHeight: 40,
           fontSize: '0.9375rem',
-          // long answers ("Secondary school (e.g. American high school, …)") wrap instead of running off a phone screen
+          // long answers wrap instead of running off a phone screen
           whiteSpace: 'normal',
           lineHeight: 1.4,
           '&.Mui-focusVisible': { outline: 'none' },
@@ -356,21 +229,19 @@ export const theme = createTheme({
         }),
       },
     },
+    // MUI's own papers (accordion, fallback cards) are panel glass; app surfaces use design/Surface
     MuiPaper: {
       defaultProps: { variant: 'outlined' },
       styleOverrides: {
         rounded: { borderRadius: RADIUS.card },
-        outlined: cardSurface,
+        outlined: ({ theme }) => ({ ...glass(theme, 'panel'), ...glassEdge(theme), ...shadow(theme, 'low') }),
       },
-      variants: [{ props: { variant: 'raised' }, style: raisedSurface }],
     },
-    // Menus and select lists: MUI's Grow starts at a squashed scale(0.75, 0.56). Instead they fade
-    // while settling from 97% towards their anchor (PopTransition), and leave with a quicker fade.
+    // Menus and select lists fade while settling towards their anchor (PopTransition), not MUI's squashed Grow.
     MuiPopover: {
       defaultProps: { slots: { transition: PopTransition } },
       styleOverrides: { paper: floatingSurface },
     },
-    // Menu hands Popover its own (empty) transition slot, so it needs the transition set as well
     MuiMenu: {
       defaultProps: { slots: { transition: PopTransition }, transitionDuration: { enter: DURATION.small, exit: 120 } },
       styleOverrides: { list: { paddingBlock: 6 } },
@@ -384,8 +255,8 @@ export const theme = createTheme({
           '& .MuiAutocomplete-groupLabel': {
             top: -6,
             fontSize: '0.6875rem',
-            fontWeight: 600,
-            letterSpacing: '0.08em',
+            fontWeight: 650,
+            letterSpacing: '0.1em',
             textTransform: 'uppercase',
             lineHeight: '32px',
             color: theme.palette.text.secondary,
@@ -394,12 +265,10 @@ export const theme = createTheme({
           },
           '& .MuiAutocomplete-groupUl': { padding: 0, '& .MuiAutocomplete-option': { paddingLeft: 24 } },
         }),
-        option: { borderRadius: 8, minHeight: '36px !important' },
-        tag: { maxWidth: 'calc(100% - 8px)', borderRadius: 8 },
+        option: { borderRadius: 10, minHeight: '38px !important' },
+        tag: { maxWidth: 'calc(100% - 8px)', borderRadius: 999 },
       },
     },
-    // Tooltips: a short fade with a slight settle from the trigger side (PopTransition), instead
-    // of Grow's squash; moving between tooltips skips the delay.
     MuiTooltip: {
       defaultProps: {
         enterDelay: 250,
@@ -412,153 +281,93 @@ export const theme = createTheme({
           ...glass(theme, 'inverse'),
           fontSize: '0.75rem',
           lineHeight: 1.45,
-          padding: '6px 10px',
-          borderRadius: 8,
+          padding: '7px 11px',
+          borderRadius: 10,
           maxWidth: 300,
           color: '#fff',
-          boxShadow: `0 8px 24px -6px ${slate(0.3)}`,
-          ...theme.applyStyles('dark', { color: ink }),
+          boxShadow: `0 10px 30px -8px ${ink(0.35)}`,
+          ...theme.applyStyles('dark', { color: INK }),
         }),
-        // the arrow is a separate shape: solid, so its overlap with the bubble does not show
-        arrow: ({ theme }) => ({ color: ink, ...theme.applyStyles('dark', { color: INVERSE_DARK }) }),
+        arrow: ({ theme }) => ({ color: INK, ...theme.applyStyles('dark', { color: INK_DARK }) }),
       },
     },
-    MuiInputLabel: {
-      styleOverrides: { root: { fontWeight: 450 } },
-    },
-    MuiFormHelperText: {
-      styleOverrides: { root: { marginInline: 2, marginTop: 6, lineHeight: 1.45 } },
-    },
+    MuiInputLabel: { styleOverrides: { root: { fontWeight: 450 } } },
+    MuiFormHelperText: { styleOverrides: { root: { marginInline: 4, marginTop: 6, lineHeight: 1.45 } } },
+    // Fields are frosted wells: a brighter fill than the panel, a hairline, and a soft accent halo on focus.
     MuiOutlinedInput: {
       styleOverrides: {
         root: ({ theme }) => ({
           borderRadius: RADIUS.control,
-          backgroundColor: SURFACE.control[0],
+          backgroundColor: white(0.66),
+          boxShadow: `inset 0 1px 2px ${ink(0.04)}`,
           transition: colorTransition(['box-shadow', 'background-color']),
-          // a field's edge is what shows where to type: strong enough to find (MUI's own default strength)
-          '& .MuiOutlinedInput-notchedOutline': { borderColor: slate(0.24), transition: colorTransition(['border-color']) },
-          [hoverOnly]: { '&:hover:not(.Mui-focused):not(.Mui-error):not(.Mui-disabled) .MuiOutlinedInput-notchedOutline': { borderColor: slate(0.4) } },
+          // a field's edge is what shows where to type: strong enough to find
+          '& .MuiOutlinedInput-notchedOutline': { borderColor: ink(0.2), transition: colorTransition(['border-color']) },
+          [HOVER]: { '&:hover:not(.Mui-focused):not(.Mui-error):not(.Mui-disabled) .MuiOutlinedInput-notchedOutline': { borderColor: ink(0.36) } },
           '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderWidth: 1, borderColor: theme.palette.primary.main },
-          '&.Mui-focused': { backgroundColor: theme.palette.background.paper, boxShadow: `0 0 0 3px ${alpha(theme.palette.primary.main, 0.18)}` },
-          '&.Mui-error.Mui-focused': { boxShadow: `0 0 0 3px ${alpha(theme.palette.error.main, 0.18)}` },
-          '&.Mui-disabled': { backgroundColor: 'transparent' },
+          '&.Mui-focused': { backgroundColor: white(0.95), boxShadow: `0 0 0 4px ${alpha(theme.palette.primary.main, 0.16)}` },
+          '&.Mui-error.Mui-focused': { boxShadow: `0 0 0 4px ${alpha(theme.palette.error.main, 0.16)}` },
+          '&.Mui-disabled': { backgroundColor: 'transparent', boxShadow: 'none' },
           ...theme.applyStyles('dark', {
-            backgroundColor: SURFACE.control[1],
-            '&.Mui-focused': { backgroundColor: white(0.05), boxShadow: `0 0 0 3px ${alpha(theme.palette.primary.main, 0.18)}` },
-            '& .MuiOutlinedInput-notchedOutline': { borderColor: white(0.2), transition: colorTransition(['border-color']) },
-            [hoverOnly]: { '&:hover:not(.Mui-focused):not(.Mui-error):not(.Mui-disabled) .MuiOutlinedInput-notchedOutline': { borderColor: white(0.34) } },
+            backgroundColor: white(0.04),
+            boxShadow: 'none',
+            '&.Mui-focused': { backgroundColor: white(0.07), boxShadow: `0 0 0 4px ${alpha(theme.palette.primary.main, 0.2)}` },
+            '& .MuiOutlinedInput-notchedOutline': { borderColor: white(0.18), transition: colorTransition(['border-color']) },
+            [HOVER]: { '&:hover:not(.Mui-focused):not(.Mui-error):not(.Mui-disabled) .MuiOutlinedInput-notchedOutline': { borderColor: white(0.32) } },
           }),
         }),
       },
     },
-    MuiSelect: {
-      defaultProps: { MenuProps: { slotProps: { paper: { sx: { mt: 0.75 } } } } },
-    },
+    MuiSelect: { defaultProps: { MenuProps: { slotProps: { paper: { sx: { mt: 0.75 } } } } } },
     MuiCheckbox: {
       styleOverrides: {
-        root: {
-          ...touchTarget,
-          borderRadius: 8,
-          transition: `${colorTransition(['background-color', 'color'])}, ${press}`,
-          '&:active': { transform: 'scale(0.9)' },
-        },
+        root: { ...touchTarget, borderRadius: 8, transition: `${colorTransition(['background-color', 'color'])}, ${press}`, '&:active': { transform: 'scale(0.9)' } },
       },
     },
     MuiLinearProgress: {
       styleOverrides: {
-        root: ({ theme }) => ({
-          borderRadius: 999,
-          backgroundColor: slate(0.07),
-          ...theme.applyStyles('dark', { backgroundColor: white(0.08) }),
-        }),
-        bar: {
-          borderRadius: 999,
-          // a value that changes (what-if re-run) moves on screen: ease-in-out
-          transition: `transform ${DURATION.large}ms ${EASE.inOut}`,
-        },
+        root: ({ theme }) => ({ borderRadius: 999, backgroundColor: ink(0.07), ...theme.applyStyles('dark', { backgroundColor: white(0.08) }) }),
+        // a value that changes (what-if re-run) moves on screen: ease-in-out
+        bar: { borderRadius: 999, transition: `transform ${DURATION.large}ms ${EASE.inOut}` },
       },
     },
-    MuiDivider: {
-      styleOverrides: { root: ({ theme }) => ({ borderColor: theme.palette.divider }) },
-    },
-    MuiAccordion: {
-      styleOverrides: {
-        root: { borderRadius: RADIUS.card, '&::before': { display: 'none' } },
-      },
-    },
-    MuiAccordionSummary: {
-      styleOverrides: {
-        root: ({ theme }) => ({
-          minHeight: 56,
-          paddingInline: theme.spacing(2.5),
-          borderRadius: RADIUS.card,
-          transition: colorTransition(['background-color']),
-          [hoverOnly]: { '&:hover': { backgroundColor: theme.palette.action.hover } },
-          '&.Mui-focusVisible': { outlineOffset: -2, backgroundColor: 'transparent' },
-        }),
-        // the chevron turns over on screen: ease-in-out, a touch slower than a colour change
-        expandIconWrapper: { transition: `transform ${DURATION.medium}ms ${EASE.inOut}` },
-      },
-    },
+    MuiDivider: { styleOverrides: { root: ({ theme }) => ({ borderColor: theme.palette.divider }) } },
     MuiCollapse: { defaultProps: { timeout: DURATION.large } },
     MuiAlert: {
       styleOverrides: {
-        root: { borderRadius: RADIUS.inset, alignItems: 'flex-start' },
-      },
-      // a hairline in the alert's own colour, so the tinted box has an edge on the light page
-      variants: (['error', 'warning'] as const).map((severity) => ({
-        props: { variant: 'standard' as const, severity },
-        style: ({ theme }: { theme: Theme }) => ({ border: `1px solid ${alpha(theme.palette[severity].main, 0.22)}` }),
-      })),
-    },
-    MuiStepButton: {
-      styleOverrides: {
+        // translucent but not blurred: alerts open inside a fading wrapper, which would switch a blur off mid-fade
         root: ({ theme }) => ({
           borderRadius: RADIUS.inset,
-          transition: colorTransition(['background-color']),
-          [hoverOnly]: { '&:hover': { backgroundColor: theme.palette.action.hover } },
+          alignItems: 'flex-start',
+          backgroundColor: white(0.78),
+          ...theme.applyStyles('dark', { backgroundColor: 'rgba(17, 20, 38, 0.82)' }),
+          ...shadow(theme, 'low'),
         }),
       },
-    },
-    MuiStepLabel: {
-      styleOverrides: {
-        label: ({ theme }) => ({
-          fontWeight: 500,
-          transition: colorTransition(['color']),
-          '&.Mui-active, &.Mui-completed': { fontWeight: 600, color: theme.palette.text.primary },
+      // a hairline and a wash in the alert's own colour, over the glass
+      variants: (['error', 'warning', 'info', 'success'] as const).map((severity) => ({
+        props: { variant: 'standard' as const, severity },
+        style: ({ theme }: { theme: Theme }) => ({
+          border: `1px solid ${alpha(theme.palette[severity].main, 0.3)}`,
+          backgroundImage: `linear-gradient(${alpha(theme.palette[severity].main, 0.1)}, ${alpha(theme.palette[severity].main, 0.06)})`,
+          '& .MuiAlert-icon': { color: theme.palette[severity].main },
         }),
-      },
-    },
-    MuiStepIcon: {
-      styleOverrides: {
-        root: { transition: colorTransition(['color']) },
-        text: { fontWeight: 600 },
-      },
-    },
-    MuiStepConnector: {
-      styleOverrides: {
-        line: ({ theme }) => ({ borderTopWidth: 2, borderRadius: 2, borderColor: theme.palette.divider, transition: colorTransition(['border-color']) }),
-        root: ({ theme }) => ({
-          '&.Mui-active .MuiStepConnector-line, &.Mui-completed .MuiStepConnector-line': {
-            borderColor: theme.palette.primary.main,
-          },
-        }),
-      },
+      })),
     },
     MuiTableCell: {
       styleOverrides: {
         root: ({ theme }) => ({ borderColor: theme.palette.divider, fontVariantNumeric: 'tabular-nums' }),
         head: ({ theme }) => ({
-          fontWeight: 600,
+          fontWeight: 650,
           color: theme.palette.text.secondary,
-          fontSize: '0.75rem',
-          letterSpacing: '0.04em',
+          fontSize: '0.6875rem',
+          letterSpacing: '0.08em',
           textTransform: 'uppercase',
         }),
       },
     },
     MuiSkeleton: {
-      styleOverrides: { root: ({ theme }) => ({ backgroundColor: slate(0.07), ...theme.applyStyles('dark', { backgroundColor: white(0.07) }) }) },
+      styleOverrides: { root: ({ theme }) => ({ backgroundColor: ink(0.06), ...theme.applyStyles('dark', { backgroundColor: white(0.06) }) }) },
     },
     MuiSnackbarContent: {
       styleOverrides: {
@@ -567,8 +376,9 @@ export const theme = createTheme({
           borderRadius: RADIUS.inset,
           border: 'none',
           color: '#fff',
-          boxShadow: `0 12px 32px -8px ${slate(0.35)}`,
-          ...theme.applyStyles('dark', { color: ink }),
+          paddingInline: 18,
+          boxShadow: `0 18px 44px -12px ${ink(0.45)}`,
+          ...theme.applyStyles('dark', { color: INK, boxShadow: '0 18px 44px -12px rgba(0, 0, 0, 0.8)' }),
         }),
       },
     },

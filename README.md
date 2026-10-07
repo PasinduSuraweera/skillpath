@@ -100,16 +100,34 @@ single answer.
 - **Salary benchmark:**
   - median and interquartile range in USD per year;
   - taken from the most specific peer group with at least 30 people: role or family, combined with country, region or worldwide, always within the user's experience band.
-- **Skill gap:** up to five distinctive technologies of the role that the user hasn't used yet.
+- **Skill gap:** up to five distinctive technologies of the role that the user hasn't used yet, and the ones they already use.
 
 ### What-if simulation
 
-- Press **+** next to a suggested skill, or change any answer. The app re-runs the prediction and
-  shows before and after side by side: role rank changes, probability changes and the list of edits.
+- Press **What if I add …?** on the recommended next step, **What if?** next to any suggested skill, or change any answer.
+  The app re-runs the prediction and shows before and after side by side: role rank changes, probability changes and
+  the list of edits.
+- **Your explorations** lists every run of the session (kept in memory only, never saved), with what changed and the
+  best match it produced; any earlier run can be brought back.
 
 ### Interface
 
-- **Light and dark themes.** The theme follows the system setting, and the header button overrides it.
+- **Start page:** a full-window layered hero (a constellation of technologies behind the glass examples panel, floating
+  fragments of a real example result in front), then "How SkillPath works": four chapters on glass cards that stack as
+  they arrive, before the questionnaire. Picking an example offers its results straight from the panel.
+- **Results dashboard:** a spotlight on the best match (match ring, skill readiness, recommended next step), the three
+  roles side by side (choosing one focuses the detailed insights on it), the chosen role's skills as a path (what you
+  have, the gap, what to learn next, readiness, the role), the career landscape and how the result was reached.
+- **Design system** (`frontend/src/design/`): layered glass materials over an aurora backdrop, colour tones per
+  kind of insight, and shared tiles, pills, meters and rings.
+- **Scrolling and depth** (`frontend/src/depth.ts`): eased wheel and trackpad scrolling (Lenis; touch and keyboard stay
+  native). The page is built in layers that move at their own share of the scroll (glows 0.5–0.7×, decoration 0.75×,
+  large glass 0.92×, text 1×, foreground fragments 1.12×), decoration leans gently towards the mouse, light slides
+  across large glass, and the backdrop's mood changes with the section in view. The story cards stack, the skill path
+  pins and passes sideways, rows of cards assemble from their sides, the analysis timeline draws as it is read, and the
+  nav firms up and shows reading progress. Wide screens with a mouse only: phones, touch and reduced motion get
+  vertical layouts with simple reveals, and reduced motion turns movement off entirely.
+- **Light and dark themes.** The theme follows the system setting, and the nav button overrides it.
 - **Print / Save as PDF** prints only the results, in light colours, without buttons.
 - **Responsive** from 320 px phones to wide desktops.
 - **Accessibility:**
@@ -185,7 +203,7 @@ All outputs of this pipeline are committed, so the app and tests run from a clea
 | **Data mining / ML** | Python, pandas, NumPy, scikit-learn 1.8.0 (pinned), PyArrow (Parquet), joblib, SciPy |
 | **Analysis and reporting** | Jupyter + Jupytext (notebooks kept as `.py`), matplotlib, seaborn, nbconvert, ReportLab (PDF report), XlsxWriter |
 | **Backend** | FastAPI, Pydantic v2, Uvicorn |
-| **Frontend** | React 19, TypeScript 6, Vite 8, Material UI 9 (Emotion), Motion for React 14 |
+| **Frontend** | React 19, TypeScript 6, Vite 8, Material UI 9 (Emotion), Motion for React 14, Lenis (smooth wheel scrolling), Inter variable font (Fontsource; used where SF Pro is not available) |
 | **Testing** | pytest (with FastAPI `TestClient`), Vitest, Puppeteer (`puppeteer-core`) driving Chrome |
 | **Code quality** | TypeScript compiler (`tsc -b`), oxlint |
 | **Storage** | Files only: Parquet, CSV, JSON and joblib. No database |
@@ -239,15 +257,20 @@ skillpath/
 ```text
 frontend/
 ├── src/
-│   ├── App.tsx               wizard state, requests, results, what-if, toasts
+│   ├── App.tsx               app state, requests, navigation, what-if, session history, toasts
 │   ├── api/                  types mirroring app/schemas.py; fetch client with response checks
-│   ├── components/           wizard steps, choice cards, role card, results, what-if panel, …
+│   ├── design/               design tokens (colour, glass materials, elevation, type) and shared primitives
+│   ├── components/           nav, hero and constellation, story deck, profile workspace and steps, …
+│   │   └── dashboard/        results: spotlight, role switcher, insights, skill path, landscape, what-if, explorations
 │   ├── form.ts               form state ↔ API profile, client-side validation
 │   ├── whatif.ts             before/after comparison of two results
+│   ├── explorations.ts       the session's runs (memory only)
 │   ├── questions.ts          question wording from the 2025 questionnaire
 │   ├── samples.ts            the four example profiles
-│   ├── theme.ts              MUI theme: colours, typography, glass surfaces, light and dark
-│   ├── motion.ts             shared easing/duration tokens and animation helpers
+│   ├── theme.ts              MUI theme built from the design tokens, light and dark
+│   ├── depth.ts              depth layers (parallax speeds), pointer depth and the backdrop's moods
+│   ├── motion.ts             shared easing/duration tokens, reveal variants and scroll-aware hooks
+│   ├── scroll.ts             smooth scrolling (Lenis) and programmatic scrolling
 │   ├── index.css             entrance keyframes, reduced-motion, contrast-theme and print rules
 │   └── *.test.ts             Vitest unit tests
 ├── e2e/run.mjs               browser test (15 cases) in Chrome via Puppeteer
@@ -715,6 +738,7 @@ If you deploy it, note how the pieces fit together:
 | Completed | Web API (Stage 9) and web app (Stage 10) |
 | Completed | Testing (Stage 11) |
 | Completed | Interface redesign: glass surfaces, Motion animation, accessibility, contrast-theme and print fixes |
+| Completed | Premium UI: design system, floating nav, profile workspace, results dashboard, session explorations |
 | Next | Final report and presentation |
 
 ## Licence and data attribution

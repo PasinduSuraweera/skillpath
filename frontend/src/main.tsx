@@ -13,8 +13,9 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ThemeProvider theme={theme} defaultMode="system">
       <CssBaseline enableColorScheme />
-      <AmbientBackground />
       <MotionProvider>
+        {/* inside MotionProvider: its layers are Motion components (scroll drift) */}
+        <AmbientBackground />
         <ErrorBoundary>
           <App />
         </ErrorBoundary>

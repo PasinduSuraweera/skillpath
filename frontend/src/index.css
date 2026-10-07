@@ -70,6 +70,17 @@ h2[tabindex='-1']:focus {
   animation-delay: calc(var(--i, 0) * var(--stagger));
 }
 
+/* the analysis orb's core breathes while a slow request runs (only mounted then) */
+@keyframes sp-breathe {
+  50% {
+    transform: scale(0.88);
+    opacity: 0.8;
+  }
+}
+.sp-breathe {
+  animation: sp-breathe 1600ms ease-in-out infinite;
+}
+
 /* loading ring: only mounted while a request is actually slow */
 @keyframes sp-spin {
   to {
@@ -113,6 +124,9 @@ h2[tabindex='-1']:focus {
     animation-name: sp-fade;
     animation-delay: 0ms;
   }
+  .sp-breathe {
+    animation: none;
+  }
   /* a loading ring is feedback, not decoration: it keeps turning, more slowly */
   .sp-spin {
     animation-duration: 2s;
@@ -144,18 +158,26 @@ h2[tabindex='-1']:focus {
   }
 }
 
+/* print-only copies (the insights of the roles not chosen on screen) */
+.print-only {
+  display: none;
+}
+
 /* --- print / save as PDF: only the results, without buttons ------------- */
 @media print {
   .no-print {
     display: none !important;
   }
+  .print-only {
+    display: block;
+  }
+  /* sections that rise into view as the page scrolls: print never scrolls, so show them all */
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
   .avoid-break {
     break-inside: avoid;
-  }
-  /* role details folded away on a phone are printed anyway */
-  .sp-details {
-    height: auto !important;
-    visibility: visible !important;
   }
   *,
   *::before,
