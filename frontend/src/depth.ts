@@ -12,7 +12,8 @@
 //
 // Depth runs only where it helps and costs little (useScrollFx: wide screens, a fine pointer,
 // no reduced motion). Every effect is a transform driven by a MotionValue: nothing re-renders
-// while scrolling, and the browser composites the layers without layout or paint.
+// while scrolling, and each moving element is its own compositor layer (LAYER), so the
+// browser moves pixels it already has instead of painting them again.
 import { motionValue, useMotionValue, useScroll, useSpring, useTransform } from 'motion/react'
 import type { MotionValue } from 'motion/react'
 import { useEffect, useLayoutEffect, useSyncExternalStore } from 'react'
@@ -26,6 +27,14 @@ export const SPEED = {
   content: 1,
   foreground: 1.12,
 } as const
+
+/**
+ * For an element a scroll or pointer value transforms every frame: its own compositor layer.
+ * Without it the browser re-rasterises the element (glass, text, SVG) on every frame it moves;
+ * measured at 2× pixel density while scrolling, this cuts raster work about tenfold. Only on
+ * elements that really move (each layer costs GPU memory), and only while they do.
+ */
+export const LAYER = { willChange: 'transform' } as const
 
 // ---------------------------------------------------------------------------
 // Layout changes: one observer for every layer that needs to re-measure

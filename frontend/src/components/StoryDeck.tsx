@@ -7,7 +7,7 @@ import { alpha } from '@mui/material/styles'
 import { m, useScroll, useTransform } from 'motion/react'
 import { Fragment, createRef, useRef, useState } from 'react'
 import type { ReactNode, Ref, RefObject } from 'react'
-import { useMood } from '../depth'
+import { LAYER, useMood } from '../depth'
 import { Eyebrow, GlassSheen, IconTile, Meter, Pill } from '../design/primitives'
 import { panel } from '../design/surfaces'
 import { AURORA, FONT, FORCED_COLORS, RADIUS, gradientText, ink, insetFill, white } from '../design/tokens'
@@ -144,6 +144,7 @@ function Card({ chapter, i, mark, next, stacked }: { chapter: Chapter; i: number
         {...(stacked ? {} : onView(true, 'glassLift'))}
         sx={(t) => ({
           ...panel(t, { elevation: 'high', radius: RADIUS.panel }),
+          ...(stacked && LAYER),
           position: 'relative',
           isolation: 'isolate',
           display: 'grid',
@@ -233,13 +234,10 @@ function StepsVisual() {
 function CrowdVisual() {
   const ref = useRef<HTMLDivElement>(null)
   const seen = useSeen(ref)
-  const { value } = useCountUp(18000, undefined, seen)
   const near = new Set([31, 32, 44, 45, 46, 57, 58, 59, 71, 72])
   return (
     <Box ref={ref}>
-      <Typography component="p" sx={{ fontWeight: 750, fontSize: { xs: '2.25rem', md: '2.75rem' }, letterSpacing: '-0.05em', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>
-        {Math.round(value).toLocaleString('en-US')}
-      </Typography>
+      <CrowdCount seen={seen} />
       <Typography variant="caption" color="text.secondary" component="p" sx={{ mt: 0.5 }}>
         developers with a job role in the 2025 survey
       </Typography>
@@ -263,6 +261,19 @@ function CrowdVisual() {
         people whose skills look most like yours
       </Typography>
     </Box>
+  )
+}
+
+/**
+ * The crowd's size, counting up once it is in view. Its own component: the count changes every
+ * frame for a second, usually mid-scroll, and only this line should re-render, not the dots.
+ */
+function CrowdCount({ seen }: { seen: boolean }) {
+  const { value } = useCountUp(18000, undefined, seen)
+  return (
+    <Typography component="p" sx={{ fontWeight: 750, fontSize: { xs: '2.25rem', md: '2.75rem' }, letterSpacing: '-0.05em', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>
+      {Math.round(value).toLocaleString('en-US')}
+    </Typography>
   )
 }
 

@@ -17,7 +17,7 @@ import type { MotionValue } from 'motion/react'
 import { useLayoutEffect, useRef, useState } from 'react'
 import type { FocusEvent, ReactNode, RefObject } from 'react'
 import type { RoleRecommendation, SkillSuggestion } from '../../api/types'
-import { documentTop, useMood } from '../../depth'
+import { LAYER, documentTop, useMood } from '../../depth'
 import { DotScale, Eyebrow, GlassSheen, IconTile, Meter, Pill, RingGauge } from '../../design/primitives'
 import { panel } from '../../design/surfaces'
 import { AURORA, FONT, FORCED_COLORS, RADIUS, TONES, gradientText, ink, white } from '../../design/tokens'
@@ -384,7 +384,7 @@ function Pinned({ role, stages, section }: { role: RoleRecommendation; stages: S
           </Stack>
         </m.div>
         <Box sx={{ position: 'relative' }}>
-          <Box component={m.div} ref={track} style={{ x }} sx={{ display: 'flex', gap: 3, width: 'max-content', alignItems: 'stretch' }}>
+          <Box component={m.div} ref={track} style={{ x }} sx={{ ...LAYER, display: 'flex', gap: 3, width: 'max-content', alignItems: 'stretch' }}>
             {stages.map((stage, i) => (
               <Box key={stage.key} onFocus={show(i)} sx={{ width: 'min(390px, 32vw)', flexShrink: 0 }}>
                 <Focused i={i} n={stages.length} along={along}>
@@ -404,7 +404,7 @@ function Focused({ i, n, along, children }: { i: number; n: number; along: Motio
   const distance = useTransform(along, (a) => Math.abs(a * (n - 1) - i))
   const opacity = useTransform(distance, [0.55, 1.6], [1, 0.5])
   const scale = useTransform(distance, [0.55, 1.6], [1, 0.95])
-  return <>{children({ opacity, scale })}</>
+  return <>{children({ opacity, scale, ...LAYER })}</>
 }
 
 /** Progress along the path: a line that fills, with a mark per stage that lights as it is reached. */
@@ -415,7 +415,7 @@ function Rail({ stages, along }: { stages: Stage[]; along: MotionValue<number> }
       <Box
         component={m.div}
         style={{ scaleX: along }}
-        sx={{ position: 'absolute', left: 6, right: 6, top: 6, height: 2, borderRadius: 2, transformOrigin: 'left', backgroundImage: `linear-gradient(90deg, ${AURORA[3]}, ${AURORA[0]} 40%, ${AURORA[1]})`, [FORCED_COLORS]: { bgcolor: 'Highlight' } }}
+        sx={{ ...LAYER, position: 'absolute', left: 6, right: 6, top: 6, height: 2, borderRadius: 2, transformOrigin: 'left', backgroundImage: `linear-gradient(90deg, ${AURORA[3]}, ${AURORA[0]} 40%, ${AURORA[1]})`, [FORCED_COLORS]: { bgcolor: 'Highlight' } }}
       />
       {stages.map((s, i) => (
         <RailMark key={s.key} i={i} n={stages.length} along={along} tone={s.tone} label={s.label} />
@@ -460,7 +460,7 @@ function Timeline({ role, stages }: { role: RoleRecommendation; stages: Stage[] 
           component={m.div}
           aria-hidden="true"
           style={{ scaleY: fill }}
-          sx={{ position: 'absolute', left: { xs: 7, sm: 11 }, top: 8, bottom: 8, width: 2, borderRadius: 2, transformOrigin: 'top', backgroundImage: `linear-gradient(${AURORA[3]}, ${AURORA[0]} 50%, ${AURORA[1]})` }}
+          sx={{ ...(!reduce && LAYER), position: 'absolute', left: { xs: 7, sm: 11 }, top: 8, bottom: 8, width: 2, borderRadius: 2, transformOrigin: 'top', backgroundImage: `linear-gradient(${AURORA[3]}, ${AURORA[0]} 50%, ${AURORA[1]})` }}
         />
         {stages.map((stage, i) => (
           <Box component="li" key={stage.key} sx={{ position: 'relative', minWidth: 0 }}>

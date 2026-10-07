@@ -11,6 +11,7 @@ import type { SxProps, Theme } from '@mui/material/styles'
 import { m, useScroll, useTransform } from 'motion/react'
 import { useId, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
+import { LAYER } from '../depth'
 import { TRANSITION, useCountUp, usePrinting, useReveal, useScrollFx, useSeen } from '../motion'
 import { panel } from './surfaces'
 import { AURORA, BRAND_GRADIENT, BRAND_GRADIENT_DARK, FORCED_COLORS, TONES, gradientText, ink, tint, toneColor, white } from './tokens'
@@ -197,6 +198,7 @@ export function GlassSheen() {
         component={m.div}
         style={{ x }}
         sx={(t) => ({
+          ...LAYER,
           position: 'absolute',
           inset: '-20% -40%',
           backgroundImage: `linear-gradient(105deg, transparent 38%, ${white(0.3)} 48%, ${white(0.08)} 54%, transparent 62%)`,

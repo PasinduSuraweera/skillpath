@@ -14,6 +14,7 @@ import type { MotionValue } from 'motion/react'
 import { useRef } from 'react'
 import type { ReactNode } from 'react'
 import type { Recommendation } from '../../api/types'
+import { LAYER } from '../../depth'
 import { IconTile, Tile } from '../../design/primitives'
 import type { SurfaceMotion } from '../../design/primitives'
 import { TONES, ink, white } from '../../design/tokens'
@@ -39,6 +40,7 @@ function Stage({ icon, tone, label, value, detail, last, drawn }: { icon: ReactN
             data-reveal=""
             style={drawn ? { scaleY: drawn } : undefined}
             sx={(t) => ({
+              ...(drawn && LAYER),
               position: 'absolute',
               inset: 0,
               borderRadius: 1,

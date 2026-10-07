@@ -3,7 +3,7 @@ import { alpha } from '@mui/material/styles'
 import { m, useTransform } from 'motion/react'
 import type { MotionValue } from 'motion/react'
 import { useId, useRef } from 'react'
-import { SPEED, useDepth, usePointerDepth } from '../depth'
+import { LAYER, SPEED, useDepth, usePointerDepth } from '../depth'
 import { AURORA, FONT, FORCED_COLORS, TONES } from '../design/tokens'
 import type { Tone } from '../design/tokens'
 import { TRANSITION } from '../motion'
@@ -92,6 +92,7 @@ export default function Constellation({ fx, intro, progress }: { fx: boolean; in
           viewBox={`0 0 ${SIZE} ${SIZE}`}
           style={{ x: pull.x, y, scale }}
           sx={(t) => ({
+            ...(fx && LAYER),
             width: '100%',
             height: '100%',
             overflow: 'visible',

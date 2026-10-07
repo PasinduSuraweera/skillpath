@@ -13,7 +13,7 @@ import type { MotionValue } from 'motion/react'
 import { useEffect, useRef } from 'react'
 import type { ReactNode } from 'react'
 import type { Options } from '../api/types'
-import { SPEED, useDepth, useMood, usePointerDepth } from '../depth'
+import { LAYER, SPEED, useDepth, useMood, usePointerDepth } from '../depth'
 import { GradientText, Pill, RingGauge } from '../design/primitives'
 import { panel } from '../design/surfaces'
 import { HOVER, RADIUS, ink, mergeStyles, white } from '../design/tokens'
@@ -90,7 +90,7 @@ function Fragment({ fx, intro, delay, reach, progress, children, sx }: { fx: boo
   const opacity = useTransform(() => shown.get() * leaving.get())
   return (
     <Box ref={ref} aria-hidden="true" sx={[{ position: 'absolute', zIndex: 2, pointerEvents: 'none', display: { xs: 'none', md: 'block' } }, ...(Array.isArray(sx) ? sx : [sx])]}>
-      <m.div style={{ x: pull.x, y }}>
+      <Box component={m.div} style={{ x: pull.x, y }} sx={fx ? LAYER : undefined}>
         {/* glass: its entrance (a fade and a settle) is on the glass itself (see SurfaceMotion) */}
         <Box
           component={m.div}
@@ -111,7 +111,7 @@ function Fragment({ fx, intro, delay, reach, progress, children, sx }: { fx: boo
         >
           {children}
         </Box>
-      </m.div>
+      </Box>
     </Box>
   )
 }
@@ -164,7 +164,7 @@ export default function Hero({ options, intro, onPick, onRun, onStart, onTour, d
       <Grid container spacing={{ xs: 4, md: 6 }} sx={{ alignItems: 'center' }}>
         <Grid size={{ xs: 12, md: 7 }}>
           {/* text only in here: this wrapper fades, which a glass surface inside would not survive */}
-          <Box component={m.div} style={{ y: textY, scale: textScale, opacity: textOpacity }} sx={{ transformOrigin: '0% 30%' }}>
+          <Box component={m.div} style={{ y: textY, scale: textScale, opacity: textOpacity }} sx={{ transformOrigin: '0% 30%', ...(fx && LAYER) }}>
             <Enter i={0} intro={intro}>
               <Pill tone="indigo" icon={<AutoAwesome />} sx={{ px: 1.5, py: 0.5, fontSize: '0.75rem', mb: 2.5, border: '1px solid', borderColor: 'rgba(79, 70, 229, 0.18)' }}>
                 <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
@@ -226,7 +226,7 @@ export default function Hero({ options, intro, onPick, onRun, onStart, onTour, d
           <Box ref={stage} sx={{ position: 'relative', isolation: 'isolate' }}>
             <Constellation fx={fx} intro={intro} progress={scrollYProgress} />
             {/* moves only (a transform), so the glass inside keeps blurring */}
-            <m.div style={{ y: panelY }}>
+            <Box component={m.div} style={{ y: panelY }} sx={fx ? LAYER : undefined}>
               {/* glass: its entrance is on the panel itself, without the blur-in (a filter or a fading
                   wrapper would stop the panel blurring the page behind it) */}
               <Box
@@ -238,7 +238,7 @@ export default function Hero({ options, intro, onPick, onRun, onStart, onTour, d
               >
                 <SampleBar onPick={onPick} onRun={onRun} disabled={disabled} activeId={activeId} />
               </Box>
-            </m.div>
+            </Box>
 
             {/* what comes back, for the first example: its best match ... */}
             <Fragment fx={fx} intro={intro} delay={0.75} reach={22} progress={scrollYProgress} sx={{ top: -44, right: -30 }}>

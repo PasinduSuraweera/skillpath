@@ -15,7 +15,7 @@ import { Eyebrow } from '../design/primitives'
 import { panel } from '../design/surfaces'
 import { RADIUS, glass } from '../design/tokens'
 import type { Errors, FormState } from '../form'
-import { useMood } from '../depth'
+import { LAYER, useMood } from '../depth'
 import { makeRoom, useScrollFx } from '../motion'
 import AIStep from './AIStep'
 import AboutStep from './AboutStep'
@@ -71,7 +71,7 @@ export default function ProfileWorkspace({ ref, ...props }: Props) {
   useMood(arrival, 'focus')
 
   return (
-    <m.div ref={arrival} style={{ y }}>
+    <m.div ref={arrival} style={fx ? { y, ...LAYER } : { y }}>
     <Box
       ref={ref}
       component={m.div}
