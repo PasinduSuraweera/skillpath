@@ -444,8 +444,9 @@ export default function App() {
                   </Button>
                 </Stack>
 
-                {/* the new step arrives while the previous one leaves (no animation when the page opens) */}
-                <AnimatePresence mode="popLayout" initial={false} custom={direction}>
+                {/* the new step arrives while the previous one leaves. No animation when the page opens;
+                    coming back from the results, the step slides in from the side it is on */}
+                <AnimatePresence mode="popLayout" initial={direction !== null} custom={direction}>
                   <StepPane key={step} direction={direction} inert={showBusy}>
                     {step === 0 && <AboutStep {...stepProps} />}
                     {step === 1 && <TechStep {...stepProps} />}

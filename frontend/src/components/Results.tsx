@@ -8,18 +8,17 @@ import AccordionDetails from '@mui/material/AccordionDetails'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import Collapse from '@mui/material/Collapse'
 import Grid from '@mui/material/Grid'
 import LinearProgress from '@mui/material/LinearProgress'
 import Paper from '@mui/material/Paper'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
-import { useLayoutEffect, useRef, useState } from 'react'
-import type { CSSProperties } from 'react'
+import { AnimatePresence, LayoutGroup, m, useReducedMotion } from 'motion/react'
+import { useLayoutEffect, useState } from 'react'
 import type { Recommendation, SkillSuggestion } from '../api/types'
 import type { FormState } from '../form'
 import { pct } from '../format'
-import { DURATION, RevealContext, useFlip } from '../motion'
+import { RevealContext, TRANSITION, revealMotion } from '../motion'
 import { BRAND_GRADIENT, BRAND_GRADIENT_DARK } from '../theme'
 import AnalysisSummary from './AnalysisSummary'
 import RoleCard from './RoleCard'
@@ -42,15 +41,24 @@ interface Props {
   onClearComparison: () => void
 }
 
-/**
- * Position in the results reveal (STAGGER_REVEAL apart): the heading, the analysis
- * summary, then each role card, then the supporting sections together. Mount-only:
- * a what-if re-run updates the figures in place instead of replaying it.
- */
-const enter = (i: number) => ({ className: 'sp-reveal', style: { '--i': i } as CSSProperties })
-
 /** Results that have been revealed once (see Results). */
 const revealed = new WeakSet<Recommendation>()
+
+/**
+ * The what-if comparison opens above the role cards. Nothing animates its height: the
+ * content below slides down to make room (layout), then the panel fades in. On the way out
+ * the panel is lifted out of the page (AnimatePresence popLayout) and fades, and the content
+ * below waits for it before sliding back up, so it never slides over the fading panel. With
+ * reduced motion that content does not slide but jumps, so the panel goes at once too.
+ */
+const PANEL = {
+  initial: { opacity: 0, y: -8 },
+  animate: { opacity: 1, y: 0, transition: { ...TRANSITION.medium, delay: 0.12 } },
+  exit: { opacity: 0, y: -8, transition: TRANSITION.small },
+}
+const PANEL_GONE = { ...PANEL, exit: { opacity: 0, transition: { duration: 0 } } }
+const MOVE = TRANSITION.move
+const MOVE_AFTER_CLOSE = { ...TRANSITION.move, delay: TRANSITION.small.duration }
 
 function Bar({ label, value, strong }: { label: string; value: number; strong?: boolean }) {
   return (
@@ -82,7 +90,7 @@ function Bar({ label, value, strong }: { label: string; value: number; strong?: 
 export default function Results(props: Props) {
   const { result, comparison } = props
   const top = result.roles[0]
-  const m = result.model
+  const model = result.model
 
   // the three salary bars share one scale, so their pay can be compared by eye
   const payScale = Math.max(1, ...result.roles.map((r) => (r.salary.available ? (r.salary.p75 ?? 0) : 0)))
@@ -94,171 +102,169 @@ export default function Results(props: Props) {
     return i < 0 ? null : { rank: i + 1, probability: comparison.before.ranking[i].probability }
   }
 
-  // after a what-if, cards that change rank glide to their new place instead of jumping
-  const cards = useFlip<HTMLDivElement>(result.roles.map((r) => r.job_role).join('|'))
-
-  // keep the last comparison on screen while its panel collapses away
-  const [shown, setShown] = useState<Comparison | null>(comparison)
-  if (comparison && comparison !== shown) setShown(comparison)
-
   // The reveal is for a new result. Results returned to (Undo, the stepper) fade in as they
-  // were left: their entrances are finished before the first paint and their figures do not
-  // count up again. Anything that changes after that (a what-if) animates as usual.
+  // were left: every part starts in place and the figures do not count up again. Anything
+  // that changes after that (a what-if) animates as usual.
   const [first] = useState(result)
   const [fresh] = useState(() => !revealed.has(result))
-  const root = useRef<HTMLDivElement>(null)
-  useLayoutEffect(() => {
-    if (fresh) return
-    root.current
-      ?.getAnimations?.({ subtree: true })
-      .filter((a) => a.effect instanceof KeyframeEffect && a.effect.target !== root.current)
-      .forEach((a) => a.finish())
-  }, [fresh])
   // every result shown counts, including one a what-if put on screen
   useLayoutEffect(() => {
     revealed.add(result)
   }, [result])
+  // position in the reveal (STAGGER_REVEAL apart): the heading, the analysis summary, then
+  // each role card, then the supporting sections together
+  const step = (i: number) => revealMotion(i, fresh)
+  // content below the comparison slides to its new place (transform only) instead of jumping
+  const move = comparison ? MOVE : MOVE_AFTER_CLOSE
+  const reduce = useReducedMotion()
+  const returning = fresh ? {} : { initial: { opacity: 0 }, animate: { opacity: 1 }, transition: TRANSITION.medium }
 
   return (
     <RevealContext.Provider value={fresh || result !== first}>
-      <Stack spacing={3} ref={root} className={fresh ? undefined : 'sp-fade'}>
-        <Stack
-          direction={{ xs: 'column', md: 'row' }}
-          sx={{ justifyContent: 'space-between', alignItems: { md: 'flex-end' }, gap: 2 }}
-          {...enter(0)}
-        >
-          <Box sx={{ minWidth: 0 }}>
-            {/* receives focus when the results arrive, so keyboard and screen reader users start here */}
-            <Typography
-              variant="h4"
-              component="h1"
-              id="results-title"
-              tabIndex={-1}
-              sx={{ fontSize: { xs: '1.6rem', md: '2rem' }, scrollMarginTop: 96 }}
-            >
-              Your top job role matches
+      {/* one group, so the content below the comparison slides when it opens and closes */}
+      <LayoutGroup>
+        {/* gap rather than margins, and positioned: the comparison is lifted out of the flow as it leaves */}
+        <Stack component={m.div} spacing={3} useFlexGap sx={{ position: 'relative' }} {...returning}>
+          <Stack
+            component={m.div}
+            direction={{ xs: 'column', md: 'row' }}
+            sx={{ justifyContent: 'space-between', alignItems: { md: 'flex-end' }, gap: 2 }}
+            {...step(0)}
+          >
+            <Box sx={{ minWidth: 0 }}>
+              {/* receives focus when the results arrive, so keyboard and screen reader users start here */}
+              <Typography
+                variant="h4"
+                component="h1"
+                id="results-title"
+                tabIndex={-1}
+                sx={{ fontSize: { xs: '1.6rem', md: '2rem' }, scrollMarginTop: 96 }}
+              >
+                Your top job role matches
+              </Typography>
+              <Typography color="text.secondary" sx={{ maxWidth: 680, mt: 0.75 }}>
+                Your best match is <Box component="strong" sx={{ color: 'text.primary' }}>{top.label}</Box>. Each percentage is
+                how likely the model thinks it is that a developer with your answers works in that role, out of {model.classes}{' '}
+                roles.
+              </Typography>
+            </Box>
+            <Stack direction="row" className="no-print" sx={{ flexShrink: 0, flexWrap: 'wrap', gap: 1 }}>
+              <Button variant="contained" startIcon={<EditNote />} onClick={props.onEdit}>
+                Change answers (what if…?)
+              </Button>
+              <Button variant="outlined" startIcon={<Print />} onClick={props.onPrint}>
+                Print / PDF
+              </Button>
+              <Button color="inherit" startIcon={<RestartAlt />} onClick={props.onRestart}>
+                Start over
+              </Button>
+            </Stack>
+          </Stack>
+
+          <AnalysisSummary result={result} answers={props.answers} revealFrom={1} />
+
+          {/* a comparison returned to (Undo, the stepper) is simply there */}
+          <AnimatePresence mode="popLayout" initial={false}>
+            {comparison && (
+              <m.div key="comparison" {...(reduce ? PANEL_GONE : PANEL)}>
+                <WhatIfPanel before={comparison.before} after={result} changes={comparison.changes} onClear={props.onClearComparison} />
+              </m.div>
+            )}
+          </AnimatePresence>
+
+          {/* tablet: the best match across the full width (its sections side by side), the runners-up in two columns */}
+          {/* a heading for screen reader navigation; the cards say what they are visually */}
+          <Grid container spacing={2} component="section" aria-labelledby="top-roles-title">
+            <h2 id="top-roles-title" className="sp-sr-only">
+              Top three job roles
+            </h2>
+            {/* after a what-if, cards that change rank glide to their new place (layout) */}
+            {result.roles.map((r, i) => (
+              <Grid
+                key={r.job_role}
+                component={m.div}
+                size={{ xs: 12, sm: i === 0 ? 12 : 6, md: 4 }}
+                {...step(3 + i)}
+                layout="position"
+                transition={{ ...step(3 + i).transition, layout: move }}
+              >
+                <RoleCard
+                  role={r}
+                  busy={props.busy}
+                  pendingTech={props.pendingTech}
+                  payScale={payScale}
+                  previous={previous(r.job_role)}
+                  onTrySkill={props.onTrySkill}
+                />
+              </Grid>
+            ))}
+          </Grid>
+
+          <Stack component={m.div} spacing={3} layout="position" transition={{ layout: move }}>
+            <Grid container component={m.div} spacing={2} {...step(6)}>
+              <Grid size={{ xs: 12, md: 5 }}>
+                <Paper sx={{ p: { xs: 2, sm: 2.5 }, height: '100%' }} className="avoid-break">
+                  <Typography variant="h6" component="h2">
+                    Career families
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, mb: 2.5 }}>
+                    The 20 roles grouped into broader career paths. A family’s score adds up its roles, so it shows the
+                    direction even when no single role stands out.
+                  </Typography>
+                  <Stack spacing={1.75}>
+                    {result.families.map((f, i) => (
+                      <Bar key={f.family} label={f.family} value={f.probability} strong={i === 0} />
+                    ))}
+                  </Stack>
+                </Paper>
+              </Grid>
+              <Grid size={{ xs: 12, md: 7 }}>
+                <Paper sx={{ p: { xs: 2, sm: 2.5 }, height: '100%' }} className="avoid-break">
+                  <Typography variant="h6" component="h2" sx={{ mb: 1.5 }}>
+                    Please keep in mind
+                  </Typography>
+                  <Stack component="ul" spacing={1.5} sx={{ m: 0, p: 0, listStyle: 'none' }}>
+                    {result.notes.map((n) => (
+                      <Stack key={n} component="li" direction="row" spacing={1.25} sx={{ alignItems: 'flex-start' }}>
+                        <InfoOutlined fontSize="small" color="primary" sx={{ mt: '1px', flexShrink: 0 }} />
+                        <Typography variant="body2" color="text.secondary">
+                          {n}
+                        </Typography>
+                      </Stack>
+                    ))}
+                  </Stack>
+                </Paper>
+              </Grid>
+            </Grid>
+
+            <m.div className="no-print" {...step(6)}>
+              <Accordion disableGutters slotProps={{ heading: { component: 'h2' } }}>
+                <AccordionSummary expandIcon={<ExpandMore />}>
+                  <Typography variant="subtitle1" component="span">
+                    See all {result.ranking.length} job roles
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails sx={{ px: 2.5, pb: 2.5 }}>
+                  <Grid container columnSpacing={4} rowSpacing={1.75}>
+                    {result.ranking.map((r, i) => (
+                      <Grid key={r.job_role} size={{ xs: 12, sm: 6 }}>
+                        <Bar label={`${i + 1}. ${r.label}`} value={r.probability} strong={i < 3} />
+                      </Grid>
+                    ))}
+                  </Grid>
+                </AccordionDetails>
+              </Accordion>
+            </m.div>
+
+            {/* the attribution carries a long URL: let it break rather than run off a narrow screen */}
+            <Typography variant="caption" color="text.secondary" component="p" sx={{ maxWidth: 900, overflowWrap: 'anywhere' }}>
+              Model: {model.name}, tested on {model.test_rows.toLocaleString()} survey respondents it never saw during training. The
+              true role was in its top 3 for {pct(model.test_top3_accuracy)} of them (top 3 career families:{' '}
+              {pct(model.test_family_top3_accuracy)}). {result.attribution}
             </Typography>
-            <Typography color="text.secondary" sx={{ maxWidth: 680, mt: 0.75 }}>
-              Your best match is <Box component="strong" sx={{ color: 'text.primary' }}>{top.label}</Box>. Each percentage is
-              how likely the model thinks it is that a developer with your answers works in that role, out of {m.classes}{' '}
-              roles.
-            </Typography>
-          </Box>
-          <Stack direction="row" className="no-print" sx={{ flexShrink: 0, flexWrap: 'wrap', gap: 1 }}>
-            <Button variant="contained" startIcon={<EditNote />} onClick={props.onEdit}>
-              Change answers (what if…?)
-            </Button>
-            <Button variant="outlined" startIcon={<Print />} onClick={props.onPrint}>
-              Print / PDF
-            </Button>
-            <Button color="inherit" startIcon={<RestartAlt />} onClick={props.onRestart}>
-              Start over
-            </Button>
           </Stack>
         </Stack>
-
-        <AnalysisSummary result={result} answers={props.answers} revealFrom={1} />
-
-        {/* height animates so the cards below are pushed down smoothly instead of jumping */}
-        <Collapse
-          in={!!comparison}
-          unmountOnExit
-          timeout={{ enter: DURATION.large, exit: DURATION.medium }}
-          onExited={() => setShown(null)}
-          sx={{ mt: '0 !important' }}
-        >
-          {shown && (
-            <Box sx={{ pt: 3 }}>
-              <WhatIfPanel before={shown.before} after={result} changes={shown.changes} onClear={props.onClearComparison} />
-            </Box>
-          )}
-        </Collapse>
-
-        {/* tablet: the best match across the full width (its sections side by side), the runners-up in two columns */}
-        {/* a heading for screen reader navigation; the cards say what they are visually */}
-        <Grid container spacing={2} component="section" aria-labelledby="top-roles-title" ref={cards}>
-          <h2 id="top-roles-title" className="sp-sr-only">
-            Top three job roles
-          </h2>
-          {result.roles.map((r, i) => (
-            <Grid key={r.job_role} size={{ xs: 12, sm: i === 0 ? 12 : 6, md: 4 }} data-flip={r.job_role} {...enter(3 + i)}>
-              <RoleCard
-                role={r}
-                busy={props.busy}
-                pendingTech={props.pendingTech}
-                payScale={payScale}
-                previous={previous(r.job_role)}
-                onTrySkill={props.onTrySkill}
-              />
-            </Grid>
-          ))}
-        </Grid>
-
-        <Grid container spacing={2} {...enter(6)}>
-          <Grid size={{ xs: 12, md: 5 }}>
-            <Paper sx={{ p: { xs: 2, sm: 2.5 }, height: '100%' }} className="avoid-break">
-              <Typography variant="h6" component="h2">
-                Career families
-              </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, mb: 2.5 }}>
-                The 20 roles grouped into broader career paths. A family’s score adds up its roles, so it shows the
-                direction even when no single role stands out.
-              </Typography>
-              <Stack spacing={1.75}>
-                {result.families.map((f, i) => (
-                  <Bar key={f.family} label={f.family} value={f.probability} strong={i === 0} />
-                ))}
-              </Stack>
-            </Paper>
-          </Grid>
-          <Grid size={{ xs: 12, md: 7 }}>
-            <Paper sx={{ p: { xs: 2, sm: 2.5 }, height: '100%' }} className="avoid-break">
-              <Typography variant="h6" component="h2" sx={{ mb: 1.5 }}>
-                Please keep in mind
-              </Typography>
-              <Stack component="ul" spacing={1.5} sx={{ m: 0, p: 0, listStyle: 'none' }}>
-                {result.notes.map((n) => (
-                  <Stack key={n} component="li" direction="row" spacing={1.25} sx={{ alignItems: 'flex-start' }}>
-                    <InfoOutlined fontSize="small" color="primary" sx={{ mt: '1px', flexShrink: 0 }} />
-                    <Typography variant="body2" color="text.secondary">
-                      {n}
-                    </Typography>
-                  </Stack>
-                ))}
-              </Stack>
-            </Paper>
-          </Grid>
-        </Grid>
-
-        <Accordion
-          disableGutters
-          className="no-print sp-reveal"
-          style={{ '--i': 6 } as CSSProperties}
-          slotProps={{ heading: { component: 'h2' } }}
-        >
-          <AccordionSummary expandIcon={<ExpandMore />}>
-            <Typography variant="subtitle1" component="span">
-              See all {result.ranking.length} job roles
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails sx={{ px: 2.5, pb: 2.5 }}>
-            <Grid container columnSpacing={4} rowSpacing={1.75}>
-              {result.ranking.map((r, i) => (
-                <Grid key={r.job_role} size={{ xs: 12, sm: 6 }}>
-                  <Bar label={`${i + 1}. ${r.label}`} value={r.probability} strong={i < 3} />
-                </Grid>
-              ))}
-            </Grid>
-          </AccordionDetails>
-        </Accordion>
-
-        {/* the attribution carries a long URL: let it break rather than run off a narrow screen */}
-        <Typography variant="caption" color="text.secondary" component="p" sx={{ maxWidth: 900, overflowWrap: 'anywhere' }}>
-          Model: {m.name}, tested on {m.test_rows.toLocaleString()} survey respondents it never saw during training. The
-          true role was in its top 3 for {pct(m.test_top3_accuracy)} of them (top 3 career families:{' '}
-          {pct(m.test_family_top3_accuracy)}). {result.attribution}
-        </Typography>
-      </Stack>
+      </LayoutGroup>
     </RevealContext.Provider>
   )
 }

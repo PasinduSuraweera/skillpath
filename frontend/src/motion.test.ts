@@ -1,3 +1,5 @@
+/// <reference types="node" />
+import { readFileSync } from 'node:fs'
 import { createElement } from 'react'
 import { renderToString } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
@@ -58,9 +60,13 @@ describe('motion tokens', () => {
     for (const key of ['press', 'hover', 'small', 'medium', 'large'] as const) expect(DURATION[key]).toBeLessThan(300)
   })
 
-  it('exposes every duration used by the stylesheet as a CSS variable', () => {
-    expect(motionCssVars['--dur-enter']).toBe(`${DURATION.enter}ms`)
-    expect(motionCssVars['--stagger-reveal']).toMatch(/^\d+ms$/)
+  it('defines every token the stylesheet uses', () => {
+    const css = readFileSync(new URL('./index.css', import.meta.url), 'utf8')
+    // tokens are used without a fallback; per-element values such as var(--i, 0) carry their own
+    const used = new Set([...css.matchAll(/var\((--[\w-]+)\)/g)].map((m) => m[1]))
+    expect(used.size).toBeGreaterThan(0)
+    for (const name of used) expect(Object.keys(motionCssVars)).toContain(name)
+    expect(motionCssVars['--dur-medium']).toBe(`${DURATION.medium}ms`)
   })
 })
 

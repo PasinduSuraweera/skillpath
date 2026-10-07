@@ -6,12 +6,13 @@ import Box from '@mui/material/Box'
 import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
 import { alpha, useTheme } from '@mui/material/styles'
-import type { CSSProperties, ReactNode } from 'react'
+import { m } from 'motion/react'
+import type { ReactNode } from 'react'
 import type { Recommendation } from '../api/types'
 import { stepProgress } from '../form'
 import type { FormState } from '../form'
 import { matchShape, pct } from '../format'
-import { useHighlight } from '../motion'
+import { revealMotion, useHighlight, useReveal } from '../motion'
 
 interface Props {
   result: Recommendation
@@ -25,11 +26,11 @@ function Item(props: { icon: ReactNode; label: string; value: string; detail: Re
   const theme = useTheme()
   // a what-if that changes this figure tints it briefly
   const valueRef = useHighlight<HTMLParagraphElement>(props.value, alpha(theme.palette.primary.main, 0.16))
+  const reveal = useReveal()
   return (
     <Box
-      component="li"
-      className="sp-reveal"
-      style={{ '--i': props.i } as CSSProperties}
+      component={m.li}
+      {...revealMotion(props.i, reveal)}
       sx={{ display: 'flex', gap: 1.5, alignItems: 'flex-start', minWidth: 0, p: { xs: 1.5, md: 2 } }}
     >
       <Box
@@ -84,7 +85,7 @@ export default function AnalysisSummary({ result, answers, revealFrom }: Props) 
   const m = result.model
 
   return (
-    <Paper component="section" aria-labelledby="analysis-title" sx={{ overflow: 'hidden' }}>
+    <Paper variant="raised" component="section" aria-labelledby="analysis-title" sx={{ overflow: 'hidden' }}>
       <h2 id="analysis-title" className="sp-sr-only">
         How SkillPath reached this result
       </h2>

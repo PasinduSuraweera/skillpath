@@ -24,7 +24,7 @@ import type { RoleRecommendation, SkillSuggestion } from '../api/types'
 import { money, pct, points } from '../format'
 import { useId, useState } from 'react'
 import { DURATION, EASE, useCountUp, useHighlight } from '../motion'
-import { BRAND_GRADIENT, BRAND_GRADIENT_DARK, ELEVATION, tintInk } from '../theme'
+import { BRAND_GRADIENT, BRAND_GRADIENT_DARK, tintInk } from '../theme'
 import CountUp from './CountUp'
 import { AverageTick, InsightSection, Metric } from './InsightSection'
 
@@ -54,6 +54,23 @@ const SKILL_HELP =
   'Technologies used by many people in this role and noticeably more often than across all roles, from the ' +
   'training data. “In role” is the share of people in the role who use it; “vs avg” is how many times more often ' +
   'than across all roles. Press + to see how your results change if you add one.'
+
+/**
+ * A 1px border in the brand gradient that follows the card's rounded corners: a gradient
+ * layer masked down to its outer pixel (border-image cannot be rounded).
+ */
+const gradientRing = (gradient: string) => ({
+  content: '""',
+  position: 'absolute',
+  inset: 0,
+  borderRadius: 'inherit',
+  padding: '1px',
+  backgroundImage: gradient,
+  WebkitMask: 'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
+  WebkitMaskComposite: 'xor',
+  mask: 'linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0)',
+  pointerEvents: 'none',
+})
 
 const gradientText = (dark: boolean) => ({
   backgroundImage: dark ? BRAND_GRADIENT_DARK : BRAND_GRADIENT,
@@ -168,6 +185,7 @@ export default function RoleCard({ role, busy, pendingTech, payScale, previous, 
 
   return (
     <Paper
+      variant={best ? 'raised' : 'outlined'}
       component="article"
       aria-label={`#${role.rank} ${role.label}`}
       className="avoid-break"
@@ -180,21 +198,17 @@ export default function RoleCard({ role, busy, pendingTech, payScale, previous, 
         flexDirection: 'column',
         // the sections below lay out by the card's own width, not the window's
         containerType: 'inline-size',
-        // the best match: an accent edge, a quiet tint and a little more lift, so the ranking reads at a glance
+        // the best match: raised, edged in the brand gradient, with a quiet tint at the top, so the
+        // ranking reads at a glance (the ring sits where the border would be)
         ...(best && {
-          borderColor: alpha(t.palette.primary.main, 0.35),
-          backgroundImage: `linear-gradient(180deg, ${alpha(t.palette.primary.main, 0.06)}, transparent 160px)`,
-          boxShadow: ELEVATION.raised,
-          '&::before': {
-            content: '""',
-            position: 'absolute',
-            inset: '0 0 auto 0',
-            height: 3,
-            backgroundImage: BRAND_GRADIENT,
-          },
+          // no border: the ring is the edge, and the padding takes the border's pixel so the content lines up
+          border: 0,
+          p: { xs: '17px', sm: '21px' },
+          backgroundImage: `linear-gradient(180deg, ${alpha(t.palette.primary.main, 0.07)}, transparent 160px)`,
+          '&::before': gradientRing(BRAND_GRADIENT),
           ...t.applyStyles('dark', {
-            boxShadow: `inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 12px 32px -14px ${alpha(t.palette.primary.main, 0.4)}`,
-            '&::before': { backgroundImage: BRAND_GRADIENT_DARK },
+            boxShadow: `inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 14px 34px -14px ${alpha(t.palette.primary.main, 0.45)}`,
+            '&::before': gradientRing(BRAND_GRADIENT_DARK),
           }),
         }),
       })}

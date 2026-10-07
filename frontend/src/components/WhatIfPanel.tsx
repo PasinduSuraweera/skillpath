@@ -17,11 +17,13 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
 import { alpha } from '@mui/material/styles'
-import type { CSSProperties, ReactNode } from 'react'
+import { m as motion } from 'motion/react'
+import { useState } from 'react'
+import type { ReactNode } from 'react'
 import type { Recommendation } from '../api/types'
 import { pct, points } from '../format'
-import { DURATION, EASE, useFlip } from '../motion'
-import { RADIUS } from '../theme'
+import { STAGGER, TRANSITION, useReveal } from '../motion'
+import { RADIUS, surfaceFill } from '../theme'
 import { compareRuns, whatIfHighlights } from '../whatif'
 import type { Highlight, Movement } from '../whatif'
 import CountUp from './CountUp'
@@ -82,11 +84,14 @@ function RankMove({ m }: { m: Movement }) {
 /**
  * The change as a bar growing out from a centre line, right for a gain and left
  * for a loss, scaled to the largest change in the table. Grows in when the row
- * first appears and moves to new values on later what-ifs.
+ * first appears (once the panel has faded in) and moves to new values on later what-ifs.
  */
 function DeltaBar({ delta, scale }: { delta: number; scale: number }) {
   const frac = Math.min(1, Math.abs(delta) / scale)
   const up = delta >= 0
+  const reveal = useReveal()
+  // the first growth waits for the panel to fade in; later values move at once
+  const [grown, setGrown] = useState(!reveal)
   return (
     <Box
       aria-hidden="true"
@@ -102,7 +107,12 @@ function DeltaBar({ delta, scale }: { delta: number; scale: number }) {
       })}
     >
       <Box
-        className="sp-grow-x"
+        component={motion.div}
+        // the bar is the value, so it grows from its zero line (scaleX 0), not from a squashed shape
+        initial={reveal ? { scaleX: 0 } : false}
+        animate={{ scaleX: frac }}
+        transition={grown ? TRANSITION.update : { ...TRANSITION.update, delay: 0.2 }}
+        onAnimationComplete={() => setGrown(true)}
         sx={{
           position: 'absolute',
           top: 0,
@@ -110,8 +120,6 @@ function DeltaBar({ delta, scale }: { delta: number; scale: number }) {
           width: '50%',
           ...(up ? { left: '50%', borderRadius: '0 999px 999px 0' } : { right: '50%', borderRadius: '999px 0 0 999px' }),
           transformOrigin: up ? 'left' : 'right',
-          transform: `scaleX(${frac})`,
-          transition: `transform ${DURATION.update}ms ${EASE.inOut}`,
           bgcolor: up ? 'success.main' : 'error.main',
           opacity: Math.abs(delta) < NOISE ? 0 : 0.85,
         }}
@@ -128,8 +136,8 @@ const HIGHLIGHT_COLOR = { up: 'success.main', down: 'error.main', same: 'text.se
  * Before → change → after, for a re-run with changed answers: the best match on
  * each side of what was changed, a few plain-words points about what moved, and
  * every role that was in either top 3 with its old and new figures. New figures
- * count from their old value and rows glide to their new order, so the change is
- * seen happening rather than just swapped in.
+ * count from their old value and rows glide to their new order (layout), so the
+ * change is seen happening rather than just swapped in.
  */
 export default function WhatIfPanel({ before, after, changes, onClear }: Props) {
   const rows = compareRuns(before, after)
@@ -137,14 +145,16 @@ export default function WhatIfPanel({ before, after, changes, onClear }: Props) 
   const scale = Math.max(0.02, ...rows.map((r) => Math.abs(r.delta)))
   const topBefore = before.roles[0]
   const topAfter = after.roles[0]
-  const tbody = useFlip<HTMLTableSectionElement>(rows.map((r) => r.job_role).join('|'))
+  const reveal = useReveal()
 
   return (
     <Paper
+      variant="raised"
       sx={(t) => ({
         p: { xs: 2, sm: 2.5 },
+        // a raised panel with an accent edge and a faint accent wash at the top: the model's answer to "what if"
         borderColor: alpha(t.palette.primary.main, 0.4),
-        bgcolor: alpha(t.palette.primary.main, 0.025),
+        backgroundImage: `linear-gradient(180deg, ${alpha(t.palette.primary.main, 0.06)}, transparent 200px)`,
       })}
       className="avoid-break"
       component="section"
@@ -172,7 +182,7 @@ export default function WhatIfPanel({ before, after, changes, onClear }: Props) 
           p: { xs: 1.5, sm: 2 },
           mb: 2,
           borderRadius: `${RADIUS.inset}px`,
-          bgcolor: 'background.paper',
+          ...surfaceFill(t, 'control'),
           border: `1px solid ${t.palette.divider}`,
         })}
       >
@@ -226,11 +236,13 @@ export default function WhatIfPanel({ before, after, changes, onClear }: Props) 
           return (
             <Stack
               key={h.text}
-              component="li"
+              component={motion.li}
+              // one after another, once the panel has faded in
+              initial={reveal ? { opacity: 0, y: 8 } : false}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ ...TRANSITION.large, delay: 0.12 + ((i + 1) * STAGGER) / 1000 }}
               direction="row"
               spacing={1}
-              className="sp-rise"
-              style={{ '--i': i + 1 } as CSSProperties}
               sx={{ alignItems: 'flex-start' }}
             >
               <Icon aria-hidden="true" sx={{ fontSize: 18, mt: '2px', color: HIGHLIGHT_COLOR[h.tone] }} />
@@ -257,11 +269,13 @@ export default function WhatIfPanel({ before, after, changes, onClear }: Props) 
               </TableCell>
             </TableRow>
           </TableHead>
-          <TableBody ref={tbody}>
+          <TableBody>
             {rows.map((m) => (
               <TableRow
                 key={m.job_role}
-                data-flip={m.job_role}
+                component={motion.tr}
+                layout="position"
+                transition={{ layout: TRANSITION.move }}
                 sx={(t) => ({
                   ...(m.left && { '& td': { color: 'text.secondary' } }),
                   ...(m.entered && { bgcolor: alpha(t.palette.success.main, 0.06) }),

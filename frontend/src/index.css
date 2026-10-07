@@ -40,9 +40,9 @@ h2[tabindex='-1']:focus {
 }
 
 /* --- entrances ----------------------------------------------------------- */
-/* Content that replaces other content (the results, an alert) arrives with a
-   short rise instead of teleporting; wizard steps are Motion (StepPane), as they
-   also animate on the way out. Mount-only: nothing here
+/* Small pieces that appear (an alert, a check mark, a status line) arrive with a
+   short rise or fade instead of teleporting; wizard steps and the results reveal
+   are Motion (StepPane, revealMotion). Mount-only: nothing here
    re-runs when data inside the element changes. Fill mode "backwards" holds
    the start frame during a stagger delay and leaves no transform behind. */
 @keyframes sp-rise {
@@ -63,32 +63,11 @@ h2[tabindex='-1']:focus {
     transform: scale(0.6);
   }
 }
-/* the results reveal: a little more travel than sp-rise, as it is the page's main moment */
-@keyframes sp-reveal {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-}
 
 .sp-rise {
   animation: sp-rise var(--dur-large) var(--ease-out) backwards;
   /* --i: position in a group entrance */
   animation-delay: calc(var(--i, 0) * var(--stagger));
-}
-/* results: summary, then each role card, then the supporting sections, one after another */
-.sp-reveal {
-  animation: sp-reveal var(--dur-enter) var(--ease-out) backwards;
-  animation-delay: calc(var(--i, 0) * var(--stagger-reveal));
-}
-/* a what-if change bar grows out of its centre line when its row appears (later values move by transition) */
-@keyframes sp-grow-x {
-  from {
-    transform: scaleX(0);
-  }
-}
-.sp-grow-x {
-  animation: sp-grow-x var(--dur-enter) var(--ease-out) 120ms backwards;
 }
 
 /* loading ring: only mounted while a request is actually slow */
@@ -130,9 +109,7 @@ h2[tabindex='-1']:focus {
 /* --- reduced motion: keep the fades that explain a change, drop movement -- */
 @media (prefers-reduced-motion: reduce) {
   .sp-rise,
-  .sp-reveal,
-  .sp-pop,
-  .sp-grow-x {
+  .sp-pop {
     animation-name: sp-fade;
     animation-delay: 0ms;
   }
@@ -140,14 +117,14 @@ h2[tabindex='-1']:focus {
   .sp-spin {
     animation-duration: 2s;
   }
-  /* count-ups and reorders are skipped in motion.ts (useCountUp, useFlip), and menus, tooltips and
-     toasts only fade (PopTransition); change highlights stay (colour only) */
+  /* Motion does the same for its animations (MotionProvider): no rise, slide or reorder, the
+     fades stay. Count-ups are skipped (useCountUp), menus, tooltips and toasts only fade
+     (PopTransition), and change highlights stay (colour only). */
   /* expanding panels, changing bars and floating field labels jump to their end state */
   .MuiCollapse-root,
   .MuiInputLabel-root,
   .MuiLinearProgress-bar,
-  .sp-meter,
-  .sp-grow-x {
+  .sp-meter {
     transition-duration: 1ms !important;
   }
   /* the 3% press scale stays: it is feedback under the finger, not movement */

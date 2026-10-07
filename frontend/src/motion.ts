@@ -11,13 +11,15 @@
 //
 // Tools, all timed from the tokens below:
 //   - Motion (motion/react): elements that animate as React adds and removes them
-//     (AnimatePresence: wizard steps, the theme icon; PopTransition for popups),
-//     selection highlights that slide between choices (layoutId), and cards that
-//     both lift and press (whileHover / whileTap)
-//   - CSS keyframes for fixed entrances (index.css), and CSS transitions for
+//     (AnimatePresence: wizard steps, the what-if comparison, the theme icon;
+//     PopTransition for popups), the results reveal (revealMotion), things that
+//     move to a new place (layout: role cards and table rows reordering, content
+//     making room for the comparison), selection highlights that slide between
+//     choices (layoutId), and cards that both lift and press (whileHover / whileTap)
+//   - CSS keyframes for small fixed entrances (index.css), and CSS transitions for
 //     anything re-triggered, including the press on buttons
-//   - the Web Animations API for results that reorder and figures that change
-import { createContext, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react'
+//   - the Web Animations API for the tint on figures that a what-if changed
+import { createContext, useContext, useEffect, useRef, useState } from 'react'
 
 export const EASE = {
   /** entering / exiting / feedback: starts fast, so the UI feels instant */
@@ -55,19 +57,13 @@ export const STAGGER_REVEAL = 70
 /** Busy indicators wait this long, so a fast answer (the API takes ~15 ms) never flickers. */
 export const BUSY_DELAY = 200
 
-/** CSS custom properties for the stylesheet (index.css) and sx props. */
+/** CSS custom properties for the stylesheet (index.css): the tokens its keyframes use. */
 export const motionCssVars = {
   '--ease-out': EASE.out,
-  '--ease-in-out': EASE.inOut,
-  '--dur-press': `${DURATION.press}ms`,
-  '--dur-hover': `${DURATION.hover}ms`,
   '--dur-small': `${DURATION.small}ms`,
   '--dur-medium': `${DURATION.medium}ms`,
   '--dur-large': `${DURATION.large}ms`,
-  '--dur-enter': `${DURATION.enter}ms`,
-  '--dur-highlight': `${DURATION.highlight}ms`,
   '--stagger': `${STAGGER}ms`,
-  '--stagger-reveal': `${STAGGER_REVEAL}ms`,
 }
 
 export const prefersReducedMotion = () =>
@@ -198,7 +194,20 @@ export const TRANSITION = {
   enter: motionTween(DURATION.enter),
   /** something already on screen moving or resizing */
   move: motionTween(DURATION.large, EASE.inOut),
+  /** a figure or bar settling on a new value after a what-if */
+  update: motionTween(DURATION.update, EASE.inOut),
 }
+
+/**
+ * One step of the results reveal, `i` steps (STAGGER_REVEAL apart) into it: a short rise
+ * into place. `reveal` false (results being returned to, see RevealContext) starts it in
+ * place. With reduced motion Motion drops the rise and keeps the fade.
+ */
+export const revealMotion = (i: number, reveal: boolean) => ({
+  initial: reveal ? { opacity: 0, y: 14 } : (false as const),
+  animate: { opacity: 1, y: 0 },
+  transition: { ...TRANSITION.enter, delay: (i * STAGGER_REVEAL) / 1000, layout: TRANSITION.move },
+})
 
 /** The value `progress` (0-1) of the way from `from` to `to` along `ease`. */
 export const tween = (from: number, to: number, progress: number, ease: (t: number) => number = easeOut) =>
@@ -247,75 +256,6 @@ export function useCountUp(target: number, from?: number): { value: number; movi
   }, [target, reduce])
 
   return { value: reduce ? target : value, moving: !reduce && value !== target }
-}
-
-type Point = { x: number; y: number }
-
-/**
- * FLIP for a list whose order can change: children marked `data-flip="<id>"`
- * glide from where they were to where they are now, instead of jumping, so a
- * role that moves from #3 to #1 is seen moving. Pass a string that changes when
- * the order does (the ids joined); other re-renders never animate. Items that
- * are new to the list are left to their own entrance animation.
- */
-export function useFlip<T extends HTMLElement>(order: string) {
-  const root = useRef<T>(null)
-  const last = useRef(new Map<string, Point>())
-  const lastOrder = useRef(order)
-
-  const measure = () => {
-    const el = root.current
-    const map = new Map<string, Point>()
-    if (!el) return map
-    const base = el.getBoundingClientRect()
-    el.querySelectorAll<HTMLElement>('[data-flip]').forEach((item) => {
-      const r = item.getBoundingClientRect()
-      // relative to the list, so scrolling or content above it moving does not count as a move
-      map.set(item.dataset.flip!, { x: r.left - base.left, y: r.top - base.top })
-    })
-    return map
-  }
-
-  useLayoutEffect(() => {
-    const el = root.current
-    if (!el) return
-    // positions without any move still in flight
-    el.querySelectorAll<HTMLElement>('[data-flip]').forEach((item) =>
-      item.getAnimations().forEach((a) => a.id === 'flip' && a.cancel()),
-    )
-    const now = measure()
-    if (order !== lastOrder.current && !prefersReducedMotion()) {
-      el.querySelectorAll<HTMLElement>('[data-flip]').forEach((item) => {
-        const before = last.current.get(item.dataset.flip!)
-        const after = now.get(item.dataset.flip!)
-        if (!before || !after) return
-        const dx = before.x - after.x
-        const dy = before.y - after.y
-        if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return
-        const move = item.animate([{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'none' }], {
-          duration: DURATION.large + 60,
-          easing: EASE.inOut,
-        })
-        move.id = 'flip'
-      })
-    }
-    lastOrder.current = order
-    last.current = now
-  })
-
-  // the layout can change without a re-render (window resized, phone rotated): keep the
-  // stored positions current so the next reorder starts from the right place
-  useEffect(() => {
-    const el = root.current
-    if (!el || typeof ResizeObserver === 'undefined') return
-    const ro = new ResizeObserver(() => {
-      last.current = measure()
-    })
-    ro.observe(el)
-    return () => ro.disconnect()
-  }, []) // measure only reads refs
-
-  return root
 }
 
 /**

@@ -161,6 +161,24 @@ const cardSurface = ({ theme }: { theme: Theme }) => ({
   '@media (prefers-reduced-transparency: reduce)': { backgroundColor: theme.palette.background.paper },
 })
 
+/**
+ * The raised surface, for the focal panels (the analysis summary, the best match, the what-if
+ * comparison): a brighter fill and a deeper, accent-tinted shadow. <Paper variant="raised">
+ */
+const raisedSurface = ({ theme }: { theme: Theme }) => ({
+  ...surfaceFill(theme, 'raised'),
+  border: `1px solid ${theme.palette.divider}`,
+  boxShadow: `inset 0 1px 0 ${white(0.9)}, ${ELEVATION.raised}`,
+  ...theme.applyStyles('dark', { boxShadow: `inset 0 1px 0 ${white(0.07)}, 0 16px 36px -18px rgba(0, 0, 0, 0.7)` }),
+  '@media (prefers-reduced-transparency: reduce)': { backgroundColor: theme.palette.background.paper },
+})
+
+declare module '@mui/material/Paper' {
+  interface PaperPropsVariantOverrides {
+    raised: true
+  }
+}
+
 /** Floating layers (menus, autocomplete lists): blurred glass and a deeper shadow, so they read as above the page. */
 const floatingSurface = ({ theme }: { theme: Theme }) => ({
   ...glass(theme, 'floating'),
@@ -337,6 +355,7 @@ export const theme = createTheme({
         rounded: { borderRadius: RADIUS.card },
         outlined: cardSurface,
       },
+      variants: [{ props: { variant: 'raised' }, style: raisedSurface }],
     },
     // Menus and select lists: MUI's Grow starts at a squashed scale(0.75, 0.56). Instead they fade
     // while settling from 97% towards their anchor (PopTransition), and leave with a quicker fade.

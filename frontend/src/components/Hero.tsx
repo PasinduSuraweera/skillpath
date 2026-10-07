@@ -5,6 +5,7 @@ import Paper from '@mui/material/Paper'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import { alpha } from '@mui/material/styles'
+import { useState } from 'react'
 import type { CSSProperties, ReactNode } from 'react'
 import type { Options } from '../api/types'
 import type { Sample } from '../samples'
@@ -38,9 +39,11 @@ export default function Hero({ options, intro, onPick, disabled, activeId }: Pro
   const families = new Set(options.job_roles.map((r) => r.family)).size
   // entrance order: eyebrow, title, copy, stats, examples
   const enter = (i: number) => (intro ? { className: 'sp-rise', style: { '--i': i } as CSSProperties } : {})
+  // coming back from the results: the start page fades in as a whole, without the first visit's entrance
+  const [returning] = useState(!intro)
 
   return (
-    <Grid container spacing={{ xs: 3, md: 6 }} className="no-print" sx={{ alignItems: 'center' }}>
+    <Grid container spacing={{ xs: 3, md: 6 }} className={returning ? 'no-print sp-fade' : 'no-print'} sx={{ alignItems: 'center' }}>
       <Grid size={{ xs: 12, md: 7 }}>
         <Box {...enter(0)}>
           <Box
