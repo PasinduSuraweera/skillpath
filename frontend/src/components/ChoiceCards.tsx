@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography'
 import { alpha } from '@mui/material/styles'
 import { useId, useState } from 'react'
 import { DURATION, EASE } from '../motion'
-import { RADIUS } from '../theme'
+import { RADIUS, surfaceFill } from '../theme'
 
 interface Props {
   /** the question, used as the group's legend */
@@ -119,7 +119,7 @@ export default function ChoiceCards({ question, number, value, choices, error, o
                 borderRadius: `${RADIUS.inset}px`,
                 border: '1px solid',
                 borderColor: checked ? 'primary.main' : 'divider',
-                bgcolor: checked ? alpha(t.palette.primary.main, 0.07) : 'background.paper',
+                ...(checked ? { backgroundColor: alpha(t.palette.primary.main, 0.07) } : surfaceFill(t, 'control')),
                 boxShadow: checked ? `0 0 0 1px ${t.palette.primary.main}` : 'none',
                 transition: [
                   `border-color ${DURATION.hover}ms ease`,

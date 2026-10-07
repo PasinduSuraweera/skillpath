@@ -11,7 +11,7 @@ import { alpha } from '@mui/material/styles'
 import { DURATION, EASE } from '../motion'
 import { SAMPLES } from '../samples'
 import type { Sample } from '../samples'
-import { RADIUS } from '../theme'
+import { RADIUS, surfaceFill } from '../theme'
 
 interface Props {
   onPick: (s: Sample) => void
@@ -53,7 +53,7 @@ export default function SampleBar({ onPick, disabled, activeId }: Props) {
                 borderRadius: `${RADIUS.inset}px`,
                 border: '1px solid',
                 borderColor: active ? 'primary.main' : 'divider',
-                bgcolor: active ? alpha(t.palette.primary.main, 0.07) : 'background.paper',
+                ...(active ? { backgroundColor: alpha(t.palette.primary.main, 0.07) } : surfaceFill(t, 'control')),
                 boxShadow: active ? `0 0 0 1px ${t.palette.primary.main}` : 'none',
                 transition: [
                   `border-color ${DURATION.hover}ms ease`,

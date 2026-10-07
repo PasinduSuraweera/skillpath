@@ -68,13 +68,6 @@ h2[tabindex='-1']:focus {
     opacity: 0;
   }
 }
-/* toast: drops in from the edge it is anchored to (top) */
-@keyframes sp-drop {
-  from {
-    opacity: 0;
-    transform: translateY(-12px);
-  }
-}
 /* a mark that confirms a selection (checkmark): settles from slightly small; never from scale(0) */
 @keyframes sp-pop {
   from {
@@ -100,13 +93,6 @@ h2[tabindex='-1']:focus {
   animation: sp-reveal var(--dur-enter) var(--ease-out) backwards;
   animation-delay: calc(var(--i, 0) * var(--stagger-reveal));
 }
-/* menus and tooltips settle from just under full size towards their anchor (opacity comes from MUI's Fade) */
-@keyframes sp-settle {
-  from {
-    transform: scale(0.97);
-  }
-}
-
 /* a what-if change bar grows out of its centre line when its row appears (later values move by transition) */
 @keyframes sp-grow-x {
   from {
@@ -139,9 +125,6 @@ h2[tabindex='-1']:focus {
 .sp-step-back {
   animation: sp-from-left var(--dur-medium) var(--ease-out) backwards;
 }
-.sp-drop {
-  animation: sp-drop var(--dur-medium) var(--ease-out) backwards;
-}
 
 /* theme switch: a short crossfade of the whole page (View Transitions API) ... */
 ::view-transition-old(root),
@@ -168,7 +151,6 @@ h2[tabindex='-1']:focus {
   .sp-reveal,
   .sp-step-forward,
   .sp-step-back,
-  .sp-drop,
   .sp-pop,
   .sp-grow-x {
     animation-name: sp-fade;
@@ -178,12 +160,8 @@ h2[tabindex='-1']:focus {
   .sp-spin {
     animation-duration: 2s;
   }
-  /* count-ups and reorders are skipped in motion.ts (useCountUp, useFlip); change highlights stay (colour only) */
-  /* MUI menus and tooltips grow from their anchor; fade them instead */
-  .MuiPopover-paper,
-  .MuiTooltip-tooltip {
-    transform: none !important;
-  }
+  /* count-ups and reorders are skipped in motion.ts (useCountUp, useFlip), and menus, tooltips and
+     toasts only fade (PopTransition); change highlights stay (colour only) */
   /* expanding panels, changing bars and floating field labels jump to their end state */
   .MuiCollapse-root,
   .MuiInputLabel-root,

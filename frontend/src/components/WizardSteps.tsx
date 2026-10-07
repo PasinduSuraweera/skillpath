@@ -9,6 +9,7 @@ import { alpha } from '@mui/material/styles'
 import type { StepIconProps } from '@mui/material/StepIcon'
 import type { Ref } from 'react'
 import { DURATION } from '../motion'
+import { surfaceFill } from '../theme'
 
 const STEPS = ['About you', 'Technologies', 'AI usage', 'Results']
 // when the stepper is narrow (phones under 360 px, or larger text) the full labels would run into each other.
@@ -57,7 +58,7 @@ function StepDot({ active, completed, icon }: StepIconProps) {
             }
           : completed
             ? { color: t.palette.primary.main, bgcolor: alpha(t.palette.primary.main, 0.12), borderColor: 'transparent' }
-            : { color: t.palette.text.secondary, bgcolor: t.palette.background.paper, borderColor: t.palette.divider }),
+            : { color: t.palette.text.secondary, ...surfaceFill(t, 'control'), borderColor: t.palette.divider }),
       })}
     >
       {completed && !active ? <Check className="sp-pop" sx={{ fontSize: 17 }} /> : icon}

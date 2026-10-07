@@ -10,7 +10,6 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import CircularProgress from '@mui/material/CircularProgress'
 import Container from '@mui/material/Container'
-import Fade from '@mui/material/Fade'
 import IconButton from '@mui/material/IconButton'
 import Paper from '@mui/material/Paper'
 import Skeleton from '@mui/material/Skeleton'
@@ -28,6 +27,7 @@ import Analyzing from './components/Analyzing'
 import AboutStep from './components/AboutStep'
 import Header from './components/Header'
 import Hero from './components/Hero'
+import PopTransition from './components/PopTransition'
 import Results from './components/Results'
 import TechStep from './components/TechStep'
 import WizardSteps from './components/WizardSteps'
@@ -45,7 +45,7 @@ import {
 import type { Errors, FormState } from './form'
 import { pct } from './format'
 import { DURATION, EASE, prefersReducedMotion, useDelayedFlag } from './motion'
-import { ELEVATION, RADIUS } from './theme'
+import { ELEVATION, RADIUS, glass } from './theme'
 import { SAMPLES } from './samples'
 import type { Sample } from './samples'
 import { whatIfHighlights } from './whatif'
@@ -298,14 +298,21 @@ export default function App() {
     <Box sx={{ minHeight: '100dvh' }}>
       <Header />
       {/* a slow what-if re-run: say what is happening, just under the header (the results dim meanwhile) */}
-      <Fade in={showBusy && step === RESULTS} unmountOnExit timeout={{ enter: DURATION.medium, exit: DURATION.small }}>
+      <PopTransition
+        in={showBusy && step === RESULTS}
+        unmountOnExit
+        timeout={{ enter: DURATION.medium, exit: DURATION.small }}
+        from="top"
+        travel={12}
+      >
         <Box
           role="status"
-          className="no-print sp-drop"
+          className="no-print"
           sx={(t) => ({
+            ...glass(t, 'floating'),
             position: 'fixed',
             top: { xs: 68, sm: 72 },
-            // centred with margins, not a transform: the drop-in animation owns transform
+            // centred with margins, not a transform: the arrival animation owns transform
             left: 0,
             right: 0,
             mx: 'auto',
@@ -320,7 +327,6 @@ export default function App() {
             borderRadius: 999,
             fontSize: '0.875rem',
             fontWeight: 500,
-            bgcolor: 'background.paper',
             border: 1,
             borderColor: 'divider',
             boxShadow: ELEVATION.floating,
@@ -331,7 +337,7 @@ export default function App() {
             {pendingTech ? `Re-running with ${pendingTech} added…` : 'Updating your matches…'}
           </Box>
         </Box>
-      </Fade>
+      </PopTransition>
       <Container component="main" maxWidth="lg" sx={{ py: { xs: 2.5, md: 5 } }}>
         {!options ? (
           loadError ? (
@@ -562,10 +568,10 @@ export default function App() {
           </>
         }
         anchorOrigin={wide ? { vertical: 'top', horizontal: 'right' } : { vertical: 'bottom', horizontal: 'center' }}
-        slots={{ transition: Fade }}
+        slots={{ transition: PopTransition }}
         transitionDuration={{ enter: DURATION.medium, exit: DURATION.small }}
-        // arrives from the edge it is anchored to, leaves with a fade
-        slotProps={{ content: { className: wide ? 'sp-drop' : 'sp-rise' } }}
+        // arrives from the edge it is anchored to
+        slotProps={{ transition: { from: wide ? 'top' : 'bottom', travel: 12 } }}
         sx={wide ? { top: '76px !important' } : { bottom: 'calc(76px + env(safe-area-inset-bottom)) !important' }}
       />
 
