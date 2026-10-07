@@ -3,7 +3,7 @@ import { alpha } from '@mui/material/styles'
 import type { SxProps, Theme } from '@mui/material/styles'
 import { m, useScroll, useTransform } from 'motion/react'
 import { useRef } from 'react'
-import { SPEED, useAtmosphere, useDepth } from '../depth'
+import { LAYER, SPEED, useAtmosphere, useDepth } from '../depth'
 import type { Mood } from '../depth'
 import { FORCED_COLORS } from '../design/tokens'
 import { useScrollFx } from '../motion'
@@ -91,7 +91,7 @@ export default function AmbientBackground() {
       <Box
         component={m.div}
         style={{ y: auroraY }}
-        sx={(t) => ({ position: 'absolute', inset: `0 0 ${AURORA_DRIFT}px 0`, backgroundImage: paint(AURORA, false), ...t.applyStyles('dark', { backgroundImage: paint(AURORA, true) }) })}
+        sx={(t) => ({ ...(fx && LAYER), position: 'absolute', inset: `0 0 ${AURORA_DRIFT}px 0`, backgroundImage: paint(AURORA, false), ...t.applyStyles('dark', { backgroundImage: paint(AURORA, true) }) })}
       />
       {/* the moods: all painted once, only the current one shown; the change is a slow crossfade */}
       {(Object.keys(MOODS) as Mood[]).map((k) => (
@@ -112,6 +112,7 @@ export default function AmbientBackground() {
         component={m.div}
         style={{ y: gridY }}
         sx={(t) => ({
+          ...(fx && LAYER),
           position: 'absolute',
           inset: 0,
           backgroundImage: 'radial-gradient(circle, rgba(11, 16, 32, 0.09) 1px, transparent 1.4px)',
@@ -137,7 +138,8 @@ export default function AmbientBackground() {
  */
 export function Glow({ color, size, sx, strength = [0.32, 0.4], speed = SPEED.light }: { color: string; size: number; sx?: SxProps<Theme>; strength?: [number, number]; speed?: number }) {
   const ref = useRef<HTMLDivElement>(null)
-  const y = useDepth(ref, speed, useScrollFx())
+  const fx = useScrollFx()
+  const y = useDepth(ref, speed, fx)
   return (
     <Box
       ref={ref}
@@ -147,6 +149,7 @@ export function Glow({ color, size, sx, strength = [0.32, 0.4], speed = SPEED.li
       className="no-print"
       sx={[
         (t) => ({
+          ...(fx && LAYER),
           position: 'absolute',
           width: size,
           height: size,

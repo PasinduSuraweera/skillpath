@@ -15,9 +15,18 @@
 //   - reduced motion: no smoothing at all, and programmatic scrolls jump
 import Lenis from 'lenis'
 import 'lenis/dist/lenis.css'
+import { cancelFrame, frame } from 'motion/react'
+import type { FrameData } from 'motion/react'
 import { prefersReducedMotion } from './motion'
 
 let lenis: Lenis | null = null
+
+/**
+ * Lenis moves the page from Motion's frame loop, in its read step: the scroll is set before
+ * Motion writes this frame's transforms, never after (a scroll set after style writes makes
+ * the browser recalculate style and layout on the spot, every frame).
+ */
+const tick = ({ timestamp }: FrameData) => lenis?.raf(timestamp)
 
 /** A MUI modal (select menu, popover) is open and has locked the page's scrolling. */
 const pageLocked = () => document.body.style.overflow === 'hidden'
@@ -30,6 +39,7 @@ export function startSmoothScroll(): () => void {
   const fine = window.matchMedia('(pointer: fine)')
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)')
   const start = () => {
+    cancelFrame(tick)
     lenis?.destroy()
     lenis = null
     if (!fine.matches || reduced.matches) return
@@ -39,9 +49,10 @@ export function startSmoothScroll(): () => void {
       smoothWheel: true,
       syncTouch: false,
       allowNestedScroll: true,
-      autoRaf: true,
+      autoRaf: false,
       prevent: (node) => pageLocked() || !!node.closest?.('.MuiPopover-root, .MuiAutocomplete-popper, .MuiDialog-root'),
     })
+    frame.read(tick, true)
   }
   start()
   fine.addEventListener('change', start)
@@ -49,6 +60,7 @@ export function startSmoothScroll(): () => void {
   return () => {
     fine.removeEventListener('change', start)
     reduced.removeEventListener('change', start)
+    cancelFrame(tick)
     lenis?.destroy()
     lenis = null
   }

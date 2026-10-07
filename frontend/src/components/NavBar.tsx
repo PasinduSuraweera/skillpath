@@ -11,6 +11,7 @@ import { useColorScheme } from '@mui/material/styles'
 import { AnimatePresence, m, useReducedMotion, useScroll, useSpring, useTransform } from 'motion/react'
 import type { MouseEvent } from 'react'
 import { flushSync } from 'react-dom'
+import { LAYER } from '../depth'
 import { TRANSITION, withViewTransition } from '../motion'
 import { FORCED_COLORS, HOVER, RADIUS, glass, glassEdge, ink, mergeStyles, shadow, white } from '../design/tokens'
 
@@ -125,6 +126,7 @@ export default function NavBar({ view, resultsReady, disabled, onNavigate }: Pro
             component={m.div}
             style={{ scaleX: progress }}
             sx={(t) => ({
+              ...LAYER,
               height: '100%',
               transformOrigin: 'left',
               backgroundImage: 'linear-gradient(90deg, rgba(99, 102, 241, 0), #6366f1 30%, #a855f7 70%, #d946ef)',
