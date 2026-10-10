@@ -3,7 +3,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://skillpath-knd12.onrender.com/api/:path*"
+      "destination": "https://skillpath-6zlo.onrender.com/api/:path*"
     }
   ],
   "headers": [
