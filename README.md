@@ -248,7 +248,9 @@ skillpath/
 ├── reports/                  decisions, results, figures, HTML notebooks, technical report
 ├── tests/                    pytest suites (data, modelling, insights, API)
 ├── pyproject.toml            package metadata and pytest configuration
-└── requirements.txt          pinned environment for the whole project
+├── requirements.txt          pinned environment for the whole project
+├── requirements-api.txt      runtime dependencies of the deployed API only
+└── render.yaml               Render Blueprint for the API (see "Deployment")
 ```
 
 <details>
@@ -275,6 +277,7 @@ frontend/
 │   └── *.test.ts             Vitest unit tests
 ├── e2e/run.mjs               browser test (15 cases) in Chrome via Puppeteer
 ├── vite.config.ts            dev/preview server, /api proxy, Vitest config
+├── vercel.json               Vercel: forwards /api to the hosted API, caches hashed assets
 └── package.json              npm scripts
 ```
 
@@ -660,15 +663,26 @@ test suites before opening a pull request.
 
 ## Deployment
 
-There is **no deployment configuration** in this repository: no Dockerfile, Compose file, CI pipeline or hosting setup.
-The supported way to run SkillPath is locally, as described above.
+The repository is set up for two free hosts: the API on [Render](https://render.com) and the web app on
+[Vercel](https://vercel.com). There is no Dockerfile, Compose file or CI pipeline.
 
-If you deploy it, note how the pieces fit together:
+| Part | Host | Configuration | Settings |
+|---|---|---|---|
+| API | Render web service | [`render.yaml`](render.yaml) (New > Blueprint) | Python 3.13, `pip install -r requirements-api.txt && pip install -e .`, `uvicorn app.main:app --host 0.0.0.0 --port $PORT`, health check `/api/health` |
+| Web app | Vercel project | [`frontend/vercel.json`](frontend/vercel.json) | Root Directory `frontend`, framework Vite (build `npm run build`, output `dist`) |
+
+1. Create the Render service first and note its address (`https://<name>.onrender.com`).
+2. Make sure the `/api` rewrite in `frontend/vercel.json` points at that address, then create the Vercel project.
+
+How the pieces fit together:
 
 - The frontend build (`frontend/dist/`) is static. It expects the API on the **same origin under `/api`**. The API
-  has no CORS configuration, so put both behind one server or reverse proxy that serves `dist/` and forwards
-  `/api` to uvicorn.
+  has no CORS configuration, so Vercel forwards `/api` to Render (the rewrite in `vercel.json`), as Vite does locally.
+  Any other host works the same way: one server or reverse proxy that serves `dist/` and forwards `/api` to uvicorn.
+- A free Render service sleeps after 15 minutes without requests and takes about a minute to wake, so the first
+  visit after a quiet spell is slow. The web app waits, and says so if the wait runs out.
 - The API needs only `app/`, the installed `skillpath` package and `artifacts/`, not `data/`.
+  [`requirements-api.txt`](requirements-api.txt) lists just its runtime dependencies, at the versions the tests pass on.
 - Use **scikit-learn 1.8.0**, the version that saved the model. The API logs a warning at startup if the version differs.
 - The API has no authentication or rate limiting.
 
@@ -726,7 +740,7 @@ If you deploy it, note how the pieces fit together:
 - The app needs no secrets. If you add any, keep them in environment variables and never commit them.
 - The insight tables contain only group-level summaries, and salary figures come from groups of at least 30 people.
   No respondent-level rows are served.
-- The API is meant for local use: it has no authentication or rate limiting.
+- The API has no authentication or rate limiting. It serves only group-level figures and stores nothing, so the hosted copy is open to anyone.
 - Report vulnerabilities privately to the repository maintainers through GitHub rather than in a public issue.
 
 ## Roadmap

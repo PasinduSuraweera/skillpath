@@ -6,7 +6,10 @@ import { ValidationError, getOptions, predict } from './client'
 const reply = (status: number, body: unknown) =>
   vi.fn().mockResolvedValue(new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } }))
 
-afterEach(() => vi.unstubAllGlobals())
+afterEach(() => {
+  vi.unstubAllGlobals()
+  vi.unstubAllEnvs()
+})
 
 describe('API client', () => {
   it('posts the profile as JSON and returns the body', async () => {
@@ -32,6 +35,18 @@ describe('API client', () => {
   it.each([502, 503, 504])('explains how to start the API when the proxy answers %i', async (status) => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('', { status })))
     await expect(getOptions()).rejects.toThrow(/Cannot reach the SkillPath API.*uvicorn app\.main:app/)
+  })
+
+  it('tells a visitor to the hosted app to wait, not to start the API', async () => {
+    vi.stubEnv('DEV', false)
+    vi.resetModules()
+    const hosted = await import('./client')
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('', { status: 502 })))
+    const err = await hosted.getOptions().catch((e: Error) => e.message)
+    expect(err).toMatch(/Cannot reach the SkillPath API.*starting up/)
+    expect(err).not.toMatch(/uvicorn/)
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('<html></html>', { status: 200 })))
+    await expect(hosted.getOptions()).rejects.toThrow(/cannot read.*starting up/)
   })
 
   it('explains how to start the API when the network request fails', async () => {

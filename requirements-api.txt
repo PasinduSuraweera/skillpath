@@ -1,0 +1,13 @@
+# What the deployed web API needs, and nothing else (no notebooks, reports or test tools).
+# Exact versions: the ones the test suites pass on, so the hosted API behaves like the local one.
+# scikit-learn must match the version that saved artifacts/*.joblib (see requirements.txt).
+# Install the skillpath package as well:  pip install -r requirements-api.txt && pip install -e .
+scikit-learn==1.8.0
+pandas==3.0.6
+numpy==2.5.3
+pyarrow==25.0.1
+joblib==1.6.0
+scipy==1.18.1
+fastapi==0.142.2
+pydantic==2.13.5
+uvicorn[standard]==0.54.0

@@ -10,14 +10,17 @@ export class ValidationError extends Error {
   }
 }
 
-const UNREACHABLE =
-  'Cannot reach the SkillPath API. Start it in another terminal with ' +
-  '"uvicorn app.main:app --reload" (from the project root, with the venv active) and try again.'
+// a visitor to the hosted app cannot start anything: there the API sleeps when idle and takes about a minute to wake
+const UNREACHABLE = import.meta.env.DEV
+  ? 'Cannot reach the SkillPath API. Start it in another terminal with ' +
+    '"uvicorn app.main:app --reload" (from the project root, with the venv active) and try again.'
+  : 'Cannot reach the SkillPath API. It may be starting up, which takes about a minute after a quiet spell. Please try again shortly.'
 
 // a 200 that is not the SkillPath API's JSON, e.g. an HTML page from a misconfigured proxy
-const UNEXPECTED =
-  'The SkillPath API sent a response this page cannot read. Check that /api points at the SkillPath API ' +
-  '(SKILLPATH_API for the dev server) and try again.'
+const UNEXPECTED = import.meta.env.DEV
+  ? 'The SkillPath API sent a response this page cannot read. Check that /api points at the SkillPath API ' +
+    '(SKILLPATH_API for the dev server) and try again.'
+  : 'The SkillPath API sent a response this page cannot read. It may still be starting up. Please try again in a minute.'
 
 /** `valid` checks the parts of a successful body the page relies on, so a wrong one is an error, not a crash. */
 async function request<T>(path: string, valid: (body: Partial<T> | null) => boolean, init?: RequestInit): Promise<T> {

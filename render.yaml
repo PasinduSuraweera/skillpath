@@ -1,0 +1,32 @@
+# Render Blueprint for the SkillPath API (Render dashboard: New > Blueprint, then pick this repo).
+# The web app is hosted separately on Vercel, which forwards /api to this service
+# (frontend/vercel.json), so the browser still talks to one origin and the API needs no CORS.
+services:
+  - type: web
+    name: skillpath-knd12
+    runtime: python
+    plan: free
+    region: singapore
+    # editable install: skillpath.config finds artifacts/ relative to the source tree
+    buildCommand: pip install -r requirements-api.txt && pip install -e .
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    # redeploy only when something the API runs on changes, not for frontend or report commits
+    buildFilter:
+      paths:
+        - app/**
+        - src/**
+        - artifacts/**
+        - requirements-api.txt
+        - pyproject.toml
+        - render.yaml
+    envVars:
+      # the Python the project is developed and tested on
+      - key: PYTHON_VERSION
+        value: 3.13.9
+      # one request scores one row; without these numpy starts a thread per host core,
+      # which only costs memory on a small instance
+      - key: OMP_NUM_THREADS
+        value: "1"
+      - key: OPENBLAS_NUM_THREADS
+        value: "1"
