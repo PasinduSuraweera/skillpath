@@ -1,0 +1,13 @@
+{
+  "name": "skillpath-presentation",
+  "private": true,
+  "type": "module",
+  "description": "Builds output/SkillPath_Final_Presentation.pptx (IT3051 mini project, group KND_12)",
+  "scripts": {
+    "build": "node build_deck.mjs",
+    "capture": "node capture_screens.mjs"
+  },
+  "dependencies": {
+    "pptxgenjs": "^4.0.1"
+  }
+}

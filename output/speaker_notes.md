@@ -1,0 +1,241 @@
+# SkillPath final presentation: speaker notes
+
+The same notes are inside the PowerPoint (View > Notes Page, or Presenter View). Lines that start with "If asked" are answers to likely questions, not part of the talk.
+
+## Shared introduction
+
+### Slide 1: SkillPath: AI-Aware Developer Career Recommendation System
+
+Hello everyone. We are group KND_12, and this is SkillPath, our mini project for IT3051, Fundamentals of Data Mining.
+
+SkillPath is a career recommendation system for developers. You tell it which technologies you use, how much experience you have and how you use AI tools. It then suggests the three developer job roles that your profile most resembles. It does not stop at a name: for every role it shows how much of the everyday work is already done with AI, what people in that role typically earn, and which skills you would need to add.
+
+Everything is learned from the Stack Overflow Annual Developer Survey 2025, which has 49,123 responses. The screenshot on the right is the real application.
+
+The presentation has four parts. S S P S Bandara covers the problem, objectives and dataset. Yoosuf A.A covers the methodology, preprocessing and features. M G S D Wijesinghe covers the models, optimisation and results. K M H S Bandara covers the system, testing and conclusion.
+
+Transition: I will hand over to S S P S Bandara to explain the problem we set out to solve.
+
+## Member 1: S S P S Bandara (Problem, Objectives & Dataset, slides 2–4)
+
+### Slide 2: Problem Statement and Motivation
+
+Software development is no longer one career. Employers advertise for back-end, front-end, mobile, data, machine learning, DevOps, cloud, security and QA roles, and each one has its own technology stack. A final-year student usually knows several languages and tools, but cannot easily tell which of those roles their current skills point to, or what to learn next.
+
+The guidance that exists is mostly generic: articles, role descriptions and job adverts. None of it is matched to an individual. And in 2026 there is a second question students ask: how much of this role is AI already doing? Career advice that ignores that question is incomplete.
+
+So on the right are the three kinds of evidence we decided a useful answer must show. AI exposure means the share of a role's everyday tasks that people in that role already do with AI tools. Salary evidence means what comparable people actually earn, in a comparable country and at a comparable experience level. A skill gap is the list of specific technologies that separate what you know from what people in the target role use.
+
+The banner at the bottom is our data mining problem in one sentence: given a person's self-reported technologies, experience, education, location and AI usage, predict which developer job roles their profile most resembles, and support each suggestion with evidence from the same survey.
+
+If asked why "resembles" and not "should become": the model learns what people who hold a role look like. A low score means your profile is unlike that role's survey respondents. It does not mean you cannot do the job.
+
+Transition: that problem gave us one aim and six objectives, which are on the next slide.
+
+### Slide 3: Aim, Objectives and Scope
+
+Our aim was to design, build and evaluate an AI-aware job role and career path recommendation system by mining the Stack Overflow Developer Survey 2025.
+
+The six objectives follow the data mining process, and they are also the structure of this presentation. Objectives one and two, understanding and preparing the data, are covered by me and by Yoosuf. Objectives three and four, developing, optimising and evaluating the models, are covered by Wijesinghe. Objectives five and six, the role insights, the deployed system and its testing, are covered across the second half.
+
+On scope. The target is 20 skill-defined job roles, grouped into 12 broader role families such as Data Science and ML or DevOps and Cloud. We predict the specific role because roles inside one family use different tools: data scientists use R and Databricks, while data and business analysts use VBA and Access. The family score is simply the sum of the role probabilities inside it, so one model serves both levels.
+
+The users we designed for are students and early-career developers.
+
+What we left out is just as deliberate. Management, executive and non-technical roles are excluded because they describe seniority, not a skill path. Age and gender are never model inputs, which is a fairness decision. The system must not be used for hiring, screening or setting salaries. And the application stores and logs nothing the user types.
+
+If asked about hosting: large-scale public hosting and load handling were out of scope. The system is built to serve one user at a time.
+
+Transition: all of this depends on the data, so let me show what the survey looks like and what we found in it.
+
+### Slide 4: Dataset and Exploratory Data Analysis
+
+The dataset is the public results file of the Stack Overflow Annual Developer Survey 2025: 49,123 responses and 170 attributes. It is published under the Open Database License, which requires attribution, so the application shows the attribution line on every result.
+
+On the left are the attribute groups we used. The job role is the class label. The technology questions are multi-select lists for seven areas, each asked twice: what you have worked with and what you want to work with. Then experience, education, country and the AI questions. Pay is used only for the salary benchmark. It is never a model input.
+
+We did the exploratory analysis on the training split only, so no decision was influenced by the test respondents.
+
+The chart in the middle is the most important finding. Full-stack Developer is 39.4 percent of the training data, 7,279 people. The smallest role, UX / UI Designer, has 47. That is a ratio of about 155 to 1. A model that always answers "Full-stack" would be 39 percent accurate while knowing nothing, so accuracy cannot be our headline metric.
+
+The heatmap on the right is the second finding. Each role is represented by its average technology profile, and we compute the cosine similarity between roles, where 1 means identical. Cloud Infrastructure Engineer and DevOps Engineer are at 0.99, and Data Engineer and Data Scientist at 0.97. No algorithm can perfectly separate roles that use the same tools. This is why the product shows three ranked roles and the family total, not a single answer.
+
+The strip at the bottom links each finding to its consequence. Two more: lift measures how many times more common a technology is in a group than overall, and Swift is 9.7 times as common among mobile developers. And AI use differs strongly by role: on average 19.1 percent of thirteen development tasks are done with AI today, rising to 39.0 percent with planned use, and 14.4 percent of respondents see AI as a threat to their job.
+
+If asked about data quality: 5,794 responses were near-empty, 87 people ticked almost every option in a technology list, and some salaries were clearly typed in thousands. The next section explains how those were handled.
+
+Transition: I will hand over to Yoosuf A.A, who explains how we turned these findings into a methodology and a clean dataset.
+
+## Member 2: Yoosuf A.A (Methodology, Preprocessing & Features, slides 5–7)
+
+### Slide 5: CRISP-DM Methodology
+
+We followed CRISP-DM, the Cross-Industry Standard Process for Data Mining. It divides a project into six phases, and this slide shows what each phase actually was in SkillPath.
+
+Business understanding was the problem, the aim and the objectives you have just seen. Data understanding was the quality audit and the exploratory analysis. Data preparation was the cleaning rules, the cohort definition, the train and test split and the feature pipeline. Modelling was six algorithms and a baseline, followed by four optimisation phases. Evaluation was a selection rule written in advance and a single test on held-out data. Deployment was the web API and the web application, verified by automated tests.
+
+CRISP-DM is iterative, and ours genuinely was. Two examples: a modelling experiment showed that scaling the binary technology columns costs about 0.025 macro-F1, which confirmed a data preparation decision. And class weighting, which we had applied as a precaution, turned out to harm Logistic Regression, so it was removed.
+
+The four principles at the bottom are what make the numbers trustworthy. One shared Python package, called skillpath, is used by the notebooks, the scripts and the web backend, so each step has exactly one definition. We split first and learn later: only fixed rules run before the split. The preprocessing sits inside the saved model, so cross-validation refits it on every fold and the web service applies exactly the same transformation. And the test split is opened once, by one script, after the model is chosen.
+
+If asked about reproducibility: the full preprocessing rebuilds from the raw file with one command in about 15 seconds, a fixed random seed of 42 is used for the split, the folds and every model, and every cross-validation run is logged with a timestamp, 26 runs in total.
+
+Transition: the next slide goes into the data preparation phase in detail.
+
+### Slide 6: Data Cleaning and Preprocessing
+
+The left side shows how 49,123 raw responses became the modelling cohort.
+
+First we removed 5,794 near-empty responses. These have ten or fewer answered fields, which is only the screening questions, so they carry no role, skill or AI information. We checked for exact duplicates after that and none remained, because every duplicate was one of those near-empty rows.
+
+Then we removed 87 straight-liners. In a multi-select survey, careless answering looks like ticking almost everything, so the rule is: ticked at least 90 percent of the options in any technology list, for example 38 of the 42 languages. That threshold comes from the questionnaire's option counts, not from statistics of the data, which is why it is safe to apply before the split.
+
+The next three steps define the cohort. We keep people with a specific developer role, then only skill-defined technical roles, then only those who answered the main technology question. That leaves 23,072 respondents across 20 roles.
+
+The split is 80/20, stratified on the job role, which gives 18,457 training and 4,615 test respondents. Stratified means every role keeps the same share on both sides: the largest difference is 0.02 percentage points, and even the smallest role keeps 12 test examples. The response IDs are frozen in a file, so every notebook and script reloads the same split.
+
+On the right, the key idea is the difference between deterministic rules and learned transformations. Deterministic rules learn nothing from the data, so they cannot leak. Anything learned, such as vocabularies, medians and scaling, is fitted on the training rows only.
+
+Two cleaning details worth knowing. The survey tells people to leave work experience blank if it is zero, so 2,919 blanks are genuine zeros. Median imputation would have given new graduates about ten years of work. And values that are impossible for the respondent's age band, such as 100 years of coding at age 25 to 34, were set to missing.
+
+Data leakage means information that would not be available at prediction time influencing training or evaluation. It is the most common reason results look better than they really are, and unit tests check each of our leakage rules automatically.
+
+Transition: with a clean cohort, the next slide shows how each person becomes 479 features.
+
+### Slide 7: Feature Engineering and Supporting Insights
+
+The diagram at the top is a single scikit-learn pipeline. A survey-format row goes in on the left, and 479 features come out on the right and feed the classifier. Because the pipeline is saved together with the model, the web service uses exactly the same code.
+
+Most of the features are technology flags: 403 of the 479 are binary columns, one per technology, for both the "have worked with" and "want to work with" lists of seven areas. Technologies chosen by fewer than 0.5 percent of training respondents, about 92 people, are pooled into an OTHER column per list, which also absorbs any value the model has never seen. Experience and technology counts are log-transformed because they are skewed. Country has 177 sparse values, so it is mapped to 13 regions.
+
+The middle strip is the detail I would highlight. An empty technology list can mean two different things. If the person answered "No" to the gate question for that area, they use none, which is a true zero. If they skipped the question, we simply do not know. Between 56 and 82 percent of empty lists are true zeros, so we encode the two cases differently with a separate "unknown" indicator, and we never impute technologies.
+
+We also engineered a career-changer flag for people with more years of work than years of coding. It is 24 percent of QA and test engineers but only 3 percent of back-end developers, so it is a real pattern.
+
+The three cards at the bottom are supporting datasets. They are shown next to each recommendation, and none of them is a model input.
+
+The AI Exposure Index: the survey asks about thirteen development tasks. A task done mostly with AI counts 1, partly with AI counts 0.5, and the index is 100 times the mean. Across all roles it is 19.1 now and 39.0 including planned use.
+
+The salary benchmark: pay has unit errors, so we use a robust z-score, based on the median and the median absolute deviation, of log pay within each country. Then we report the median and the middle half for the most specific peer group that has at least 30 people. If the role in your country is too small, it falls back through six levels, ending at the worldwide family. The reference set has 15,545 respondents.
+
+The skill gap uses lift: the share of a role that uses a technology, divided by the share across all roles. A technology is distinctive if at least 20 percent of the role uses it and its lift is at least 1.1.
+
+If asked about feature selection: chi-square and ANOVA tests found 431 of the 479 features significant after Bonferroni correction, and supervised selection was later tested inside cross-validation and did not help.
+
+Transition: I will hand over to M G S D Wijesinghe, who explains how we modelled this data.
+
+## Member 3: M G S D Wijesinghe (Models, Optimisation & Results, slides 8–10)
+
+### Slide 8: Classification Algorithms and Validation
+
+This is a supervised multi-class classification problem. The class label is the job role, with 20 classes, and the input is the 479 features. One product constraint applies to every model: it must output probabilities, because the application ranks three roles and sums the probabilities into families.
+
+We compared six algorithms, chosen to cover different ways of learning and not six variations of one idea. Complement Naive Bayes assumes features are independent given the class. k-Nearest Neighbours with cosine distance directly tests our product premise, "similar skills, similar job". Logistic Regression draws linear decision boundaries and gives good probabilities. The Linear SVM maximises the margin and is wrapped in a calibrator to produce probabilities. Random Forest and Histogram Gradient Boosting are tree ensembles that can capture combinations of skills. The seventh model is a dummy that always answers the most frequent class. It sets the floor.
+
+For validation we used stratified 5-fold cross-validation on the training split, with the same folds for every experiment so every number is comparable. Stratified means each fold keeps the class proportions, so rare roles appear in every fold. Five folds leave about nine examples of the smallest role in each validation fold. Ten folds would leave about four, which makes its score mostly noise. Because the preprocessing is inside the model, each fold refits it on its own training part.
+
+Now the metric. Macro-F1 is the plain average of the F1 score of each of the 20 roles, so every role counts equally and ignoring rare roles is penalised. The chart shows why this matters. The grey bars are accuracy and the blue bars are macro-F1. The dummy model scores 39.4 percent accuracy, which is even higher than the first Logistic Regression at 36.6 percent, yet its macro-F1 is 0.028. Accuracy hides what macro-F1 shows.
+
+At this first stage Histogram Gradient Boosting leads with macro-F1 0.272, followed by Logistic Regression at 0.255 and Random Forest at 0.254. The top three are within 0.019 of each other, which is about the size of the fold-to-fold variation, so the ceiling is set mainly by the data, not by the algorithm.
+
+If asked why the first Logistic Regression has low accuracy: it was run with balanced class weights, which chase rare roles at the cost of many false positives. The next slide shows what happened when we tested that.
+
+Transition: these are initial configurations only. Next is how optimisation changed the picture.
+
+### Slide 9: Model Optimisation and Final Model Selection
+
+Optimisation ran in four phases, and each one answered a question raised earlier.
+
+Phase A was imbalance handling: no treatment, class weighting, or random oversampling of minority roles. We rejected SMOTE on principle, because interpolating between binary skill vectors creates rows like "0.4 knows React" that nobody could report. The result overturned our own assumption. For Logistic Regression, removing class weighting raises macro-F1 from 0.2535 to 0.3003. That gain of 0.047 is larger than any hyper-parameter effect we found later. The reason is that re-weighting forces the model to inflate rare-role probabilities everywhere: it gains some recall but loses far more precision. Random Forest shows the opposite, improving from 0.1869 to 0.2548 with weighting. So imbalance handling is a property of the algorithm and data pair, not a universal good.
+
+Phase B tested the feature set. Removing the "want to learn" lists costs about 0.009 macro-F1, so they earn their place. Chi-square feature selection did not help. And adding current-job context scored slightly higher but was rejected, because students, our main users, have no employer and would leave those questions blank.
+
+Phase C was hyper-parameter tuning with randomised search, which finds good settings far more efficiently than a grid when only a few parameters matter. Both linear models preferred much stronger regularisation than the default, which tells us the untuned models were overfitting.
+
+Phase D is the chart. Grey is the Stage 6 baseline and blue is the tuned model. All four improve, but the ranking changes. Gradient Boosting led at first with 0.2724. After tuning, Logistic Regression reaches 0.3030 against 0.2860 for Gradient Boosting, a lead of about twice its standard deviation. If we had tuned only the early leader, we would have shipped the wrong model.
+
+The selection rule in the banner was written down before the results were read, so it could not be adjusted to favour a model: the highest 5-fold macro-F1, and models within one standard deviation of the best count as tied, with the cheapest to fit winning. In the event the tie-break was not needed, because Logistic Regression was the only model within one standard deviation of the best.
+
+The final model is Logistic Regression with C equal to 0.218 and no class weighting. It fits in 3.3 seconds, its coefficients are interpretable, and it is saved with its preprocessing as one small pipeline file.
+
+Transition: the last question is whether this holds on data the model has never seen.
+
+### Slide 10: Final Model Evaluation
+
+The chosen model was refitted on all 18,457 training rows and evaluated exactly once on the 4,615 held-out respondents. Only one script ever reads the test split.
+
+The headline is on the left. For 83.92 percent of held-out respondents, their real job role is among the three roles SkillPath shows. At the career-family level it is 87.78 percent. In practical terms, for about 84 out of 100 people the right answer is on the screen. The majority-class baseline reaches about 0.41 top-3 accuracy in cross-validation, so the model roughly doubles that.
+
+The other tiles are the stricter metrics. Top-1 accuracy is 54.93 percent. Macro-F1 is 0.2845 at role level and 0.4149 at family level.
+
+The small table shows the validation was honest. Macro-F1 was 0.3030 in cross-validation and 0.2845 on the test set. That gap of 0.0185 is about two fold standard deviations and is in the expected direction, because the cross-validated figure is the maximum over a search. Top-3 accuracy is almost identical, and log loss matches to four decimals. So there is no sign of leakage inflating our numbers.
+
+We want to be straightforward about the limits. A macro-F1 of 0.28 is modest. The causes are structural: Full-stack is 39 percent of the data and absorbs uncertain profiles, several roles share technology profiles, and job titles are self-reported.
+
+The chart on the right shows that the model does not predict every role equally well. Mobile, Full-stack and Embedded are recognised well because they are large or use distinctive tools. Mobile has only 739 training examples but an F1 of about 0.70, because Swift, Kotlin, Xcode and Android Studio are used by almost nobody else. At the bottom, seven roles have a test recall below 0.10, and two of them, AI Application Developer and UX / UI Designer, are never predicted as the first choice.
+
+We do not hide this in an average. The application marks those seven roles with a "low confidence" badge whenever they are recommended.
+
+If asked what recall and precision mean here: recall is the share of people truly in a role that the model finds, and precision is the share of its predictions for that role that are right. F1 combines the two.
+
+Transition: I will hand over to K M H S Bandara, who shows how this model became a working system.
+
+## Member 4: K M H S Bandara (System, Testing & Conclusion, slides 11–13)
+
+### Slide 11: System Architecture and Technology Stack
+
+This is the real architecture. The top row is what runs when someone asks for a recommendation, and the row below it is the offline workflow that produces the model.
+
+The web application is built with React 19, TypeScript, Vite and Material UI. It builds its questionnaire from the API's list of valid options, so it can only offer values the model understands.
+
+The web API is built with FastAPI, with Pydantic for validation and Uvicorn as the server. It has three endpoints: health, options and predict.
+
+The API does not re-implement any preprocessing. It uses the same skillpath package as the notebooks and training scripts. A function called profile_to_frame converts the validated answers into a one-row table that looks exactly like a survey row, and passes it to the saved pipeline, which contains the fitted preprocessing and the Logistic Regression.
+
+The artifacts are the saved pipeline, the pre-computed role insights, the list of valid options and the model card. The deployed system needs only these and the package. It does not need the respondent-level data.
+
+The seven steps at the bottom are the prediction flow. The browser sends the answers as JSON. Pydantic validates every answer against the valid options and returns HTTP 422 with one readable message per field if something is wrong. The profile becomes a survey-format row. The pipeline returns 20 role probabilities. The top three roles are selected, and the probabilities are summed into families. The insights file supplies the AI outlook, salary benchmark, skill gap and low-confidence flag. And the response is rendered as the results page.
+
+Validation mirrors the cleaning rules: years must be between 0 and 60, and ticking 90 percent or more of a technology list is rejected, just as in training. Nothing the user sends is stored or logged, and a prediction takes about 15 milliseconds including the insights.
+
+If asked about version safety: the scikit-learn version used to save the model is recorded in the model card, and the service logs a warning if a different version is installed.
+
+If asked about hosting: the repository also contains configuration to host the API on Render and the web app on Vercel. On a free tier the API sleeps when idle, so the first request after a quiet spell can take about a minute.
+
+Transition: next is what the application looks like and how we tested it.
+
+### Slide 12: Application Demonstration and Testing
+
+These are real screenshots of the running application, taken with the built-in example profile of a Sri Lankan computer science undergraduate. The interface has been restyled since the report was written, so it looks different from the report's figures, but the results are the same.
+
+The screenshots are numbered. Number 1 is the questionnaire. For each technology area you pick what you have used in the past year and what you want to work with next, or tick "I don't use any of these", which is sent as a true zero and not as a skipped question.
+
+Number 2 is the results page. The best match is Full-stack Developer at 64 percent, followed by Back-end Developer at 23 percent and Desktop / Enterprise Developer at 3 percent. Each percentage is how likely the model thinks it is that a developer with these answers works in that role.
+
+Number 3 is the evidence for one role. The AI outlook says people in this role do 20 out of 100 everyday tasks with AI today, against an all-roles average of 19. Typical pay is a median of 5,600 US dollars a year, and the app states exactly which peer group that came from: 73 full-stack developers in South Asia with 0 to 2 years of experience. The page also shows the career families and a skill-gap list.
+
+Number 4 is the what-if comparison. Adding TypeScript re-runs the prediction and shows a before-and-after table: Full-stack moves up 1.6 points, and Front-end Developer enters the top three. That turns the recommendation into a learning-planning tool.
+
+On testing. The final report documents 178 automated tests at five levels, with 177 passed, 1 skipped and none failed. The skipped test needs the 140 megabyte raw survey file and runs whenever that file is present.
+
+The levels follow the path of a recommendation: unit tests for the data and model, unit tests for the insights, integration tests for the API over HTTP, unit tests for the web app logic, and a system test that drives a real Chrome browser through 15 scenarios against the real API.
+
+The check I would highlight is training–serving parity. Real survey rows are converted to the JSON format the web form sends and passed through the API's conversion. For 300 rows the maximum probability difference from the direct model call was exactly zero, and the API tests repeat this with 150 held-out respondents over HTTP. That proves the deployed service preprocesses inputs exactly as the validated model expects.
+
+If asked about the test count today: 178 is the figure in the final report. The web-app unit suite has grown since then as the interface was extended, and it currently has 82 tests, all passing.
+
+If asked what was not tested: only Chrome was automated, and no screen-reader test, load test or usability study with real users was carried out.
+
+Transition: the last slide covers the limitations, future work and our conclusion.
+
+### Slide 13: Limitations, Future Work and Conclusion
+
+To summarise what we achieved. We built a leakage-free pipeline that takes 49,123 survey responses to 479 features. We compared six algorithms systematically, and that process produced two findings a less careful approach would have missed: class weighting harms Logistic Regression on this data, and tuning changed the winning algorithm. On held-out data the correct role is among the three shown 83.9 percent of the time, and the correct family 87.8 percent. And the model is deployed as a web API and web application, verified by 178 automated tests.
+
+The limitations are real and we state them in the application as well. Stack Overflow respondents are not a random sample of all developers. They skew towards particular regions, languages and seniority levels. Roles and skills are self-reported, so two people doing the same work may label it differently. The model is weak on rare roles, and two of them are never predicted first. It is a single-year snapshot of 2025, and technology and AI adoption change quickly. And the salary figures are US-dollar benchmarks that may not match local pay, especially when only a worldwide group has enough people.
+
+For future work: retraining every year on each new survey and tracking how roles and AI exposure change. Collecting more examples of rare roles, for example by merging survey years, or using hierarchical models that share strength within a family. Adding per-user explanations from the Logistic Regression coefficients, such as "these three technologies pushed you towards Data Engineer". Recommending learning resources and showing salaries in local currency. And usability and accessibility testing with SLIIT students.
+
+In conclusion, SkillPath applies the full data mining process, from understanding the data to a tested deployment, to turn a developer's skills and AI usage into three explained, evidence-backed role recommendations, with an honest evaluation and transparent limits.
+
+Thank you. We are happy to take your questions.
